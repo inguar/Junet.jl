@@ -182,6 +182,8 @@ hasedge{N}(g::UndirectedGraph{N}, n::Integer, m::Integer) =
     g.nodes[n].forward[searchsortedlast(g.nodes[n].forward, N(m))].node == N(m) ||
     g.nodes[n].reverse[searchsortedlast(g.nodes[n].reverse, N(m))].node == N(m)
 
+# FIXME: test the undiredted graph implementation
+
 """
     addedge!{N,E}(g::Graph{N,E}, n::Integer, m::Integer)
 

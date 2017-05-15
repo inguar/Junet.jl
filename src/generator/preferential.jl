@@ -23,7 +23,7 @@ function preferential(n::Integer, m::Integer, multi::Bool=false; params...)
         push!(p, 1)
         for j = 1:m
             k = rand(p)
-            if !multi && hasedge(g, i, k)
+            if k == i || !multi && hasedge(g, i, k)
                 k = rand(p)
             end
             addedge!(g, i, k)
