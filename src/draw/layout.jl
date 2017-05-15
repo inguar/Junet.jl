@@ -33,8 +33,12 @@ function layout_fruchterman_reingold(g::Graph, maxiter=30)
         for i = 1:n                     # apply forces
             force_mag = sqrt(force_x[i]^2 + force_y[i]^2)
             scale     = min(force_mag, temp)/force_mag
-            x[i] += force_x[i] * scale
-            y[i] += force_y[i] * scale
+            if !isnan(force_x[i])
+                x[i] += force_x[i] * scale
+            end
+            if !isnan(force_y[i])
+                y[i] += force_y[i] * scale
+            end
         end
     end
     return x, y
