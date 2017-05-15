@@ -14,6 +14,9 @@ include("measure/k-core.jl")
 include("measure/clustering.jl")
 include("generator/erdos_renyi.jl")
 include("generator/geometric.jl")
+include("generator/small_world.jl")
+include("generator/rand_dist.jl")
+include("generator/preferential.jl")
 include("io/show.jl")               # input/output
 include("io/pajek.jl")
 include("io/edgelist.jl")
@@ -59,7 +62,8 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         readgraph,
 
         # generator/
-        erdosrenyi,
+        path, cycle, star, wheel, complete, tree,
+        erdosrenyi, smallworld, preferential,
 
         # draw/
         plot, layout_fruchterman_reingold
