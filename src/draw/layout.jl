@@ -2,6 +2,10 @@
 
 layout_random(g::Graph) = (rand(nodecount(g)), rand(nodecount(g)))
 
+layout_circle(g::Graph) =
+    ([cos(2*pi*i/nodecount(g)) for i=nodes(g)],
+     [sin(2*pi*i/nodecount(g)) for i=nodes(g)])
+
 function layout_fruchterman_reingold(g::Graph, maxiter=30)
     temp = 2.
     n    = nodecount(g)

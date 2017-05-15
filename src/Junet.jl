@@ -66,7 +66,8 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         erdosrenyi, smallworld, preferential,
 
         # draw/
-        plot, layout_fruchterman_reingold
+        plot,
+        layout_random, layout_circle, layout_fruchterman_reingold
 
 
 
