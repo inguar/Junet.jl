@@ -8,7 +8,7 @@ include("sorted.jl")
 include("graph.jl")
 include("measure/dyad.jl")          # graph measures
 include("measure/degree.jl")
-include("measure/pagerank.jl")
+include("measure/power_iter.jl")
 include("measure/components.jl")
 include("measure/k-core.jl")
 include("measure/clustering.jl")
@@ -52,8 +52,8 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         # measure/clustering.jl
         maxtrianglecount, triangles, clustering,
 
-        # measure/pagerank.jl
-        pagerank,
+        # measure/power_iter.jl
+        eigenvector, pagerank,
 
         # measure/k-core.jl
         kcores,
