@@ -1,7 +1,6 @@
-# Junet — Networks Package for Julia
-
 ![logo](doc/readme/logo.png)
 
+# Junet — Networks Package for Julia
 
 Junet is a new package for network analysis that seeks
 to be a fast and hackable alternative to mainstream network analysis
@@ -11,6 +10,8 @@ the graphs as well as to associate the attributes with their nodes and edges.
 
 Currently, Junet is in *alpha* stage: many features are being ported from
 experimental branches. Some things may break unexpectedly.
+To report a problem, please create an issue here. To contribute some code, please fork this repository and create a pull request.
+
 
 ## Demo
 
@@ -23,6 +24,9 @@ plot(g, node_size=degree(g), edge_curved=.5)
 ```
 
 ![plot](doc/readme/test.png)
+
+See [more examples](https://github.com/inguar/Junet-demos).
+
 
 ## Features
 
@@ -40,8 +44,7 @@ end
 plot(g)             # layout and display the result
 ```
 
-* Node and edge attributes within network objects.
-They can be of arbitrary Julia types.
+* Arbitrary-typed node and edge attributes stored within network objects.
 
 ```julia
 g[:, :size] = "a"     # add a constant attribute to all nodes
@@ -61,7 +64,7 @@ which can greatly improve the memory consumption.
 * Smaller data structures. By default, Junet uses `UInt32`s everywhere
 and takes up to 2 times less space than libraries using `Int64`s.
 Users can also strip off support for edge attributes, which gives
-an additional 2x improvement.
+an additional 2x improvement in memory footprint.
 
 ```julia
 g = Graph(nodeids=Int, edgeids=Int)  # about the same size as igraph on 64-bit machines
@@ -73,21 +76,21 @@ g = Graph(nodeids=UInt32, edgeids=Void)    # 4 times smaller
 g = Graph(nodeids=UInt8, edgeids=Void)     # hardly usable, but ~16x smaller!
 ```
 
-* Zero-cost views on the networks
+* Zero-cost views on the networks, which don't copy the data.
 
 ```julia
 ug = undirected(g)  # network data not copied
 
 rg = reverse(g)     # here too
 
-dg = directed(undirected(g))   # the same as g, nothing lost in translation!
+dg = directed(undirected(g))   # another object, but indistinguishable from g
 ```
 
 
 ## Performance
 
 Here's how Junet compares with other network analysis tools.
-They all were tested on a [LiveJournal network](https://snap.stanford.edu/data/soc-LiveJournal1.html):
+They all are tested on a [LiveJournal network](https://snap.stanford.edu/data/soc-LiveJournal1.html):
 they had to load it into RAM and run 4 different algorithms on it.
 
 |                  | igraph   | graph-tool | SNAP     | *Junet*  | *Junet\** | NetworkX  |
@@ -98,4 +101,17 @@ they had to load it into RAM and run 4 different algorithms on it.
 | PageRank         | 22.2 s   | 50.6 s     | 250.2 s  | 24.3 s   | 17.3 s    | 625.9 s   |
 | Clustering Coef. | 22.2 s   | 254.2 s    | 266.9 s  | 44.9 s   | 35.2 s    | 2804.4 s  |
 
-\* Asterisk denotes the version with all optimizations enabled.
+\* Asterisk denotes the version with RAM optimizations enabled.
+
+
+## Installation
+
+You need Julia 0.5 to run Junet. It is also forward compatible with release candidate of Julia 0.6, but it will trigger some warnings.
+
+Once you have Julia set up, you can check out Junet from this repository (it is't added to METADATA registry yet). For that, run the following line in REPL:
+
+```julia
+julia> Pkg.clone("git://github.com/inguar/Junet.jl.git")
+```
+
+If you want to update the package, a simple `Pkg.update()` command should do that.
