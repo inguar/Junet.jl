@@ -115,3 +115,20 @@ julia> Pkg.clone("git://github.com/inguar/Junet.jl.git")
 ```
 
 If you want to update the package, a simple `Pkg.update()` command should do that.
+
+
+## Citing Junet
+
+If you're using Junet in scientific research, here is a way to cite it:
+
+```bibtex
+@inbook{
+    Zakhlebin_2017,
+    author={Zakhlebin, Igor},
+    title={Junet: a Julia package for network research},
+    booktitle={Proceedings of 11th International AAAI Conference on Web and Social Media (ICWSM-17)},
+    year={2017},
+    place={Montreal, Canada},
+    pages={731–732}
+}
+```
