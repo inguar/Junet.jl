@@ -191,7 +191,7 @@ Add an edge between nodes `n` and `m` in graph `g`.
 """
 function addedge!{N,E}(g::MultiGraph{N,E}, n::Integer, m::Integer)
     id = g.edgemaxid + one(E)
-    @assert(id > zero(E), "Integer overflow; try using a larger type for edge ids")
+    @assert(id > zero(E), "integer overflow; try using a larger type for edge ids")
     insertsorted!(g.nodes[n].forward, NodePtr(N(m), id))
     insertsorted!(g.nodes[m].reverse, NodePtr(N(n), id))
     g.edgecount += 1
@@ -200,9 +200,9 @@ end
 
 function addedge!{N,E}(g::SimpleGraph{N,E}, n::Integer, m::Integer)
     id = g.edgemaxid + one(E)
-    @assert(id > zero(E), "Integer overflow; try using a larger type for edge ids")
+    @assert(id > zero(E), "integer overflow; try using a larger type for edge ids")
     if insertsortedone!(g.nodes[n].forward, NodePtr(N(m), id)) &&
-            insertsortedone!(g.nodes[m].reverse, NodePtr(N(n), id))
+       insertsortedone!(g.nodes[m].reverse, NodePtr(N(n), id)) == false
         error("Graph already contains edge $n → $m")
     else
         g.edgecount += 1
@@ -218,88 +218,117 @@ end
 
 """
     remedge!(g::Graph, e::Edge)
+    remedge!(g::Graph, u::Integer, v::Integer)
 
 Remove edge `e` from graph `g`.
 """
-function remedge!{N,E,D<:Directed}(g::Graph{N,E,D}, e::Edge{N,E})
-    direct = g.nodes[e.source].forward
-    succ_direct = false
-    for i = searchsorted(direct, e.source)
-        if direct[i].id == e.id
-            deleteat!(direct, i)
-            succ_direct = true
-            break
-        end
-    end
-    @assert(succ_direct, "Edge $e not found in graph")
-    reverse = g.nodes[e.target].reverse
-    succ_reverse = false
-    for i = searchsorted(reverse, e.target)
-        if reverse[i].id == e.id
-            deleteat!(reverse, i)
-            succ_reverse = true
-            break
-        end
-    end
-    @assert(succ_reverse, "Reverse image of edge $e not found")
-    g.edgecount -= 1
+function remedge!{N,E,D<:Directed,M<:Multi}(g::Graph{N,E,D,M}, e::Edge{N,E})
+    success = delete_ptr!(g.nodes[e.source].forward, e.target, e.id)
+    @assert(success, "edge $e not found in graph")
+    success = delete_ptr!(g.nodes[e.target].reverse, e.source, e.id)
+    @assert(success, "reverse pointer for edge $e not found")
+    g.edgecount -= 1;
 end
 
-remedge!{N,E,D<:Reverse,M}(g::Graph{N,E,D,M}, e::Edge{N,E}) = remedge!(g, reverse(e))
-
-function remedge!{N,E,D<:Undirected,M}(g::Graph{N,E,D,M}, e::Edge{N,E})
-    direct = g.nodes[e.source].forward
-    succ = 0
-    for i = searchsorted(direct, e.target)
-        if direct[i].id == e.id
-            deleteat!(direct, i)
-            succ = 1     # direct-reverse
-            break
-        end
+function remedge!{N,E,D<:Undirected,M<:Multi}(g::Graph{N,E,D,M}, e::Edge{N,E})
+    success = delete_ptr!(g.nodes[e.source].forward, e.target, e.id)
+    if success
+        direction = Forward()
+    else
+        success = delete_ptr!(g.nodes[e.source].reverse, e.target, e.id)
+        direction = Reverse()
     end
-    if succ == 0
-        reverse = g.nodes[e.source].reverse
-        for i = searchsorted(reverse, e.target)
-            if direct[i].id == e.id
-                deleteat!(reverese, i)     # reverse-direct
-                succ = 2
-                break
-            end
-        end
+    @assert(success, "edge $e not found in graph")
+    if direction == Forward()
+        success = delete_ptr!(g.nodes[e.target].reverse, e.source, e.id)
+    else
+        success = delete_ptr!(g.nodes[e.target].forward, e.source, e.id)
     end
-    @assert(succ != 0, "Edge $e not found in graph")
-    list = succ == 1 ? g.nodes[e.target].reverse : g.nodes[e.target].forward
-    succ_reverse = false
-    for i = searchsorted(list, e.source)
-        if list[i].id == e.id
-            deleteat!(list, i)
-            succ_reverse = true
-            break
-        end
-    end
-    @assert(succ_reverse, "Reverse image of edge $e not found")
-    g.edgecount -= 1
+    @assert(success, "reverse pointer for edge $e not found")
+    g.edgecount -= 1;
 end
 
-function remedge!{N,E}(g::UndirectedGraph{N,E}, e::Edge{N,E})
-    for i = searchsorted(g.nodes[e.source].forward, e.target)
-        if g.nodes[e.source].forward[i].id == e.id
-            deleteat!(g.nodes[e.source].forward, i)
-            return
-        end
-    end
-    for i = searchsorted(g.nodes[e.source].reverse, e.target)
-        if g.nodes[e.source].reverse[i].id == e.id
-            deleteat!(g.nodes[e.source].reverse, i)
-            return
-        end
-    end
-    error("Edge not found in the graph")
+function remedge!{N,E,D<:Directed,M<:Multi}(g::Graph{N,E,D,M}, u::Integer, v::Integer)
+    success = delete_ptr!(g.nodes[u].forward, v)
+    @assert(success, "edge $u → $v not found in graph")
+    success = delete_ptr!(g.nodes[v].reverse, u)
+    @assert(success, "reverse pointer for edge $u → $v not found")
+    g.edgecount -= 1;
 end
 
-function remedge!{N,E,D<:Directed,M<:Simple}(g::Graph{N,E,D,M}, n::Integer, m::Integer)
-    # TODO
+function remedge!{N,E,D<:Undirected,M<:Multi}(g::Graph{N,E,D,M}, u::Integer, v::Integer)
+    success = delete_ptr!(g.nodes[u].forward, v)
+    if success
+        direction = Forward()
+    else
+        success = delete_ptr!(g.nodes[u].reverse, v)
+        direction = Reverse()
+    end
+    @assert(success, "edge $u ←→ $v not found in graph")
+    if direction == Forward()
+        success = delete_ptr!(g.nodes[v].reverse, u)
+    else
+        success = delete_ptr!(g.nodes[v].forward, u)
+    end
+    @assert(success, "reverse pointer for edge $u ←→ $v not found")
+    g.edgecount -= 1;
 end
+
+
+function remedge!{N,E,D<:Directed,M<:Simple}(g::Graph{N,E,D,M}, e::Edge{N,E})
+    success = delete_ptr!(g.nodes[e.source].forward, e.target)
+    @assert(success, "edge $e not found in graph")
+    success = delete_ptr!(g.nodes[e.target].reverse, e.source)
+    @assert(success, "reverse pointer for edge $e not found")
+    g.edgecount -= 1;
+end
+
+function remedge!{N,E,D<:Undirected,M<:Simple}(g::Graph{N,E,D,M}, e::Edge{N,E})
+    success = delete_ptr!(g.nodes[e.source].forward, e.target)
+    if success
+        direction = Forward()
+    else
+        success = delete_ptr!(g.nodes[e.source].reverse, e.target)
+        direction = Reverse()
+    end
+    @assert(success, "edge $e not found in graph")
+    if direction == Forward()
+        success = delete_ptr!(g.nodes[e.source].reverse, e.source)
+    else
+        success = delete_ptr!(g.nodes[e.source].forward, e.source)
+    end
+    @assert(success, "reverse pointer for edge $e not found")
+    g.edgecount -= 1;
+end
+
+function remedge!{N,E,D<:Directed,M<:Simple}(g::Graph{N,E,D,M}, u::Integer, v::Integer)
+    success = delete_ptr!(g.nodes[u].forward, v)
+    @assert(success, "edge $u → $v not found in graph")
+    success = delete_ptr!(g.nodes[v].reverse, u)
+    @assert(success, "reverse pointer for edge $u → $v not found")
+    g.edgecount -= 1;
+end
+
+function remedge!{N,E,D<:Undirected,M<:Simple}(g::Graph{N,E,D,M}, u::Integer, v::Integer)
+    success = delete_ptr!(g.nodes[u].forward, v)
+    if success
+        direction = Forward()
+    else
+        success = delete_ptr!(g.nodes[u].reverse, v)
+        direction = Reverse()
+    end
+    @assert(success, "edge $u ←→ $v not found in graph")
+    if direction == Forward()
+        success = delete_ptr!(g.nodes[v].reverse, u)
+    else
+        success = delete_ptr!(g.nodes[v].forward, u)
+    end
+    @assert(success, "reverse pointer for edge $u ←→ $v not found")
+    g.edgecount -= 1;
+end
+
+
+remedge!{N,E,D<:Reverse}(g::Graph{N,E,D}, e::Edge{N,E}) = remedge!(g, reverse(e))
 
 
 

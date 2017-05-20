@@ -7,7 +7,7 @@ Based on those pointers and their corresponding nodes, `Edge` instances
 are generated dynamically upon user's request.
 =#
 
-import Base: isless
+import Base: isless, ==
 
 """
     NodePtr{N,E}
@@ -25,6 +25,8 @@ end
 isless{N,E}(e::NodePtr{N,E}, f::NodePtr{N,E}) = <(e.node, f.node)
 isless{N,E}(e::NodePtr{N,E}, f::N) = <(e.node, f)
 isless{N,E}(e::N, f::NodePtr{N,E}) = <(e, f.node)
+=={N,E}(e::N, f::NodePtr{N,E}) = ==(e, f.node)
+=={N,E}(f::NodePtr{N,E}, e::N) = ==(e, f.node)
 
 
 """
