@@ -49,8 +49,8 @@ type Graph{N<:Integer,E<:Union{Integer,Void},D<:DirParam,M<:MultiParam}
     )
 end
 
+dirtype{N,E,D}(::Graph{N,E,D}) = D
 dirview{N,E,D_,M}(g::Graph{N,E,D_,M}, D::Type) = Graph{N,E,D,M}(g)
-dirtype{N,E,D}(g::Graph{N,E,D}) = D
 
 typealias LightGraph{N,E<:Void,D,M}            Graph{N,E,D,M}
 
@@ -67,16 +67,16 @@ typealias SimpleGraph{N,E,D,M<:Simple}         Graph{N,E,D,M}
 
 Check whether graph is directed.
 """
-isdirected(g::DirectedGraph)   = true
-isdirected(g::UndirectedGraph) = false
+isdirected(::DirectedGraph)   = true
+isdirected(::UndirectedGraph) = false
 
 """
     ismultigraph(g::Graph)
 
 Check whether graph is permitted to contain mutliple edges and/or selfloops.
 """
-ismultigraph(g::MultiGraph)  = true
-ismultigraph(g::SimpleGraph) = false
+ismultigraph(::MultiGraph)  = true
+ismultigraph(::SimpleGraph) = false
 
 """
     directed(g::Graph)

@@ -53,7 +53,7 @@ Generate a [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph) with `n` nod
 If `out == true`, connections go outwards from the central node.
 Otherwise, they go inwards.
 """
-function wheel(n::Integer; params...)
+function wheel(n::Integer; out=true, params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 2:n

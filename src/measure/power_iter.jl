@@ -37,7 +37,7 @@ function eigenvector(g::Graph, eps::Real=1e-4, maxiter::Int=100)
             error("Power iteration cannot converge")
             break
         else
-            maxdiff = 0
+            maxdiff = 0.
             for i = 1:n
                 score[i] /= λ
                 maxdiff = max(maxdiff, abs(score[i] - prevscore[i]))

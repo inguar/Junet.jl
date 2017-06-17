@@ -10,8 +10,8 @@ import Colors: color_names, ColorTypes
 @inline _color{T<:Tuple{Real,Real,Real}}(c::T) = c
 @inline _color{T<:ColorTypes.RGB}(c::T) = (c.r, c.g, c.b)
 @inline _color{T<:AbstractString}(c::T) = begin
-    !haskey(color_names, c) && error("Unknown color: $c")
-    x=color_names[c]
+    haskey(color_names, c) || error("Unknown color: $c")
+    x = color_names[c]
     return (x[1]/255, x[2]/255, x[3]/255)
 end
 
@@ -231,7 +231,7 @@ function draw_graph!(surface::CairoSurface, g::Graph;
     draw_background!(context, surface.width, surface.height; kvargs...)
     nodecount(g) == 0 && return
     # Set up the layout and styles
-    scale != 1 && scale(context, _scale, _scale)
+    _scale != 1 && scale(context, _scale, _scale)
     x, y = _setup_layout(surface, g, layout, margin)
     ns = _setup_node_style(g; kvargs...)
     es = _setup_edge_style(g; kvargs...)

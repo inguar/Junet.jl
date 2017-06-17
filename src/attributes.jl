@@ -29,7 +29,7 @@ sizehint!(a::AbstractAttribute, sz::Integer) = a.length = sz
 # of `Attribute` instances. Index 0 serves as proxy for default values.
 eachindex(a::AbstractAttribute) = 0:length(a)
 
-typealias AttributeDict Dict{Symbol, AbstractAttribute}
+const AttributeDict = Dict{Symbol, AbstractAttribute}
 
 
 #=
@@ -58,8 +58,8 @@ setindex!{T}(c::ConstantAttribute{T}, x::T, i::Integer) =
     else
         error("Constant attributes don't support element assignments")
     end
-delete!(c::ConstantAttribute, i::Integer) = nothing
-eachindex(c::ConstantAttribute) = [0]
+delete!(::ConstantAttribute, ::Integer) = nothing
+eachindex(::ConstantAttribute) = [0]
 similar{T}(c::ConstantAttribute, ::Type{T}) = ConstantAttribute{T}(T(c.default), c.length)
 
 
@@ -114,7 +114,7 @@ type DenseAttribute{T} <: AbstractAttribute{T}
     length  :: Int
 end
 
-DenseAttribute{T}(default::T, length=0) = DenseAttribute(T[], default, 0)
+DenseAttribute{T}(default::T, len=0) = DenseAttribute(T[], default, len)
 DenseAttribute{T}(v::Vector{T}, default::T) = DenseAttribute(v, default, length(v))
 DenseAttribute{T}(v::Vector{T}) = DenseAttribute(v, null(T), length(v))
 DenseAttribute(s::SparseAttribute) = DenseAttribute(collect(s), s.default, s.length)
