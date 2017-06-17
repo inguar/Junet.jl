@@ -2,46 +2,45 @@
 
 layout_random(g::Graph) = (rand(nodecount(g)), rand(nodecount(g)))
 
-layout_circle(g::Graph) =
-    ([cos(2*pi*i/nodecount(g)) for i=nodes(g)],
-     [sin(2*pi*i/nodecount(g)) for i=nodes(g)])
+layout_circle(g::Graph) = ([cos(2*pi*i/nodecount(g)) for i=nodes(g)],
+    [sin(2*pi*i/nodecount(g)) for i=nodes(g)])
 
-function layout_fruchterman_reingold(g::Graph, maxiter=30)
-    temp = 2.
-    n    = nodecount(g)
-    x    = 2 * rand(n) .- 1.0
-    y    = 2 * rand(n) .- 1.0
-    const k = 2. * sqrt(4.0 / n)
+function layout_fruchterman_reingold(g::Graph, maxiter=250, scale=sqrt(nodecount(g)), init_temp=sqrt(nodecount(g)))
+    const n = nodecount(g)
+    x = scale / 2 .* (rand(n) .- 0.5)
+    y = scale / 2 .* (rand(n) .- 0.5)
     @inbounds for iter = 1:maxiter
-        force_x, force_y = zeros(Float64, n), zeros(Float64, n)
+        force_x, force_y = zeros(n), zeros(n)
         for i = 1:n
-            for j = 1:n                 # repulsive forces
-                j >= i && break
+            @inbounds for j = 1:i-1
                 d_x, d_y = x[j] - x[i], y[j] - y[i]
-                d2 = d_x^2 + d_y^2
-                force_x[i] -= d_x * k^2 / d2
-                force_y[i] -= d_y * k^2 / d2
-                force_x[j] += d_x * k^2 / d2
-                force_y[j] += d_y * k^2 / d2
+                f = - 1 / (d_x^2 + d_y^2)           # repulsive force
+                force_x[i] += d_x * f
+                force_y[i] += d_y * f
+                force_x[j] -= d_x * f
+                force_y[j] -= d_y * f
             end
-            for j = NodeIDView(g.nodes[i], Forward)  # attractive forces
+            @inbounds for j = NodeIDView(g.nodes[i], Forward)
                 d_x, d_y = x[j] - x[i], y[j] - y[i]
-                d = sqrt(d_x^2 + d_y^2)
-                force_x[i] += d_x * (d/k - k^2/d^2)
-                force_y[i] += d_y * (d/k - k^2/d^2)
-                force_x[j] -= d_x * (d/k - k^2/d^2)
-                force_y[j] -= d_y * (d/k - k^2/d^2)
+                f = n * sqrt(d_x ^ 2 + d_y ^ 2)     # attractive force
+                force_x[i] += d_x * f
+                force_y[i] += d_y * f
+                force_x[j] -= d_x * f
+                force_y[j] -= d_y * f
             end
         end
-        t = temp / iter
-        for i = 1:n                     # apply forces
-            force_mag = sqrt(force_x[i]^2 + force_y[i]^2)
-            scale     = min(force_mag, temp)/force_mag
-            if !isnan(force_x[i])
-                x[i] += force_x[i] * scale
+        t = init_temp / iter
+        @inbounds for i = 1:n
+            force_mag = sqrt(force_x[i] ^ 2 + force_y[i] ^ 2)  # apply forces
+            if force_mag > t
+                coef = t / force_mag
+                x[i] += force_x[i] * coef
+                y[i] += force_y[i] * coef
             end
-            if !isnan(force_y[i])
-                y[i] += force_y[i] * scale
+            mag = sqrt(x[i] ^ 2 + y[i] ^ 2)         # don't let points run away
+            if mag > scale
+                x[i] *= scale / mag
+                y[i] *= scale / mag
             end
         end
     end

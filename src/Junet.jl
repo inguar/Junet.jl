@@ -18,8 +18,9 @@ include("generator/small_world.jl")
 include("generator/rand_dist.jl")
 include("generator/preferential.jl")
 include("io/show.jl")               # input/output
-include("io/pajek.jl")
+include("io/matrix.jl")
 include("io/edgelist.jl")
+include("io/pajek.jl")
 include("draw/layout.jl")           # visualization
 include("draw/plot.jl")
 

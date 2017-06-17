@@ -156,6 +156,17 @@ function draw_nodes!(context::CairoContext, g::Graph, x, y, nodestyle)
     end
 end
 
+function draw_node_labels!(context::CairoContext, g::Graph, x, y)
+    haskey(g.nodeattrs, :label) || return
+    label = g[:, :label]
+    # select_font_face(context, "Roboto Mono")
+    set_font_size(context, 10)
+    for i = nodes(g)
+        move_to(context, x[i], y[i])
+        set_source_rgb(context, 0.1, 0.1, 0.1)
+        show_text(context, label[i])
+    end
+end
 
 function draw_arrow!(context::CairoContext, x, y, α, color, opacity)
     r = 10
@@ -228,6 +239,7 @@ function draw_graph!(surface::CairoSurface, g::Graph;
     draw_edges!(context, g, x, y, ns, es)
     # Draw the nodes
     draw_nodes!(context, g, x, y, ns)
+    draw_node_labels!(context, g, x, y)
 end
 
 
