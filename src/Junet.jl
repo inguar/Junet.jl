@@ -63,12 +63,12 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         readgraph,
 
         # generator/
-        path, cycle, star, wheel, complete, tree,
-        erdosrenyi, smallworld, preferential,
+        graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
+        graph_tree, graph_erdosrenyi, graph_smallworld, graph_preferential,
 
         # draw/
-        plot,
-        layout_random, layout_circle, layout_fruchterman_reingold
+        layout_random, layout_circle, layout_fruchterman_reingold,
+        plot
 
 
 

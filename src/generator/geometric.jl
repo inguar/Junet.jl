@@ -1,9 +1,9 @@
 """
-    path(n::Integer)
+    graph_path(n::Integer)
 
 Generate a [path graph](https://en.wikipedia.org/wiki/Path_graph) with `n` nodes.
 """
-function path(n::Integer; params...)
+function graph_path(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 1:n-1
@@ -13,11 +13,11 @@ function path(n::Integer; params...)
 end
 
 """
-    cycle(n::Integer)
+    graph_cycle(n::Integer)
 
 Generate a [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph) with `n` nodes.
 """
-function cycle(n::Integer; params...)
+function graph_cycle(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 1:n
@@ -27,13 +27,13 @@ function cycle(n::Integer; params...)
 end
 
 """
-    star(n::Integer; [out=true])
+    graph_star(n::Integer; [out=true])
 
 Generate a [star graph](https://en.wikipedia.org/wiki/Star_graph) with `n` nodes.
 If `out == true`, connections go outwards from the central node.
 Otherwise, they go inwards.
 """
-function star(n::Integer; out=true, params...)
+function graph_star(n::Integer; out=true, params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 2:n
@@ -47,13 +47,13 @@ function star(n::Integer; out=true, params...)
 end
 
 """
-    wheel(n::Integer; [out=true])
+    graph_wheel(n::Integer; [out=true])
 
 Generate a [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph) with `n` nodes.
 If `out == true`, connections go outwards from the central node.
 Otherwise, they go inwards.
 """
-function wheel(n::Integer; out=true, params...)
+function graph_wheel(n::Integer; out=true, params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 2:n
@@ -64,11 +64,11 @@ function wheel(n::Integer; out=true, params...)
 end
 
 """
-    complete(n::Integer)
+    graph_complete(n::Integer)
 
 Generate a [complete graph](https://en.wikipedia.org/wiki/Complete_graph) with `n` nodes.
 """
-function complete(n::Integer; params...)
+function graph_complete(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 1:n, j = i+1:n
@@ -89,11 +89,11 @@ function _branch!(g::Graph, root, i, l, d)
 end
 
 """
-    tree(l::Integer, d::Integer)
+    graph_tree(l::Integer, d::Integer)
 
 Builds a regular tree with depth `d` and branching factor `l`.
 """
-function tree(l::Integer, d::Integer; params...)
+function graph_tree(l::Integer, d::Integer; params...)
     g = Graph(; params...)
     addnode!(g)
     _branch!(g, 1, 1, l, d)

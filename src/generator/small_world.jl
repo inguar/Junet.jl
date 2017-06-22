@@ -13,7 +13,7 @@ Small-world network model of Watts and Strogatz (1998).
 Watts, D. J., & Strogatz, S. H. (1998).
 Collective dynamics of “small-world” networks. Nature, 393(6684), 440–442.
 """
-function smallworld(n::Integer, k::Integer, p::Real, multi::Bool=false; params...)
+function graph_smallworld(n::Integer, k::Integer, p::Real, multi::Bool=false; params...)
     @assert n > 5 "`n` too small"
     @assert 0 < k < n / 2 "`k` is not in a valid range"
     @assert k % 2 == 0 "`k` should be even"
