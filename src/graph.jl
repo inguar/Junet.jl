@@ -420,14 +420,15 @@ getattrg(d::AttributeDict, s::Symbol, g) = (d[s][i] for i=g)
 
 setattr!(d::AttributeDict, s::Symbol, x) = d[s] = attribute(x)
 
-function setattr!(d::AttributeDict, s::Symbol, idx::Integer, x)
+
+function setattr!(d::AttributeDict, s::Symbol, ids::Integer, x)
     if typeof(d[s]) <: ConstantAttribute
         d[s] = SparseAttribute(d[s])
     end
-    d[s][idx] = x
+    d[s][ids] = x
 end
 
-function setattrg!(d::AttributeDict, s::Symbol, ids, x)
+function setattr!{T<:AbstractVector}(d::AttributeDict, s::Symbol, ids::T, x)
     if typeof(d[s]) <: ConstantAttribute
         d[s] = SparseAttribute(d[s])
     end
@@ -469,6 +470,7 @@ getindex(g::Graph, n::Integer, s::Symbol) = getattrn(g.nodeattrs, s, n)
 setindex!(g::Graph, x, ::Colon, s::Symbol) = setattr!(g.nodeattrs, s, x)
 setindex!(g::Graph, x, n::Integer, s::Symbol) =
     (checkbounds(g.nodes, n); setattr!(g.nodeattrs, s, n, x))
+setindex!(g::Graph, x, n::UnitRange, s::Symbol) = setattr!(g.nodeattrs, s, n, x)
 
 # Edge atrributes
 getindex(g::Graph, ::Colon, ::Colon, s::Symbol) = getattr(g.edgeattrs, s, edgecount(g))
@@ -477,9 +479,9 @@ getindex(g::Graph, ::Colon, n::Integer, s::Symbol) = getattrg(g.edgeattrs, s, in
 getindex(g::Graph, n::Integer, m::Integer, s::Symbol) = getattrg(g.edgeattrs, s, edgeids(g, n, m))
 
 setindex!(g::Graph, x, ::Colon, ::Colon, s::Symbol) = setattr!(g.edgeattrs, s, x)
-setindex!(g::Graph, x, n::Integer, ::Colon, s::Symbol) = setattrg!(g.edgeattrs, s, outedgeids(g, n), x)
-setindex!(g::Graph, x, ::Colon, n::Integer, s::Symbol) = setattrg!(g.edgeattrs, s, inedgeids(g, n), x)
-setindex!(g::Graph, x, n::Integer, m::Integer, s::Symbol) = setattrg!(g.edgeattrs, s, edgeids(g, n, m), x)
+setindex!(g::Graph, x, n::Integer, ::Colon, s::Symbol) = setattr!(g.edgeattrs, s, outedgeids(g, n), x)  #+g
+setindex!(g::Graph, x, ::Colon, n::Integer, s::Symbol) = setattr!(g.edgeattrs, s, inedgeids(g, n), x)  #+g
+setindex!(g::Graph, x, n::Integer, m::Integer, s::Symbol) = setattr!(g.edgeattrs, s, edgeids(g, n, m), x)  #+g
 
 
 
