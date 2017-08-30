@@ -102,6 +102,10 @@ function _node_offset(shape::Symbol, size::Real, angle::Real)
         else
             return (size/2 * c/abs(s), size/2 * sign(s))
         end
+    elseif shape == :diamond  # FIXME, this is bogus
+        if abs(s) > abs(c)
+        return (size/2 * sign(c), size/2 * s/abs(c))
+            end
     else
         error("Unsupported shape!")
     end
@@ -169,7 +173,7 @@ function draw_node_labels!(context::CairoContext, g::Graph, x, y)
 end
 
 function draw_arrow!(context::CairoContext, x, y, α, color, opacity)
-    r = 10
+    r = 5
     move_to(context, x, y)
     line_to(context, x-cos(α-.35)*r, y-sin(α-.35)*r)
     curve_to(context, x-cos(α-.1)*r*.7, y-sin(α-.1)*r*.7,
