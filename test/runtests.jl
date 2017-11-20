@@ -103,3 +103,7 @@ using Base.Test
     end
 
 end
+
+# New corner cases:
+
+# memsize(Graph())

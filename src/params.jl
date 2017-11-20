@@ -1,4 +1,4 @@
-# Types used as parameters
+## Parameter types used by Junet for multiple dispatch ##
 
 """
     DirParam
@@ -20,17 +20,18 @@ uses them, but there are some commonalities:
 For good presentation, they have two parents — `Directed` and `Undirected`,
 by the type of graphs in which they are used.
 """
-abstract DirParam
-abstract Directed   <: DirParam
-abstract Undirected <: DirParam
-type Forward        <: Directed end
-type Reverse        <: Directed end
-type Both           <: Undirected end
+abstract type DirParam end
+abstract type Directed <: DirParam end
+abstract type Forward  <: Directed end
+abstract type Reverse  <: Directed end
+abstract type Undirected <: DirParam end
+abstract type Both       <: Undirected end
 
-rev(::Type{Forward}) = Reverse
-rev(::Type{Reverse}) = Forward
-rev(::Type{Both})    = Both
-
+dir_xor(::Type{D}, ::Type{R}) where {D<:Forward, R<:Forward} = Forward
+dir_xor(::Type{D}, ::Type{R}) where {D<:Forward, R<:Reverse} = Reverse
+dir_xor(::Type{D}, ::Type{R}) where {D<:Reverse, R<:Forward} = Reverse
+dir_xor(::Type{D}, ::Type{R}) where {D<:Reverse, R<:Reverse} = Forward
+dir_xor(::Type{D}, ::Type{R}) where {D<:DirParam, R<:DirParam} = Both
 
 """
     MultiParam
@@ -38,6 +39,6 @@ rev(::Type{Both})    = Both
 Similar to `DirParam`, this abstract type is for encoding whether graph may
 have multiple edges. There are two child types: `Multi` amd `Simple`.
 """
-abstract MultiParam
-type Multi  <: MultiParam end
-type Simple <: MultiParam end
+abstract type MultiParam end
+abstract type Multi  <: MultiParam end
+abstract type Simple <: MultiParam end

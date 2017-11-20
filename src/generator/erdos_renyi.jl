@@ -1,26 +1,6 @@
-# Random graph generators.
+## Random graph generators ##
 
-"""
-    randfill!(g, dens)
-
-Fill the graph with random edges until it reaches a certain density.
-"""
-function randfill!(g::Graph, dens::Real)
-    @assert(nodecount(g) > 1, "Too little nodes to add edges")
-    @assert(dens < .7, "Too high density value")
-    n = round(Int, maxedgecount(g) * dens)
-    for i = 1:n
-        x = randnode(g)
-        y = randnode(g)
-        while x == y
-            y = randnode(g)
-        end
-        addedge!(g, x, y)
-    end
-end
-
-
-# Sample from a geometric distribution (adapted from the Distributions package)
+# Sampler from a geometric distribution (adapted from the Distributions package)
 randgeom(p::Real) = floor(Int, -randexp() / log1p(-p))
 
 function _erdosrenyifill!(g::UndirectedGraph, p::Real)
@@ -65,17 +45,17 @@ matiematical expectation for the graph's density is `p`.
 
 If you want an exact number of edges, provide it as an argument `m`. In this case
 they will be randomly picked from all possible edges in the graph with equal
-probability.t
+probability.
 """
-function erdosrenyifill!(g::Graph, p::Real)
+function graph_erdosrenyifill!(g::Graph, p::Real)
     @assert(nodecount(g) > 1, "too little nodes in the graph")
-    @assert(0 < p < 1, "value of `p` should be in (0,1) interval")
+    @assert(0 < p < 1, "value of `p` should be in (0, 1) interval")
     _erdosrenyifill!(g, p)
     return g
 end
 
-function erdosrenyi(n::Integer, p::Real)
+function graph_erdosrenyi(n::Integer, p::Real)
     g = Graph(nodecount=n)
-    erdosrenyifill!(g, p)
+    _erdosrenyifill!(g, p)
     return g
 end

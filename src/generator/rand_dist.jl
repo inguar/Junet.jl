@@ -1,15 +1,12 @@
-# Miscellaneous code to generate random outcomes with predefined discrete
-# probability distribution
+## Efficient sampler from discrete probability distributions ##
 
-# TODO: move this over to a separate module
+# TODO: move this over to a separate module, or in main folder
 
-import Base: push!, pop!, getindex, rand
-
-type DistributionPicker{T<:Integer}
+struct DistributionPicker{T<:Integer}
     weights :: Vector{T}
 end
 
-function push!{T}(d::DistributionPicker{T}, x::T)
+function push!(d::DistributionPicker{T}, x::T) where T
     if length(d.weights) == 0
         push!(d.weights, x)
     else

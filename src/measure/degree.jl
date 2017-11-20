@@ -1,5 +1,3 @@
-
-
 degree(g::Graph, n::Integer) = length(g.nodes[n].forward) + length(g.nodes[n].reverse)
 degree(g::Graph) = [degree(g, i) for i = nodes(g)]
 

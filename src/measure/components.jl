@@ -1,4 +1,4 @@
-# Code for finding connected components.
+## Finding connected components ##
 
 @inline function _root(parent, i)
     while i != parent[i]
@@ -18,7 +18,7 @@ Implementation based on WQUPC algorithm from Robert Sedgewick's lecture
 on Union-Find algorithms
 [link](https://www.cs.princeton.edu/~rs/AlgsDS07/01UnionFind.pdf).
 """
-function components{N,E}(g::Graph{N,E})
+function components(g::Graph{N,E}) where {N,E}
     n      = nodecount(g)
     parent = collect(1:n)
     weight = fill(1, n)

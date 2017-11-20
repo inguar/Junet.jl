@@ -1,6 +1,6 @@
-import Base: Matrix
+## Conversion to and from Matrix objects ##
 
-function Graph{T<:Number}(m::Matrix{T}; params...)
+function Graph(m::Matrix{T}; params...) where {T<:Number}
     n, n_ = size(m)
     @assert(n == n_, "adjacency matrix should be square")
     g = Graph(; nodecount=n, params...)

@@ -1,5 +1,7 @@
+## Power iteration-based centrality indices ##
+
 """
-    eigenvector(g::Graph, [eps::Real, maxiter::Int])
+    eigenvector(g::Graph[, eps::Real, maxiter::Int])
 
 Compute eigenvector centrality for all nodes in the graph.
 
@@ -55,7 +57,7 @@ end
 
 
 """
-    pagerank(g::Graph, [d::Real, eps::Real])
+    pagerank(g::Graph[, d::Real, eps::Real])
 
 Compute PageRank scores for all nodes in the graph.
 
@@ -91,37 +93,3 @@ function pagerank(g::Graph, d::Real=0.85, eps::Real=1e-4)
     end
     return prevscore
 end
-
-
-# for Julia 0.5
-
-# function pagerank(g::Graph, d=0.85, ϵ=1e-4)
-#     @assert(0 < d < 1,   "Value of `d` should be between 0 and 1")
-#     @assert(0 < ϵ < 0.1, "Value of `ϵ` should be positive and small")
-#     n        = nodecount(g)
-#     rank     = fill(0.,     n)
-#     prevrank = fill(1. / n, n)
-#     ratio    = [d / outdegree(g, i) for i = 1:n]
-#     done     = false
-#     @inbounds while !done
-#         for i = 1:n                    # transfer the weights
-#             for j = inneighbors(g, i)
-#                 rank[i] += prevrank[j] * ratio[j]
-#             end
-#         end
-#         loss = (1. - sum(rank)) / n    # put the lost weight back
-#         for i = 1:n
-#             rank[i] += loss
-#         end
-#         done = true                    # check convergence
-#         for i = 1:n
-#             if abs(rank[i] - prevrank[i]) > ϵ
-#                 done = false
-#                 break
-#             end
-#         end
-#         prevrank, rank = rank, prevrank
-#         fill!(rank, 0.)
-#     end
-#     return prevrank
-# end

@@ -1,4 +1,4 @@
-#= Read and write Pajek files.
+#= Read and write Pajek files
 
 Most of things specified in the format (like node and edge attributes) are supported.
 See [1](http://www.pfeffer.at/txt2pajek/txt2pajek.pdf), and
@@ -117,10 +117,6 @@ function readpajek(io::IO)
     end
     g
 end
-
-
-
-
 
 """
     writepajek(filename, g::Graph)

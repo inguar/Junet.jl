@@ -1,14 +1,11 @@
-# Efficient container types for node and edge attributes.
-
-import Base: length, size, sizehint!, getindex, setindex!, delete!,
-             eachindex, similar
+## Efficient container types for node and edge attributes ##
 
 """
     null(::Type{T})
 
 Get an empty (null) value for a type. Works like `zero()`, but for more types.
 """
-null{T<:Number}(::Type{T}) = zero(T)
+null(::Type{T}) where {T <: Number} = zero(T)
 null(::Type{String}) = ""
 null(::Type{Char}) = '\0'
 null(::Type{Void}) = nothing
@@ -19,7 +16,7 @@ null(::Type{Void}) = nothing
 
 Abstract parent for graph attribute types. They behave like `Vector`s.
 """
-abstract AbstractAttribute{T} <: AbstractVector{T}
+abstract type AbstractAttribute{T} <: AbstractVector{T} end
 
 length(a::AbstractAttribute) = a.length
 size(a::AbstractAttribute) = (a.length,)
@@ -45,14 +42,14 @@ serialize it, everything works
 Attribute always returning a default value. Extremely memory efficient, does
 no bounds checks.
 """
-type ConstantAttribute{T} <: AbstractAttribute{T}
+mutable struct ConstantAttribute{T} <: AbstractAttribute{T}
     default :: T
     length  :: Int
 end
 
 ConstantAttribute(default, length=0) = ConstantAttribute(default, length)
 getindex(c::ConstantAttribute, ::Integer) = c.default
-setindex!{T}(c::ConstantAttribute{T}, x::T, i::Integer) =
+setindex!(c::ConstantAttribute{T}, x::T, i::Integer) where {T} =
     if i == 0
         c.default = x
     else
@@ -60,7 +57,7 @@ setindex!{T}(c::ConstantAttribute{T}, x::T, i::Integer) =
     end
 delete!(::ConstantAttribute, ::Integer) = nothing
 eachindex(::ConstantAttribute) = [0]
-similar{T}(c::ConstantAttribute, ::Type{T}) = ConstantAttribute{T}(T(c.default), c.length)
+similar(c::ConstantAttribute, ::Type{T}) where {T} = ConstantAttribute{T}(T(c.default), c.length)
 
 
 """
@@ -71,18 +68,18 @@ uses `Dict` to store non-default elements.
 
 `T` is its element type, `I` is a preferred indexing type.
 """
-type SparseAttribute{T,_,I} <: AbstractAttribute{T}
+mutable struct SparseAttribute{T,N,I} <: AbstractAttribute{T}
     data    :: Dict{I,T}
     default :: T
     length  :: Int
 end
 
-SparseAttribute{T}(default::T, idtype=Int) = SparseAttribute{T,1,idtype}(Dict{idtype,T}(), default, 0)
-SparseAttribute{T}(c::ConstantAttribute{T}, idtype=Int) =
+SparseAttribute(default::T, idtype=Int) where {T} = SparseAttribute{T,1,idtype}(Dict{idtype,T}(), default, 0)
+SparseAttribute(c::ConstantAttribute{T}, idtype=Int) where {T} =
     SparseAttribute{T,1,idtype}(Dict{idtype,T}(), c.default, c.length)
 
 getindex(s::SparseAttribute, i::Integer) = get(s.data, i, s.default)
-setindex!{T}(s::SparseAttribute{T}, x, i::Integer) =
+setindex!(s::SparseAttribute{T}, x, i::Integer) where {T} =
     if i == 0
         s.default = x
     else
@@ -91,9 +88,9 @@ setindex!{T}(s::SparseAttribute{T}, x, i::Integer) =
 
 delete!(s::SparseAttribute, i::Integer) = delete!(s.data, i)
 
-eachindex{T,I}(s::SparseAttribute{T,I}) = [zero(I), keys(s.data)...]
+eachindex(s::SparseAttribute{T,I}) where {T,I} = [zero(I), keys(s.data)...]
 
-function similar{T,I,T_}(s::SparseAttribute{T,I}, ::Type{T_})
+function similar(s::SparseAttribute{T,I}, ::Type{T_}) where {T,I,T_}
     d = Dict{I,T_}()
     for i = keys(s.data)
         d[i] = T_(s.data[i])
@@ -108,20 +105,20 @@ end
 Attribute with most of its values being unique. Under the hood, uses `Vector`
 to store all elements.
 """
-type DenseAttribute{T} <: AbstractAttribute{T}
+mutable struct DenseAttribute{T} <: AbstractAttribute{T}
     data    :: Vector{T}
     default :: T
     length  :: Int
 end
 
-DenseAttribute{T}(default::T, len=0) = DenseAttribute(T[], default, len)
-DenseAttribute{T}(v::Vector{T}, default::T) = DenseAttribute(v, default, length(v))
-DenseAttribute{T}(v::Vector{T}) = DenseAttribute(v, null(T), length(v))
+DenseAttribute(default::T, len=0) where {T} = DenseAttribute(T[], default, len)
+DenseAttribute(v::Vector{T}, default::T) where {T} = DenseAttribute(v, default, length(v))
+DenseAttribute(v::Vector{T}) where {T} = DenseAttribute(v, null(T), length(v))
 DenseAttribute(s::SparseAttribute) = DenseAttribute(collect(s), s.default, s.length)
 
 # FIXME index 0 not supported yet
 getindex(d::DenseAttribute, i::Integer) = d.data[i]
-setindex!{T}(d::DenseAttribute{T}, x::T, i::Integer) = d.data[i] = x
+setindex!(d::DenseAttribute{T}, x::T, i::Integer) where {T} = d.data[i] = x
 delete!(d::DenseAttribute, i::Integer) = d.data[i] = d.default
 
 function sizehint!(d::DenseAttribute, sz::Integer)
@@ -139,7 +136,7 @@ function sizehint!(d::DenseAttribute, sz::Integer)
     d.length = sz
 end
 
-similar{T,T_}(d::DenseAttribute{T}, ::Type{T_}) =
+similar(d::DenseAttribute{T}, ::Type{T_}) where {T,T_} =
     DenseAttribute{T_}([T_(i) for i = d.data], T_(d.default), d.length)
 
 
@@ -149,13 +146,13 @@ similar{T,T_}(d::DenseAttribute{T}, ::Type{T_}) =
 Attribute with its values being mostly unique vectors of the same length.
 Uses `Matrix` under the hood.
 """
-type VectorAttribute{T} <: AbstractAttribute{T}
+mutable struct VectorAttribute{T} <: AbstractAttribute{T}
     data    :: Matrix{T}
     default :: Vector{T}
     length  :: Int
 end
 
-VectorAttribute{T}(m::Matrix{T}) = VectorAttribute()
+VectorAttribute(m::Matrix{T}) where {T} = VectorAttribute()
 
 getindex(v::VectorAttribute, i::Integer) = v.data[i,:]
 setindex!(v::VectorAttribute, x::VecOrMat, i::Integer) = v.data[i,:] = x

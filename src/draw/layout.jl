@@ -1,4 +1,4 @@
-# Graph layout procedures.
+## Graph layouts ##
 
 layout_random(g::Graph) = (rand(nodecount(g)), rand(nodecount(g)))
 
@@ -20,7 +20,7 @@ function layout_fruchterman_reingold(g::Graph, maxiter=250, scale=sqrt(nodecount
                 force_x[j] -= d_x * f
                 force_y[j] -= d_y * f
             end
-            @inbounds for j = NodeIDView(g.nodes[i], Forward)
+            @inbounds for j = map(x->x.node, g.nodes[i].forward)  # TODO: create generic way to handle this 
                 d_x, d_y = x[j] - x[i], y[j] - y[i]
                 f = n * sqrt(d_x ^ 2 + d_y ^ 2)     # attractive force
                 force_x[i] += d_x * f

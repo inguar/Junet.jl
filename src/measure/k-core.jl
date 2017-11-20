@@ -1,4 +1,4 @@
-# K-core decomposition
+## K-core decomposition ##
 
 function _binsortperm(deg::Vector, n::Integer)
     vert = Array{Int}(n)    # `vert` is the order of vertices

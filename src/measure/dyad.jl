@@ -1,4 +1,4 @@
-# Graph measures on a dyadic level.
+## Dyad-based network measures ##
 
 """
     maxedgecount(g::Graph)

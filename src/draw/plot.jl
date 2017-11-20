@@ -1,16 +1,20 @@
-using Cairo
-import Colors: color_names, ColorTypes
+## Plotting networks with Cairo ##
 
+# TODO: switch to the new Tableau color scheme, maybe keep the purple color
+# TODO: handle self-loops gracefully
+# TODO: draw parallel edges gracefully, like in graph-tool
+# TODO: fix arrow cap offset
+# TODO: allow variable arrow cap sizes
 
-@inline _attribute{T<:Vector}(v::T) = v
-@inline _attribute{T<:AbstractAttribute}(v::T) = v
+@inline _attribute(v::T) where {T<:AbstractVector} = v
+@inline _attribute(v::T) where {T<:AbstractAttribute} = v
 @inline _attribute(v::Any) = ConstantAttribute(v)
 
-@inline _color{T<:Tuple{Integer,Integer,Integer}}(c::T) = (c[1]/255, c[2]/255, c[3]/255)
-@inline _color{T<:Tuple{Real,Real,Real}}(c::T) = c
-@inline _color{T<:ColorTypes.RGB}(c::T) = (c.r, c.g, c.b)
-@inline _color{T<:AbstractString}(c::T) = begin
-    haskey(color_names, c) || error("Unknown color: $c")
+@inline _color(c::T) where {T<:Tuple{Integer, Integer, Integer}} = (c[1]/255, c[2]/255, c[3]/255)
+@inline _color(c::T) where {T<:Tuple{Real, Real, Real}} = c
+@inline _color(c::T) where {T<:RGB} = (c.r, c.g, c.b)
+@inline _color(c::T) where {T<:AbstractString} = begin
+    haskey(color_names, c) || error("unknown color \"$c\"")
     x = color_names[c]
     return (x[1]/255, x[2]/255, x[3]/255)
 end
@@ -92,7 +96,7 @@ function _setup_edge_style(g::Graph; kvargs...)
 end
 
 function _node_offset(shape::Symbol, size::Real, angle::Real)
-    # TODO switch to sin and cos as arguments and collate lots of stuff together
+    # TODO: switch to sin and cos as arguments and collate lots of stuff together
     s, c = sin(angle), cos(angle)
     if shape == :circle
         return (size*.56 * c, size*.56 * s)
@@ -103,7 +107,7 @@ function _node_offset(shape::Symbol, size::Real, angle::Real)
             return (size/2 * c/abs(s), size/2 * sign(s))
         end
     else
-        error("Unsupported shape!")
+        error("unsupported shape")
     end
 end
 
@@ -209,20 +213,18 @@ function draw_edges!(context::CairoContext, g::Graph, x, y, nodestyle, edgestyle
     shape, size = nodestyle[:shape], nodestyle[:size]
     width, color, opacity, curved =
         edgestyle[:width], edgestyle[:color], edgestyle[:opacity], edgestyle[:curved]
-    for n = nodes(g)
-        for np = g.nodes[n].forward
-            m, e = np.node, np.id
-            draw_edge!(context, isdirected(g),
-                       x[n], y[n], shape[n], size[n],
-                       x[m], y[m], shape[m], size[m],
-                       width[e], _color(color[e]), opacity[e], curved[e])
-        end
+    for e = edges(g)
+        draw_edge!(context, e.isdir,
+                   x[e.source], y[e.source], shape[e.source], size[e.source],
+                   x[e.target], y[e.target], shape[e.target], size[e.target],
+                   width[e.id], _color(color[e.id]), opacity[e.id], curved[e.id])
     end
 end
 
 
 function draw_graph!(surface::CairoSurface, g::Graph;
                      layout=(),
+                     _layout=(),
                      margin=(20,20),
                      _scale=1,
                      kvargs...)
@@ -232,7 +234,11 @@ function draw_graph!(surface::CairoSurface, g::Graph;
     nodecount(g) == 0 && return
     # Set up the layout and styles
     _scale != 1 && scale(context, _scale, _scale)
-    x, y = _setup_layout(surface, g, layout, margin)
+    if _layout != ()
+        x, y = _layout
+    else
+        x, y = _setup_layout(surface, g, layout, margin)
+    end
     ns = _setup_node_style(g; kvargs...)
     es = _setup_edge_style(g; kvargs...)
     # Draw the edges
@@ -244,12 +250,12 @@ end
 
 
 """
-    plot(g::Graph; [kvargs...])
+    plot(g::Graph[, filename, size, format[, kvargs...]])
 
-Plot the graph `g`. Specify the `size`, `filename`, `format`, or many
+Plot the graph `g`. Specify the `filename`, `size`, `format`, or many
 of the other parameters.
 """
-function plot(g::Graph; size=(500,500), filename="", format=:png, kvargs...)
+function plot(g::Graph, filename="", size=(500,500), format=:png; kvargs...)
     if format == :png
         surface = CairoARGBSurface(size...)
         draw_graph!(surface, g; kvargs...)
@@ -268,14 +274,14 @@ function plot(g::Graph; size=(500,500), filename="", format=:png, kvargs...)
             surface = CairoSVGSurface(buf, size...)
             draw_graph!(surface, g; kvargs...)
             finish(surface)
-            display(MIME("image/svg+xml"), takebuf_string(buf))
+            display(MIME("image/svg+xml"), String(take!(buf)))
         end
     elseif format == :pdf
-        @assert filename!="" "Need a filename to write PDF to"
+        @assert(filename != "", "need a file name to write PDF")
         surface = CairoPDFSurface(filename, size...)
         draw_graph!(surface, g; kvargs...)
         finish(surface)
     else:
-        error("Wrong or unsupported picture format ($format)")
+        error("wrong or unsupported image format :$format")
     end
 end

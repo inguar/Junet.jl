@@ -26,9 +26,9 @@ function graph_smallworld(n::Integer, k::Integer, p::Real, multi::Bool=false; pa
             if p == 0 || rand() >= p
                 addedge!(g, i, x)
             else
-                k = rand(1:n)
-                while k == i || !multi && hasedge(g, i, k)
+                while true
                     k = rand(1:n)
+                    k != i && (multi || !hasedge(g, i, k)) && break
                 end
                 addedge!(g, i, k)
             end

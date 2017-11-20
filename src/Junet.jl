@@ -1,11 +1,30 @@
+__precompile__()
+
 module Junet
 
+# Use-only imports
+import GZip     # for io/edgelist.jl
+using Cairo     # for draw/plot.jl
+import Colors: color_names, RGB    # for draw/plot.jl
+
+# Imports to extend Base
+import Base: 
+        length, size, getindex, setindex!,  # common
+        @_inline_meta, @_propagate_inbounds_meta,
+        isless, ==,             # primitives.jl
+        sizehint!, delete!, eachindex, similar, # attributes.jl
+        ndims, start, next, done, endof, eltype,  # edgeiter.jl
+        reverse, transpose,     # graph.jl
+        push!, pop!, rand,      # generator/rand_dist.jl
+        Matrix,                 # io/matrix.jl
+        summary, show           # io/show.jl
+        
 include("params.jl")                # getting to a minimally usable state
 include("primitives.jl")
-include("views.jl")
 include("attributes.jl")
-include("sorted.jl")
 include("graph.jl")
+include("edgeiter.jl")
+include("graph_operations.jl")
 include("measure/dyad.jl")          # graph measures
 include("measure/degree.jl")
 include("measure/power_iter.jl")
@@ -21,6 +40,7 @@ include("io/show.jl")               # input/output
 include("io/matrix.jl")
 include("io/edgelist.jl")
 include("io/pajek.jl")
+include("io/ngraph.jl")
 include("draw/layout.jl")           # visualization
 include("draw/plot.jl")
 
@@ -28,9 +48,9 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         LightGraph,
 
         # graph.jl
-        isdirected, ismultigraph, directed, undirected, reverse,
-        nodecount, nodes, hasnode, addnode!, remnode!,
-        edgecount, edges, hasedge, addedge!, remedge!,
+        isdirected, ismultigraph, directed, undirected,
+        nodecount, nodes, addnode!, remnode!,
+        edgecount, hasedge, addedge!, remedge!, remedges!,
 
         neighbors, outneighbors, inneighbors,
         edges, outedges, inedges,
@@ -70,7 +90,7 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         layout_random, layout_circle, layout_fruchterman_reingold,
         plot
 
-
+# FIXME: check that all useful functions are exported
 
 
 end

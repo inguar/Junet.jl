@@ -1,3 +1,4 @@
+## Compute the clustering coefficient ##
 
 maxtrianglecount(g::DirectedGraph, k::Integer) = k * (k - 1)
 maxtrianglecount(g::UndirectedGraph, k::Integer) = div(k * (k - 1), 2)

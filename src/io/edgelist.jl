@@ -1,10 +1,13 @@
-import GZip
-
+## Read and write plain-text edgelists ##
 
 const _delims = [Base._default_delims,
         [',', '"', '\n', '\r'], [';', '"', '\n', '\r']]
 
-function readedgelist(io::IO; delim=:auto, directed=:auto, kvargs...)
+function readedgelist(io::IO;
+                      delim=:auto,
+                      directed=:auto,
+                      id_offset::Integer = 1,  # rename to offset_ids
+                      kvargs...)
     # Skip comments, try to extract information about directedness if available
     local line
     dir = isa(directed, Bool) ? Bool(directed) : true
@@ -39,8 +42,8 @@ function readedgelist(io::IO; delim=:auto, directed=:auto, kvargs...)
     while true
         try
             x, y = split(line, dlm, keep=false)[1:2]
-            x = parse(Int, x) + 1
-            y = parse(Int, y) + 1
+            x = parse(Int, x) + id_offset
+            y = parse(Int, y) + id_offset
             while nodecount(g) < max(x, y)
                 addnode!(g)
             end
@@ -77,7 +80,7 @@ function readgraph(filename; format=:auto, gzip=:auto, kvargs...)
     extensions = split(lowercase(basename(filename)), '.')[2:end]
     matchext(exts...) = any(i -> i in extensions, exts)
     if format == :auto
-        if matchext("tsv", "csv", "txt")
+        if matchext("txt", "tsv", "csv", "edgelist")
             format = :delim
         elseif matchext("net", "paj")
             format = :pajek

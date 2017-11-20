@@ -1,3 +1,5 @@
+## Generators for simply-shaped graphs ##
+
 """
     graph_path(n::Integer)
 
@@ -7,7 +9,7 @@ function graph_path(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 1:n-1
-        addedge!(g, i, i+1)
+        addedge!(g, i, i + 1)
     end
     g
 end
@@ -21,7 +23,7 @@ function graph_cycle(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
     for i = 1:n
-        addedge!(g, i, (i+1)%n)
+        addedge!(g, i, i % n + 1)
     end
     g
 end
@@ -58,7 +60,7 @@ function graph_wheel(n::Integer; out=true, params...)
     addnode!(g, n)
     for i = 2:n
         out ? addedge!(g, 1, i) : addedge!(g, i, 1)
-        addedge!(g, i, i<n ? i+1 : 2)
+        addedge!(g, i, i < n ? i + 1 : 2)
     end
     g
 end
@@ -71,11 +73,12 @@ Generate a [complete graph](https://en.wikipedia.org/wiki/Complete_graph) with `
 function graph_complete(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
-    for i = 1:n, j = i+1:n
+    for i = 1:n, j = i + 1:n
         addedge!(g, i, j)
     end
     g
 end
+
 
 function _branch!(g::Graph, root, i, l, d)
     for j = 1:l
@@ -83,7 +86,7 @@ function _branch!(g::Graph, root, i, l, d)
         k = nodecount(g)
         addedge!(g, k, root)
         if i < d
-            _branch!(g, k, i+1, l, d)
+            _branch!(g, k, i + 1, l, d)
         end
     end
 end

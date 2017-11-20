@@ -33,3 +33,7 @@ function graph_preferential(n::Integer, m::Integer, multi::Bool=false; params...
     end
     return g
 end
+
+# FIXME: make sure the procedure doesn't generate self-loops
+# FIXME: add a function that returns a list of self-loops
+# FIXME: allow to combine it with bulk edge deletion
