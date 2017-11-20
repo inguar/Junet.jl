@@ -18,7 +18,7 @@ To report a problem, please create an issue here. To contribute some code, pleas
 ```julia
 using Junet
 
-g = erdosrenyi(100, .05)
+g = graph_erdosrenyi(100, .05)
 
 plot(g, node_size=degree(g), edge_curved=.5)
 ```
