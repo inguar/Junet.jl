@@ -1,4 +1,7 @@
-![logo](./doc/readme/logo.svg)
+<center>
+<img alt="logo" src="./doc/readme/logo.svg" height="200px">
+</center>
+<br>
 
 # Junet — Networks Package for Julia
 
@@ -23,7 +26,7 @@ g = graph_smallworld(100, 6, .1)
 plot(g, node_size=degree(g), edge_curved=.5)
 ```
 
-![plot](./doc/readme/test.svg)
+<img alt="plot" src="./doc/readme/test.svg" height="450px">
 
 See [more examples](https://github.com/inguar/Junet-demos).
 
