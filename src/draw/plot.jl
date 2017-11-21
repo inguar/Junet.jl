@@ -4,6 +4,7 @@
 # TODO: handle self-loops gracefully
 # TODO: draw parallel edges gracefully, like in graph-tool
 # TODO: fix arrow cap offset
+# TODO: fix drawing short edges (arrow cap angle)
 # TODO: allow variable arrow cap sizes
 
 @inline _attribute(v::T) where {T<:AbstractVector} = v
@@ -50,7 +51,7 @@ function _setup_node_style(g::Graph; kvargs...)
     style = Dict{Symbol,Any}(       # default node style
         :shape          => ConstantAttribute(:circle),
         :size           => ConstantAttribute(10),
-        :color          => ConstantAttribute((.667,.2,.467)),
+        :color          => ConstantAttribute((.7,.2,.5)),
         :border_color   => ConstantAttribute((1.,1.,1.)),
         :opacity        => ConstantAttribute(.75)
     )
