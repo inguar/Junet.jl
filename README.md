@@ -1,4 +1,4 @@
-![logo](doc/readme/logo.png)
+![logo](./doc/readme/logo.svg)
 
 # Junet — Networks Package for Julia
 
@@ -18,12 +18,12 @@ To report a problem, please create an issue here. To contribute some code, pleas
 ```julia
 using Junet
 
-g = graph_erdosrenyi(100, .05)
+g = graph_smallworld(100, 6, .1)
 
 plot(g, node_size=degree(g), edge_curved=.5)
 ```
 
-![plot](doc/readme/test.png)
+![plot](./doc/readme/test.svg)
 
 See [more examples](https://github.com/inguar/Junet-demos).
 
