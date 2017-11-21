@@ -1,6 +1,6 @@
-<center>
-<img alt="logo" src="./doc/readme/logo.svg" height="200px">
-</center>
+<p align="center">
+  <img alt="logo" src="./doc/readme/logo.svg" height="200px">
+</p>
 <br>
 
 # Junet — Networks Package for Julia
