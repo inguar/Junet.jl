@@ -1,11 +1,10 @@
 ## Plotting networks with Cairo ##
 
-# TODO: switch to the new Tableau color scheme, maybe keep the purple color
-# TODO: handle self-loops gracefully
+# TODO further play around with the color options
+# TODO switch to area-matching node sizes
+# TODO get rid of magic constants in node sizes or unify them
+# TODO: introduce color maps for real-valued attributes
 # TODO: draw parallel edges gracefully, like in graph-tool
-# TODO: fix arrow cap offset
-# TODO: fix drawing short edges (arrow cap angle)
-# TODO: allow variable arrow cap sizes
 
 @inline _attribute(v::T) where {T<:AbstractVector} = v
 @inline _attribute(v::T) where {T<:AbstractAttribute} = v
@@ -40,7 +39,7 @@ function _setup_layout(surface::CairoSurface, g::Graph, layout, margin)
     elseif typeof(margin) <: Tuple{Real,Real}
         m_x, m_y = margin
     else
-        error("Invalid margin specification")
+        error("invalid margin specification")
     end
     x = _rescale_coord(x_, surface.width, m_x)      # rescale x and y
     y = _rescale_coord(y_, surface.height, m_y)
@@ -53,7 +52,7 @@ function _setup_node_style(g::Graph; kvargs...)
         :size           => ConstantAttribute(10),
         :color          => ConstantAttribute((.7,.2,.5)),
         :border_color   => ConstantAttribute((1.,1.,1.)),
-        :opacity        => ConstantAttribute(.75)
+        :opacity        => ConstantAttribute(.8)
     )
     for (k, v) in g.nodeattrs       # incorporate node attributes
         if haskey(style, k)
@@ -76,7 +75,7 @@ function _setup_edge_style(g::Graph; kvargs...)
     style = Dict{Symbol,Any}(       # default edge style
         :width          => ConstantAttribute(.5),
         :color          => ConstantAttribute((.5,.5,.5)),
-        :opacity        => ConstantAttribute(.5),
+        :opacity        => ConstantAttribute(.8),
         :curved         => ConstantAttribute(0)
     )
     for (k, v) in g.edgeattrs       # incorporate edge attributes
@@ -96,45 +95,28 @@ function _setup_edge_style(g::Graph; kvargs...)
     return style
 end
 
-function _node_offset(shape::Symbol, size::Real, angle::Real)
-    # TODO: switch to sin and cos as arguments and collate lots of stuff together
-    s, c = sin(angle), cos(angle)
+function _node_radius(shape::Symbol, size::Real, a::Real)
+    sin_a, cos_a = abs(sin(a)), abs(cos(a))
     if shape == :circle
-        return (size*.56 * c, size*.56 * s)
+        return size * .56
     elseif shape == :square
-        if abs(s) < abs(c)
-            return (size/2 * sign(c), size/2 * s/abs(c))
-        else
-            return (size/2 * c/abs(s), size/2 * sign(s))
-        end
-    elseif shape == :diamond  # FIXME, this is bogus
-        if abs(s) > abs(c)
-        return (size/2 * sign(c), size/2 * s/abs(c))
-            end
+        return size / 2 / max(sin_a, cos_a)
+    elseif shape == :diamond
+        tan_a = abs(sin_a / cos_a)
+        return size * .7 / (1 + sin_a / cos_a) / cos_a
     else
         error("unsupported shape")
+        return 0
     end
 end
 
-function _curve_points(x1, y1, x2, y2, angle, rotation=.5)
-    offset = .3
-    dist = sqrt(float(y2 - y1) ^ 2 + float(x2 - x1) ^ 2)
-    return (float(x1) + dist * offset * cos(angle + rotation),
-            float(y1) + dist * offset * sin(angle + rotation),
-            float(x2) - dist * offset * cos(angle - rotation),
-            float(y2) - dist * offset * sin(angle - rotation))
-end
-
-
-function draw_background!(context::CairoContext, width::Real, height::Real;
+function draw_background!(context::CairoContext;
                           bg_color=(1.,1.,1.),
                           bg_opacity=1,
                           kvargs...)
-    rectangle(context, 0, 0, width, height)
     set_source_rgba(context, _color(bg_color)..., bg_opacity)
-    fill(context)
+    paint(context)
 end
-
 
 function draw_node!(context::CairoContext, x, y, shape, size, color, bcolor, opacity)
     if shape == :circle
@@ -177,41 +159,112 @@ function draw_node_labels!(context::CairoContext, g::Graph, x, y)
     end
 end
 
-function draw_arrow!(context::CairoContext, x, y, α, color, opacity)
-    r = 5
-    move_to(context, x, y)
-    line_to(context, x-cos(α-.35)*r, y-sin(α-.35)*r)
-    curve_to(context, x-cos(α-.1)*r*.7, y-sin(α-.1)*r*.7,
-                x-cos(α+.1)*r*.7, y-sin(α+.1)*r*.7,
-                x-cos(α+.35)*r, y-sin(α+.35)*r)
+function arrow_path!(context::CairoContext, x, y, α, size, width)
+    if width > 3
+        arc(context, x, y, width / 2, α - 2.3, α + 2.3)
+    else
+        move_to(context, x, y)
+    end
+    line_to(context, x + size * cos(α + 2.3), y + size * sin(α + 2.3))
+    line_to(context, x + size * cos(α), y + size * sin(α))
+    line_to(context, x + size * cos(α - 2.3), y + size * sin(α - 2.3))
     close_path(context)
-    set_source_rgba(context, color..., opacity)
-    fill(context)
 end
+
+_arc_angle(r, d) = 2 * asin(d/2 / r)
 
 function draw_edge!(context::CairoContext, directed,
                     x1, y1, shape1, size1,
                     x2, y2, shape2, size2,
                     width, color, opacity, curved)
+    arrow_size = max(7, width * 1.5)
+
     α = atan2(y2 - y1, x2 - x1)
-    if curved == 0
-        Δx, Δy = _node_offset(shape1, size1, α)
-        move_to(context, x1 + Δx, y1 + Δy)
-        Δx, Δy = _node_offset(shape2, size2, α + pi)
-        line_to(context, x2 + Δx, y2 + Δy)
-        set_line_width(context, width)
-        set_source_rgba(context, color..., opacity)
-        stroke(context)
-    else
-        Δx, Δy = _node_offset(shape1, size1, α + curved)
-        move_to(context, x1 + Δx, y1 + Δy)
-        Δx, Δy = _node_offset(shape2, size2, α + pi - curved)
-        curve_to(context, _curve_points(x1, y1, x2, y2, α, curved)..., x2 + Δx, y2 + Δy)
-        set_line_width(context, width)
-        set_source_rgba(context, color..., opacity)
-        stroke(context)
+    dist = sqrt(float(x2 - x1) ^ 2 + float(y2 - y1) ^ 2)
+    cos_a = (x2 - x1) / dist
+    sin_a = (y2 - y1) / dist
+
+    if abs(curved) < 0.01 && dist > 0
+        start = _node_radius(shape1, size1, α)
+        finish = dist - _node_radius(shape2, size2, α)
+        finish > start || return
+        if directed && finish - arrow_size > start
+            finish -= arrow_size
+        else
+            directed = false
+        end
+        move_to(context, x1 + start * cos_a, y1 + start * sin_a)
+        end_x, end_y = x1 + finish * cos_a, y1 + finish * sin_a
+        line_to(context, end_x, end_y)
+        end_α = α
+    elseif curved >= 0  # edge is a clockwise arc 
+        if dist > 0
+            c2 = curved / 2 * pi
+            r = dist/2 / sin(c2)
+        else
+            α = 0
+            c2 = pi
+            r = (size1 + arrow_size) / 2
+        end
+        temp_α = α + (pi/2 - c2)
+        xc, yc = x1 + r * cos(temp_α), y1 + r * sin(temp_α)
+        α1, α2 = α - pi/2 - c2, α - pi/2 + c2
+        r1 = _node_radius(shape1, size1, α1 + pi/2)
+        r2 = _node_radius(shape2, size2, α2 - pi/2)
+        r1 < 2r && r2 < 2r || return
+        start = α1 + _arc_angle(r, r1)
+        finish = α2 - _arc_angle(r, r2)
+        finish > start || return
+        arr_α = _arc_angle(r, arrow_size)
+        if directed && finish - arr_α > start
+            finish -= arr_α
+        else
+            directed = false
+        end
+        arc(context, xc, yc, r, start, finish)
+        end_x = xc + r * cos(finish)
+        end_y = yc + r * sin(finish)
+        end_α = finish + pi/2 + arr_α/2
+    elseif curved < 0  # edge is counter-clockwise arc
+        if dist > 0
+            c2 = -curved / 2 * pi
+            r = dist / 2 / sin(c2)
+        else
+            α = 0
+            c2 = pi
+            r = (size1 + arrow_size) / 2
+        end
+        temp_α = α - (pi/2 - c2)
+        xc, yc = x1 + r * cos(temp_α), y1 + r * sin(temp_α)
+        α1, α2 = α + pi/2 + c2, α + pi/2 - c2
+        r1 = _node_radius(shape1, size1, α1 + pi/2)
+        r2 = _node_radius(shape2, size2, α2 - pi/2)
+        r1 < 2r && r2 < 2r || return
+        start = α1 - _arc_angle(r, r1)
+        finish = α2 + _arc_angle(r, r2)
+        finish < start || return
+        arr_α = _arc_angle(r, arrow_size)
+        if directed && finish + arr_α < start
+            finish += arr_α
+        else
+            directed = false
+        end
+        arc_negative(context, xc, yc, r, start, finish)
+        end_x = xc + r * cos(finish)
+        end_y = yc + r * sin(finish)
+        end_α = finish - (pi/2 + arr_α/2)
     end
-    directed && draw_arrow!(context, x2+Δx, y2+Δy, α-curved, color, opacity)
+    set_line_width(context, width)
+    if width > 3
+        set_line_cap(context, 1)
+    end
+    set_source_rgba(context, color..., opacity)
+    stroke(context)
+    if directed
+        arrow_path!(context, end_x, end_y, end_α, arrow_size, width)
+        set_source_rgba(context, color..., opacity)
+        fill(context)
+    end
 end
 
 function draw_edges!(context::CairoContext, g::Graph, x, y, nodestyle, edgestyle)
@@ -229,13 +282,13 @@ end
 
 function draw_graph!(surface::CairoSurface, g::Graph;
                      layout=(),
-                     _layout=(),
+                     _layout=(),  # FIXME remove this hack
                      margin=(20,20),
                      _scale=1,
-                     kvargs...)
+                     kvargs...)   # FIXME remove this hack or make it work well
     context = CairoContext(surface)
     # Draw background
-    draw_background!(context, surface.width, surface.height; kvargs...)
+    draw_background!(context; kvargs...)
     nodecount(g) == 0 && return
     # Set up the layout and styles
     _scale != 1 && scale(context, _scale, _scale)
@@ -260,7 +313,7 @@ end
 Plot the graph `g`. Specify the `filename`, `size`, `format`, or many
 of the other parameters.
 """
-function plot(g::Graph, filename="", size=(500,500), format=:png; kvargs...)
+function plot(g::Graph; filename="", size=(500,500), format=:png, kvargs...)
     if format == :png
         surface = CairoARGBSurface(size...)
         draw_graph!(surface, g; kvargs...)
