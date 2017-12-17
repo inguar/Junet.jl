@@ -290,7 +290,7 @@ end
 Plot the graph `g`. Specify the `filename`, `size`, `format`, or many
 of the other parameters.
 """
-function plot(g::Graph; filename="", size=(500,500), format=:png, kvargs...)
+function plot(g::Graph; filename="", size=(500,500), format=:svg, kvargs...)
     if format == :png
         surface = CairoARGBSurface(size...)
         draw_graph!(surface, g; kvargs...)
