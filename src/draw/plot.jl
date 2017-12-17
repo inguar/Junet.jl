@@ -1,8 +1,6 @@
 ## Plotting networks with Cairo ##
 
 # TODO further play around with the color options
-# TODO switch to area-matching node sizes
-# TODO get rid of magic constants in node sizes or unify them
 # TODO: introduce color maps for real-valued attributes
 # TODO: draw parallel edges gracefully, like in graph-tool
 
@@ -49,8 +47,8 @@ end
 function _setup_node_style(g::Graph; kvargs...)
     style = Dict{Symbol,Any}(       # default node style
         :shape          => ConstantAttribute(:circle),
-        :size           => ConstantAttribute(10),
-        :color          => ConstantAttribute((.7,.2,.5)),
+        :size           => ConstantAttribute(100),
+        :color          => ConstantAttribute((.7,.1,.2)),
         :border_color   => ConstantAttribute((1.,1.,1.)),
         :opacity        => ConstantAttribute(.8)
     )
@@ -76,7 +74,7 @@ function _setup_edge_style(g::Graph; kvargs...)
         :width          => ConstantAttribute(.5),
         :color          => ConstantAttribute((.5,.5,.5)),
         :opacity        => ConstantAttribute(.8),
-        :curved         => ConstantAttribute(0)
+        :curve          => ConstantAttribute(0)
     )
     for (k, v) in g.edgeattrs       # incorporate edge attributes
         if haskey(style, k)
@@ -95,20 +93,6 @@ function _setup_edge_style(g::Graph; kvargs...)
     return style
 end
 
-function _node_radius(shape::Symbol, size::Real, a::Real)
-    sin_a, cos_a = abs(sin(a)), abs(cos(a))
-    if shape == :circle
-        return size * .56
-    elseif shape == :square
-        return size / 2 / max(sin_a, cos_a)
-    elseif shape == :diamond
-        tan_a = abs(sin_a / cos_a)
-        return size * .7 / (1 + sin_a / cos_a) / cos_a
-    else
-        error("unsupported shape")
-        return 0
-    end
-end
 
 function draw_background!(context::CairoContext;
                           bg_color=(1.,1.,1.),
@@ -119,17 +103,8 @@ function draw_background!(context::CairoContext;
 end
 
 function draw_node!(context::CairoContext, x, y, shape, size, color, bcolor, opacity)
-    if shape == :circle
-        circle(context, x, y, size*.56)
-    elseif shape == :square
-        rectangle(context, x-size/2, y-size/2, size, size)
-    elseif shape == :diamond
-        move_to(context, x-size*.7, y)
-        line_to(context, x, y-size*.7)
-        line_to(context, x+size*.7, y)
-        line_to(context, x, y+size*.7)
-        close_path(context)
-    end
+    side = sqrt(size)
+    node_path(Val{shape}, context, x, y, side)
     set_source_rgba(context, color..., opacity)
     fill_preserve(context)
     set_source_rgba(context, bcolor..., opacity)
@@ -173,20 +148,22 @@ end
 
 _arc_angle(r, d) = 2 * asin(d/2 / r)
 
+_node_radius(shape, size, a) = node_radius(Val{shape}, sqrt(size), a)
+
 function draw_edge!(context::CairoContext, directed,
                     x1, y1, shape1, size1,
                     x2, y2, shape2, size2,
-                    width, color, opacity, curved)
-    arrow_size = max(7, width * 1.5)
+                    width, color, opacity, curve)
+    arrow_size = max(5, width * 1.5)
 
     α = atan2(y2 - y1, x2 - x1)
     dist = sqrt(float(x2 - x1) ^ 2 + float(y2 - y1) ^ 2)
     cos_a = (x2 - x1) / dist
     sin_a = (y2 - y1) / dist
 
-    if abs(curved) < 0.01 && dist > 0
+    if abs(curve) < 0.01 && dist > 0
         start = _node_radius(shape1, size1, α)
-        finish = dist - _node_radius(shape2, size2, α)
+        finish = dist - _node_radius(shape2, size2, α + pi)
         finish > start || return
         if directed && finish - arrow_size > start
             finish -= arrow_size
@@ -197,14 +174,14 @@ function draw_edge!(context::CairoContext, directed,
         end_x, end_y = x1 + finish * cos_a, y1 + finish * sin_a
         line_to(context, end_x, end_y)
         end_α = α
-    elseif curved >= 0  # edge is a clockwise arc 
+    elseif curve >= 0  # edge is a clockwise arc 
         if dist > 0
-            c2 = curved / 2 * pi
+            c2 = curve / 2 * pi
             r = dist/2 / sin(c2)
         else
             α = 0
             c2 = pi
-            r = (size1 + arrow_size) / 2
+            r = (sqrt(size1) + arrow_size) / 2
         end
         temp_α = α + (pi/2 - c2)
         xc, yc = x1 + r * cos(temp_α), y1 + r * sin(temp_α)
@@ -225,14 +202,14 @@ function draw_edge!(context::CairoContext, directed,
         end_x = xc + r * cos(finish)
         end_y = yc + r * sin(finish)
         end_α = finish + pi/2 + arr_α/2
-    elseif curved < 0  # edge is counter-clockwise arc
+    elseif curve < 0  # edge is counter-clockwise arc
         if dist > 0
-            c2 = -curved / 2 * pi
+            c2 = -curve / 2 * pi
             r = dist / 2 / sin(c2)
         else
             α = 0
             c2 = pi
-            r = (size1 + arrow_size) / 2
+            r = (sqrt(size1) + arrow_size) / 2
         end
         temp_α = α - (pi/2 - c2)
         xc, yc = x1 + r * cos(temp_α), y1 + r * sin(temp_α)
@@ -269,13 +246,13 @@ end
 
 function draw_edges!(context::CairoContext, g::Graph, x, y, nodestyle, edgestyle)
     shape, size = nodestyle[:shape], nodestyle[:size]
-    width, color, opacity, curved =
-        edgestyle[:width], edgestyle[:color], edgestyle[:opacity], edgestyle[:curved]
+    width, color, opacity, curve =
+        edgestyle[:width], edgestyle[:color], edgestyle[:opacity], edgestyle[:curve]
     for e = edges(g)
         draw_edge!(context, e.isdir,
                    x[e.source], y[e.source], shape[e.source], size[e.source],
                    x[e.target], y[e.target], shape[e.target], size[e.target],
-                   width[e.id], _color(color[e.id]), opacity[e.id], curved[e.id])
+                   width[e.id], _color(color[e.id]), opacity[e.id], curve[e.id])
     end
 end
 

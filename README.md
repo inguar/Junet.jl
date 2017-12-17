@@ -21,9 +21,9 @@ To report a problem, please create an issue here. To contribute some code, pleas
 ```julia
 using Junet
 
-g = graph_smallworld(100, 6, .1)
+g = graph_smallworld(100, 4, .1)
 
-plot(g, node_size=degree(g), edge_curved=.5)
+plot(g, node_size=10degree(g), edge_curve=.5)
 ```
 
 <img alt="plot" src="./doc/readme/test.svg" height="450px">
