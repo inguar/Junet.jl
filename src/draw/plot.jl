@@ -1,6 +1,8 @@
 ## Plotting networks with Cairo ##
 
-# TODO further play around with the color options
+# TODO: eliminate intermediate layers when passing styles
+# TODO: make it easy to override functions for drawing nodes, edges, and their elements
+# TODO: ensure no mixed type combinations when calling Cairo
 # TODO: introduce color maps for real-valued attributes
 # TODO: draw parallel edges gracefully, like in graph-tool
 
@@ -50,7 +52,10 @@ function _setup_node_style(g::Graph; kvargs...)
         :size           => ConstantAttribute(100),
         :color          => ConstantAttribute((.7,.1,.2)),
         :border_color   => ConstantAttribute((1.,1.,1.)),
-        :opacity        => ConstantAttribute(.8)
+        :border_width   => ConstantAttribute(.5),
+        :opacity        => ConstantAttribute(.8),
+        :label          => ConstantAttribute(""),
+        :label_color    => ConstantAttribute((0.,0.,0.))
     )
     for (k, v) in g.nodeattrs       # incorporate node attributes
         if haskey(style, k)
@@ -102,35 +107,41 @@ function draw_background!(context::CairoContext;
     paint(context)
 end
 
-function draw_node!(context::CairoContext, x, y, shape, size, color, bcolor, opacity)
+function draw_node!(context::CairoContext, x, y, shape, size, color, bcolor, bwidth, opacity)
     side = sqrt(size)
     node_path(Val{shape}, context, x, y, side)
     set_source_rgba(context, color..., opacity)
+    bwidth == 0 && return fill(context)
     fill_preserve(context)
     set_source_rgba(context, bcolor..., opacity)
-    set_line_width(context, 1)
+    set_line_width(context, bwidth)
     stroke(context)
 end
 
 function draw_nodes!(context::CairoContext, g::Graph, x, y, nodestyle)
-    shape, size, color, border_color, opacity =
-        nodestyle[:shape], nodestyle[:size], nodestyle[:color],
-        nodestyle[:border_color], nodestyle[:opacity]
+    shape, size, color, opacity, border_color, border_width =
+        nodestyle[:shape], nodestyle[:size], nodestyle[:color], nodestyle[:opacity],
+        nodestyle[:border_color], nodestyle[:border_width]
     for i = nodes(g)
         draw_node!(context, x[i], y[i],
-                   shape[i], size[i], _color(color[i]), _color(border_color[i]), opacity[i])
+                   shape[i], size[i], _color(color[i]),
+                   _color(border_color[i]), border_width[i], opacity[i])
     end
 end
 
-function draw_node_labels!(context::CairoContext, g::Graph, x, y)
-    haskey(g.nodeattrs, :label) || return
-    label = g[:, :label]
-    # select_font_face(context, "Roboto Mono")
-    set_font_size(context, 10)
+function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
+    size, label, label_color, opacity = nodestyle[:size],
+        nodestyle[:label], nodestyle[:label_color], nodestyle[:opacity]
+    select_font_face(context, "Sans", 0, 0)  # TODO: make this user-selectable
     for i = nodes(g)
-        move_to(context, x[i], y[i])
-        set_source_rgb(context, 0.1, 0.1, 0.1)
-        show_text(context, label[i])
+        l = string(label[i])
+        l == "" && continue
+        set_font_size(context, sqrt(size[i]) * .9)  # TODO: make this user-selectable
+        ext = text_extents(context, l)
+        move_to(context, x[i] - ext[3] / 2 - ext[1],
+                         y[i] - ext[4] / 2 - ext[2])
+        set_source_rgba(context, _color(label_color[i])..., opacity[i])
+        show_text(context, l)
     end
 end
 
@@ -280,7 +291,7 @@ function draw_graph!(surface::CairoSurface, g::Graph;
     draw_edges!(context, g, x, y, ns, es)
     # Draw the nodes
     draw_nodes!(context, g, x, y, ns)
-    draw_node_labels!(context, g, x, y)
+    draw_node_labels!(context, g, x, y, ns)
 end
 
 
