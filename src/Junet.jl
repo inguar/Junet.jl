@@ -27,6 +27,7 @@ include("edgeiter.jl")
 include("graph_operations.jl")
 include("measure/dyad.jl")          # graph measures
 include("measure/degree.jl")
+include("measure/subtree.jl")
 include("measure/power_iter.jl")
 include("measure/components.jl")
 include("measure/k-core.jl")
@@ -67,6 +68,9 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         leaves, leafcount,
         sources, sourcecount,
         sinks, sinkcount,
+
+        # measures/subtree.jl
+        subtree_size,
 
         # measure/components.jl
         components,
