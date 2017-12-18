@@ -25,7 +25,7 @@ function _rescale_coord(v, newmax::Real, margin::Real)
     return [round(Int16, margin + (x - oldmin) / (oldmax - oldmin) * newmax) for x = v]
 end
 
-function _setup_layout(surface::CairoSurface, g::Graph, layout, margin)
+function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
     if haskey(g.nodeattrs, :x) && haskey(g.nodeattrs, :y)   # get layout
         x_ = g.nodeattrs[:x]
         y_ = g.nodeattrs[:y]
@@ -45,8 +45,8 @@ function _setup_layout(surface::CairoSurface, g::Graph, layout, margin)
     else
         error("invalid margin specification")
     end
-    x = _rescale_coord(x_, surface.width, m_x)      # rescale x and y
-    y = _rescale_coord(y_, surface.height, m_y)
+    x = _rescale_coord(x_, surface.width / zoom, m_x / zoom)      # rescale x and y
+    y = _rescale_coord(y_, surface.height / zoom, m_y / zoom)
     return x, y
 end
 
@@ -276,18 +276,18 @@ function draw_graph!(surface::CairoSurface, g::Graph;
                      layout=(),
                      _layout=(),  # FIXME remove this hack
                      margin=(20,20),
-                     _scale=1,
-                     kvargs...)   # FIXME remove this hack or make it work well
+                     zoom=1,
+                     kvargs...)
     context = CairoContext(surface)
     # Draw background
     draw_background!(context; kvargs...)
     nodecount(g) == 0 && return
     # Set up the layout and styles
-    _scale != 1 && scale(context, _scale, _scale)
+    zoom != 1 && scale(context, zoom, zoom)
     if _layout != ()
         x, y = _layout
     else
-        x, y = _setup_layout(surface, g, layout, margin)
+        x, y = _setup_layout(surface, g, layout, margin, zoom)
     end
     ns = _setup_node_style(g; kvargs...)
     es = _setup_edge_style(g; kvargs...)
