@@ -32,7 +32,11 @@ function _setup_layout(surface::CairoSurface, g::Graph, layout, margin)
     elseif length(layout) >= 2
         x_, y_ = layout[1:2]
     else
-        x_, y_ = layout_fruchterman_reingold(g)
+        if nodecount(g) <= 1000
+            x_, y_ = layout_fruchterman_reingold(g)
+        else
+            x_, y_ = layout_circle(g)
+        end
     end
     if isa(margin, Real)                            # get margins
         m_x = m_y = margin
