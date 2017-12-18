@@ -170,6 +170,7 @@ function draw_edge!(context::CairoContext, directed,
                     x2, y2, shape2, size2,
                     width, color, opacity, curve)
     arrow_size = max(5, width * 1.5)
+    curve = clamp(curve, -1.8, 1.8)
 
     α = atan2(y2 - y1, x2 - x1)
     dist = sqrt(float(x2 - x1) ^ 2 + float(y2 - y1) ^ 2)
