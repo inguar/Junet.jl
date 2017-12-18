@@ -32,7 +32,7 @@ include("measure/power_iter.jl")
 include("measure/components.jl")
 include("measure/k-core.jl")
 include("measure/clustering.jl")
-include("generator/erdos_renyi.jl")
+include("generator/erdos_renyi.jl") # graph generators
 include("generator/geometric.jl")
 include("generator/small_world.jl")
 include("generator/rand_dist.jl")

@@ -5,6 +5,16 @@ layout_random(g::Graph) = (rand(nodecount(g)), rand(nodecount(g)))
 layout_circle(g::Graph) = ([cos(2*pi*i/nodecount(g)) for i=nodes(g)],
     [sin(2*pi*i/nodecount(g)) for i=nodes(g)])
 
+"""
+    layout_fruchterman_reingold(g::Graph, ...)
+
+Layout network with Fruchterman-Reingold force-directed algorithm.
+
+# References
+
+Fruchterman, Thomas MJ, and Edward M Reingold. 1991.
+“Graph Drawing by Force-Directed Placement.” Software: Practice and Experience 21 (11):1129–64.
+"""
 function layout_fruchterman_reingold(g::Graph, maxiter=250, scale=sqrt(nodecount(g)), init_temp=sqrt(nodecount(g)))
     const n = nodecount(g)
     x = scale / 2 .* (rand(n) .- 0.5)
