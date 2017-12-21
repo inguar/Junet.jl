@@ -37,6 +37,7 @@ include("generator/geometric.jl")
 include("generator/small_world.jl")
 include("generator/rand_dist.jl")
 include("generator/preferential.jl")
+include("community/label_propagation.jl")       # community detection
 include("io/show.jl")               # input/output
 include("io/matrix.jl")
 include("io/edgelist.jl")
@@ -91,11 +92,12 @@ export Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph,
         graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
         graph_tree, graph_erdosrenyi, graph_smallworld, graph_preferential,
 
+        # community/
+        label_propagation,
+
         # draw/
         layout_random, layout_circle, layout_fruchterman_reingold,
         plot
-
-# FIXME: check that all useful functions are exported
 
 
 end
