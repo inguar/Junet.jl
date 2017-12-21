@@ -78,6 +78,8 @@ Count edges in the graph.
 """
 edgecount(g::Graph) = g.edgecount
 
+size(g::Graph) = (nodecount(g), edgecount(g))
+
 """
     hasedge(g::Graph, e::Edge)
     hasedge(g::Graph, n::Integer, m::Integer)
@@ -163,7 +165,7 @@ end
 function remedge!(g::Graph{N,E,D}, n::Integer, m::Integer) where {N,E,D<:Directed}
     delete_ptr!(fwd_ptrs(g.nodes[n], D), N(m)) &&
     delete_ptr!(rev_ptrs(g.nodes[m], D), N(n)) ||
-    error("edge $e not found")
+    error("edge $(Edge(n, m, 0, true)) not found")
     g.edgecount -= 1;
 end
 
@@ -172,11 +174,9 @@ function remedge!(g::Graph{N,E,D}, n::Integer, m::Integer) where {N,E,D<:Undirec
     delete_ptr!(rev_ptrs(g.nodes[m], D), N(n)) ||
     delete_ptr!(fwd_ptrs(g.nodes[m], D), N(n)) &&
     delete_ptr!(rev_ptrs(g.nodes[n], D), N(m)) ||
-    error("edge $e not found")
+    error("edge $(Edge(n, m, 0, false)) not found")
     g.edgecount -= 1;
 end
-
-# FIXME: error message picks up the constant e=2.71... and not the edge
 
 remedges!(g::Graph, it) = for x = collect(it); remedge!(g, x); end
 

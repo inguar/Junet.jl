@@ -40,8 +40,6 @@ end
 const LightGraph = Graph{N,Void,D,M} where {N,D,M}
 
 const DirectedGraph   = Graph{N,E,<:Directed,M} where {N,E,M}
-const DirectedFwGraph = Graph{N,E,Forward,M} where {N,E,M}   # TODO: retire these definitions
-const DirectedRvGraph = Graph{N,E,Reverse,M} where {N,E,M}   # <-
 const UndirectedGraph = Graph{N,E,<:Undirected,M} where {N,E,M}
 
 const MultiGraph  = Graph{N,E,D,Multi} where {N,E,D}
@@ -96,7 +94,7 @@ undirected(g::UndirectedGraph) = g
 
 A view on the graph where each edge is reversed.
 """
-reverse(g::DirectedFwGraph) = dirview(g, Reverse)
-reverse(g::DirectedRvGraph) = dirview(g, Forward)
+reverse(g::Graph{N,E,Forward}) where {N,E} = dirview(g, Reverse)
+reverse(g::Graph{N,E,Reverse}) where {N,E} = dirview(g, Forward)
 reverse(g::UndirectedGraph) = g
 transpose(g::Graph) = reverse(g)

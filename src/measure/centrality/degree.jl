@@ -1,24 +1,17 @@
-degree(g::Graph, n::Integer) = length(g.nodes[n].forward) + length(g.nodes[n].reverse)
+degree(g::Graph{N,E,D}, n::Integer) where {N,E,D} = ptr_length(g.nodes[n], dir_xor(D, Both))
 degree(g::Graph) = [degree(g, i) for i = nodes(g)]
 
-indegree(g::UndirectedGraph, n::Integer) = degree(g, n)
-indegree(g::DirectedFwGraph, n::Integer) = length(g.nodes[n].reverse)
-indegree(g::DirectedRvGraph, n::Integer) = length(g.nodes[n].forward)
 indegree(g::Graph) = [indegree(g, i) for i = nodes(g)]
+indegree(g::Graph{N,E,D}, n::Integer) where {N,E,D} = ptr_length(g.nodes[n], dir_xor(D, Reverse))
 
-outdegree(g::UndirectedGraph, n::Integer) = degree(g, n)
-outdegree(g::DirectedFwGraph, n::Integer) = length(g.nodes[n].forward)
-outdegree(g::DirectedRvGraph, n::Integer) = length(g.nodes[n].reverse)
+outdegree(g::Graph{N,E,D}, n::Integer) where {N,E,D} = ptr_length(g.nodes[n], dir_xor(D, Forward))
 outdegree(g::Graph) = [outdegree(g, i) for i = nodes(g)]
 
-
 # TODO giantcomponent, components, componentcount
-
 
 is_isolate(g::Graph, n::Integer) = degree(g, n) == 0
 isolates(g::Graph) = [i for i = nodes(g) if is_isolate(g, i)]
 isolatecount(g::Graph) = count(i -> is_isolate(g, i), nodes(g))
-
 
 # See https://en.wikipedia.org/wiki/Vertex_(graph_theory)#Types_of_vertices
 

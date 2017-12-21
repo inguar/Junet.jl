@@ -1,7 +1,5 @@
 ## Pretty printing of Junet types ##
 
-size(g::Graph) = (nodecount(g), edgecount(g))  # FIXME does this belong here?
-
 typestr(g::Graph) = string(
     nodecount(g), "-node ",
     edgecount(g), "-edge ",
@@ -67,49 +65,37 @@ end
 show(io::IO, e::Edge) = print(io,
     e.source, e.isdir ? " → " : " ←→ ", e.target)
 
-# FIXME: there is one redundant newline at the end
-# TODO: add the type declaration of the thing that it returns
-# TODO: make type declarations consistent ("Junet.X{...}")
-# TODO: make something similar for EdgeIter
-
+# TODO: make this work with EdgeIter and potential other iterators
 function show(io::IO, x::PtrView)
+    print(io, length(x), "-element Junet.PtrView with ", eltype(x), " values")
     if !get(io, :limit, false)
         screenheight = 20
     else
         sz = displaysize(io)
         screenheight = sz[1] - 4
     end
-    halfheight = div(screenheight, 2)
-    println(io, length(x), "-element PtrView")
+    screenheight < 5 || length(x) == 0 && return
+    println(io)
     if length(x) < screenheight
-        for i = x
-            println(io, ' ', i)
+        for i = 1:length(x)
+            if i < length(x)
+                println(io, ' ', x[i])
+            else
+                print(io, ' ', x[i])
+            end
         end
     else
+        halfheight = div(screenheight, 2) - 1
         for i = 1:halfheight
             println(io, ' ', x[i])
         end
-        println(io, "⋮")
+        println(io, " ⋮")
         for i = length(x) - halfheight:length(x)
-            println(io, ' ', x[i])
+            if i < length(x)
+                println(io, ' ', x[i])
+            else
+                print(io, ' ', x[i])
+            end
         end
     end
 end
-
-
-# FIXME: check if the following is not just rubbish at this point
-
-show(io::IO, g::Base.Generator{Vector{NodePtr{N,E}}}) where {N,E} =
-    print(io, length(g), "-element edge iterator")
-
-# function show(io::IO, x::NewIter)
-#     println(io, length(x), "-element NewIter{...}:")
-#     s = start(x)
-#     cnt = 0
-#     while !done(x, s) && cnt < 10
-#         val, s = next(x, s)
-#         println(io, " ", val)
-#         cnt += 1
-#     end
-#     done(x, s) || print(io, " ⋮")
-# end
