@@ -71,38 +71,33 @@ export Graph,
     edges, outedges, inedges,
     getindex, setindex!,
 
-    # measure/dyad.jl
-    maxedgecount, density, reciprocity, dyadcensus,
-    selfloopcount, selfloopnodes,
+    # generate/
+    graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
+    graph_tree, graph_erdosrenyi, graph_smallworld, graph_preferential,
 
-    # measure/degree.jl
-    degree, indegree, outdegree,
+    # measure/centrality/
+    degree, indegree, outdegree,    # degree.jl
     isolates, isolatecount,
     leaves, leafcount,
     sources, sourcecount,
     sinks, sinkcount,
 
-    # measures/subtree.jl
-    subtree_size,
+    subtree_size,           # subtree.jl
 
-    # measure/components.jl
-    components,
+    eigenvector, pagerank,  # power_iter.jl
 
-    # measure/clustering.jl
+    # measure/dyadic.jl
+    maxedgecount, density, reciprocity, dyadcensus,
+    selfloopcount, selfloopnodes,
+
+    # measure/triadic/
     maxtrianglecount, triangles, clustering,
 
-    # measure/power_iter.jl
-    eigenvector, pagerank,
-
-    # measure/k-core.jl
-    kcores,
+    # measure/global/
+    components, kcores,
 
     # io/
     readgraph,
-
-    # generator/
-    graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
-    graph_tree, graph_erdosrenyi, graph_smallworld, graph_preferential,
 
     # community/
     label_propagation,
