@@ -1,4 +1,4 @@
-## Finding connected components ##
+## Find weakly connected components ##
 
 @inline function _root(parent, i)
     while i != parent[i]
@@ -43,3 +43,5 @@ function components(g::Graph{N,E}) where {N,E}
     end
     return relabel(parent)
 end
+
+# TODO: implement giantcomponent and componentcount

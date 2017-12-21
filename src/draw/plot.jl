@@ -275,7 +275,7 @@ end
 
 function draw_graph!(surface::CairoSurface, g::Graph;
                      layout=(),
-                     _layout=(),  # FIXME remove this hack
+                     _layout=(),  # FIXME: remove this hack
                      margin=(20,20),
                      zoom=1,
                      kvargs...)

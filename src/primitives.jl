@@ -52,7 +52,6 @@ rev_ptrs(n::Node, ::Type{Forward}) = n.reverse
 rev_ptrs(n::Node, ::Type{Reverse}) = n.forward
 rev_ptrs(n::Node, ::Type{Both}) = n.reverse
 
-
 ptr_length(n::Node, ::Type{Forward}) = length(n.forward)
 ptr_length(n::Node, ::Type{Reverse}) = length(n.reverse)
 ptr_length(n::Node, ::Type{Both}) = length(n.forward) + length(n.reverse)

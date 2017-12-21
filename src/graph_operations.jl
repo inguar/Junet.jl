@@ -219,8 +219,8 @@ edgeids(g::Graph, n::Integer) = PtrView(g, n, Both, get_edge_id)
 outedgeids(g::Graph, n::Integer) = PtrView(g, n, Forward, get_edge_id)
 inedgeids(g::Graph, n::Integer) = PtrView(g, n, Reverse, get_edge_id)
 
+# FIXME: edgeids
 # edgeids(g::Graph{N,E,D}, n::Integer, m::Integer) where {N,E,D} = EdgeRangeIDView(g.nodes[n], m, D)
-# FIXME ^
 
 """
     edges(g::Graph, [n::Integer, [m::Integer]])
@@ -232,11 +232,11 @@ two nodes.
 edges(g::Graph) = EdgeIter(g)
 edges(g::Graph, n::Integer) = PtrView(g, n, Both, get_edge)
 
+# FIXME: implement next 4 methods
 # edges(g::Graph{N,E,D}, n::Integer, m::Integer) where {N,E,D} = EdgeRangeView(g.nodes[n], n, m, D, Forward)
 # edges(g::Graph{N,E,D}, n::Integer, m::UnitRange) where {N,E,D} = EdgeRangeView(g.nodes[n], n, m, D, Forward)
 # edges(g::Graph{N,E,D}, n::UnitRange, m::Integer) where {N,E,D} = EdgeRangeView(g.nodes[m], m, n, D, Reverse)
 # edges(g::Graph{N,E,D}, n::UnitRange, m::UnitRange) where {N,E,D} = Base.Flatten(EdgeRangeView(g.nodes[i], i, m, Forward, D) for i = n)
-# FIXME ^
 
 """
     outedges(g::Graph, n::Integer)

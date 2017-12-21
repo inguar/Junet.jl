@@ -173,5 +173,5 @@ end
 
 done(x::EdgeIter, s) = (@_inline_meta; s[3])
 
-# FIXME: check that self-loops work correctly, e.g., in case of a 1-node graph with self-loop
+# FIXME: make self-loops work correctly, e.g., in case of 1-node graph with self-loop
 

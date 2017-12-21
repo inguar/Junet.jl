@@ -116,7 +116,7 @@ DenseAttribute(v::Vector{T}, default::T) where {T} = DenseAttribute(v, default, 
 DenseAttribute(v::Vector{T}) where {T} = DenseAttribute(v, null(T), length(v))
 DenseAttribute(s::SparseAttribute) = DenseAttribute(collect(s), s.default, s.length)
 
-# FIXME index 0 not supported yet
+# FIXME: index 0 not supported yet
 getindex(d::DenseAttribute, i::Integer) = d.data[i]
 setindex!(d::DenseAttribute{T}, x::T, i::Integer) where {T} = d.data[i] = x
 delete!(d::DenseAttribute, i::Integer) = d.data[i] = d.default
