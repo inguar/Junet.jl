@@ -1,7 +1,5 @@
 ## Efficient sampler from discrete probability distributions ##
 
-# TODO: move this over to a separate module, or in main folder
-
 struct DistributionPicker{T<:Integer}
     weights :: Vector{T}
 end

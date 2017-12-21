@@ -41,5 +41,5 @@ function components(g::Graph{N,E}) where {N,E}
             parent[i] = parent[parent[i]]
         end
     end
-    return parent
+    return relabel(parent)
 end

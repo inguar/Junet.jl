@@ -9,20 +9,6 @@ function _count_neighbor_labels(g::Graph, label::Vector{Int}, n::Integer)
     return count
 end
 
-# TODO: move to "utils" and use in component functions
-function relabel(label::Vector{T}) where {T}
-    label_ = similar(label, Int)
-    dict = Dict{T,Int}()
-    for (i, l) = enumerate(label)
-        if !haskey(dict, l)
-            dict[l] = length(dict) + 1
-        end
-        label_[i] = dict[l]
-    end
-    return label_
-end
-
-
 """
     label_propagation(g::Graph)
 
