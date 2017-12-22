@@ -27,12 +27,14 @@ function addnode!(g::Graph{N,E}) where {N,E}
     @assert(nodecount(g) < typemax(N),
             "integer overflow; try using a larger type for node ids")
     push!(g.nodes, Node{N,E}())
+    return nodecount(g)
 end
 
 function addnode!(g::Graph, count::Integer)
     for i = 1:count
         addnode!(g)
     end
+    return nodecount(g) - count + 1:nodecount(g)
 end
 
 """
