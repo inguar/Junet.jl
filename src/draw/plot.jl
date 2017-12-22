@@ -141,7 +141,7 @@ function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
     for i = nodes(g)
         l = string(label[i])
         l == "" && continue
-        set_font_size(context, sqrt(size[i]) * .9)  # TODO: make font size user-selectable
+        set_font_size(context, sqrt(size[i]) * .8)  # TODO: make font size user-selectable
         ext = text_extents(context, l)
         move_to(context, x[i] - ext[3] / 2 - ext[1],
                          y[i] - ext[4] / 2 - ext[2])
