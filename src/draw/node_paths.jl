@@ -61,18 +61,18 @@ function _polygon_path(context::CairoContext, x, y, n, r, start=-pi/2)
 end
 
 """
-    node_path(::Type{Val{:shape}}, context, x, y, s)
+    outline_node!(::Type{Val{:shape}}, context, x, y, s)
 
 Create a path on a Cairo `context` that corresponds to `:shape` of size `s`.
 """
-node_path(_, context, x, y, r) = nothing
+outline_node!(_, context, x, y, r) = nothing
 
-node_path(::Type{Val{:circle}}, context, x, y, r) = circle(context, x, y, r * SIDE_COEF_CIRCLE)
+outline_node!(::Type{Val{:circle}}, context, x, y, r) = circle(context, x, y, r * SIDE_COEF_CIRCLE)
 
-node_path(::Type{Val{:square}}, context, x, y, r) = rectangle(context,
+outline_node!(::Type{Val{:square}}, context, x, y, r) = rectangle(context,
     x - r * SIDE_COEF_SQUARE, y - r * SIDE_COEF_SQUARE, r, r)
 
-node_path(::Type{Val{:diamond}}, context, x, y, side) = begin
+outline_node!(::Type{Val{:diamond}}, context, x, y, side) = begin
     move_to(context, x - side * SIDE_COEF_DIAMOND, y)
     line_to(context, x, y - side * SIDE_COEF_DIAMOND)
     line_to(context, x + side * SIDE_COEF_DIAMOND, y)
@@ -80,14 +80,14 @@ node_path(::Type{Val{:diamond}}, context, x, y, side) = begin
     close_path(context)
 end
 
-node_path(::Type{Val{:triangle}}, context, x, y, side) = 
+outline_node!(::Type{Val{:triangle}}, context, x, y, side) = 
     _polygon_path(context, x, y, 3, side * SIDE_COEF_TRIANGLE)
 
-node_path(::Type{Val{:pentagon}}, context, x, y, side) = 
+outline_node!(::Type{Val{:pentagon}}, context, x, y, side) = 
     _polygon_path(context, x, y, 5, side * SIDE_COEF_PENTAGON)
 
-node_path(::Type{Val{:hexagon}}, context, x, y, side) = 
+outline_node!(::Type{Val{:hexagon}}, context, x, y, side) = 
     _polygon_path(context, x, y, 6, side * SIDE_COEF_HEXAGON)
 
-node_path(::Type{Val{:octagon}}, context, x, y, side) = 
+outline_node!(::Type{Val{:octagon}}, context, x, y, side) = 
     _polygon_path(context, x, y, 8, side * SIDE_COEF_OCTAGON, pi/8)

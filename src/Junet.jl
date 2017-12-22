@@ -54,7 +54,8 @@ include("io/pajek.jl")
 include("io/ngraph.jl")
 
 include("draw/layout.jl")                   # visualization
-include("draw/node_shapes.jl")
+include("draw/node_paths.jl")
+include("draw/edge_paths.jl")
 include("draw/plot.jl")
 
 export Graph,

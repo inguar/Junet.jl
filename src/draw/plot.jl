@@ -1,7 +1,6 @@
 ## Plotting networks with Cairo ##
 
 # TODO: eliminate intermediate layers when passing styles
-# TODO: make it easy to override functions for drawing nodes, edges, and their elements
 # TODO: ensure no mixed type combinations when calling Cairo
 # TODO: introduce color maps for real-valued attributes
 # TODO: draw parallel edges gracefully, like in graph-tool
@@ -80,6 +79,7 @@ end
 
 function _setup_edge_style(g::Graph; kvargs...)
     style = Dict{Symbol,Any}(       # default edge style
+        :shape          => ConstantAttribute(:arrow),
         :width          => ConstantAttribute(.5),
         :color          => ConstantAttribute((.5,.5,.5)),
         :opacity        => ConstantAttribute(.8),
@@ -111,9 +111,10 @@ function draw_background!(context::CairoContext;
     paint(context)
 end
 
+
 function draw_node!(context::CairoContext, x, y, shape, size, color, bcolor, bwidth, opacity)
     side = sqrt(size)
-    node_path(Val{shape}, context, x, y, side)
+    outline_node!(Val{shape}, context, x, y, side)
     set_source_rgba(context, color..., opacity)
     bwidth == 0 && return fill(context)
     fill_preserve(context)
@@ -136,11 +137,11 @@ end
 function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
     size, label, label_color, opacity = nodestyle[:size],
         nodestyle[:label], nodestyle[:label_color], nodestyle[:opacity]
-    select_font_face(context, "Sans", 0, 0)  # TODO: make this user-selectable
+    select_font_face(context, "Sans", 0, 0)  # TODO: make font face user-selectable
     for i = nodes(g)
         l = string(label[i])
         l == "" && continue
-        set_font_size(context, sqrt(size[i]) * .9)  # TODO: make this user-selectable
+        set_font_size(context, sqrt(size[i]) * .9)  # TODO: make font size user-selectable
         ext = text_extents(context, l)
         move_to(context, x[i] - ext[3] / 2 - ext[1],
                          y[i] - ext[4] / 2 - ext[2])
@@ -149,126 +150,39 @@ function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
     end
 end
 
-function arrow_path!(context::CairoContext, x, y, α, size, width)
-    if width > 3
-        arc(context, x, y, width / 2, α - 2.3, α + 2.3)
-    else
-        move_to(context, x, y)
-    end
-    line_to(context, x + size * cos(α + 2.3), y + size * sin(α + 2.3))
-    line_to(context, x + size * cos(α), y + size * sin(α))
-    line_to(context, x + size * cos(α - 2.3), y + size * sin(α - 2.3))
-    close_path(context)
-end
-
-_arc_angle(r, d) = 2 * asin(d/2 / r)
-
-_node_radius(shape, size, a) = node_radius(Val{shape}, sqrt(size), a)
-
-function draw_edge!(context::CairoContext, directed,
-                    x1, y1, shape1, size1,
-                    x2, y2, shape2, size2,
-                    width, color, opacity, curve)
-    arrow_size = max(5, width * 1.5)
-    curve = clamp(curve, -1.8, 1.8)
-
-    α = atan2(y2 - y1, x2 - x1)
-    dist = sqrt(float(x2 - x1) ^ 2 + float(y2 - y1) ^ 2)
-    cos_a = (x2 - x1) / dist
-    sin_a = (y2 - y1) / dist
-
-    if abs(curve) < 0.01 && dist > 0
-        start = _node_radius(shape1, size1, α)
-        finish = dist - _node_radius(shape2, size2, α + pi)
-        finish > start || return
-        if directed && finish - arrow_size > start
-            finish -= arrow_size
-        else
-            directed = false
-        end
-        move_to(context, x1 + start * cos_a, y1 + start * sin_a)
-        end_x, end_y = x1 + finish * cos_a, y1 + finish * sin_a
-        line_to(context, end_x, end_y)
-        end_α = α
-    elseif curve >= 0  # edge is a clockwise arc 
-        if dist > 0
-            c2 = curve / 2 * pi
-            r = dist/2 / sin(c2)
-        else
-            α = 0
-            c2 = pi
-            r = (sqrt(size1) + arrow_size) / 2
-        end
-        temp_α = α + (pi/2 - c2)
-        xc, yc = x1 + r * cos(temp_α), y1 + r * sin(temp_α)
-        α1, α2 = α - pi/2 - c2, α - pi/2 + c2
-        r1 = _node_radius(shape1, size1, α1 + pi/2)
-        r2 = _node_radius(shape2, size2, α2 - pi/2)
-        r1 < 2r && r2 < 2r || return
-        start = α1 + _arc_angle(r, r1)
-        finish = α2 - _arc_angle(r, r2)
-        finish > start || return
-        arr_α = _arc_angle(r, arrow_size)
-        if directed && finish - arr_α > start
-            finish -= arr_α
-        else
-            directed = false
-        end
-        arc(context, xc, yc, r, start, finish)
-        end_x = xc + r * cos(finish)
-        end_y = yc + r * sin(finish)
-        end_α = finish + pi/2 + arr_α/2
-    elseif curve < 0  # edge is counter-clockwise arc
-        if dist > 0
-            c2 = -curve / 2 * pi
-            r = dist / 2 / sin(c2)
-        else
-            α = 0
-            c2 = pi
-            r = (sqrt(size1) + arrow_size) / 2
-        end
-        temp_α = α - (pi/2 - c2)
-        xc, yc = x1 + r * cos(temp_α), y1 + r * sin(temp_α)
-        α1, α2 = α + pi/2 + c2, α + pi/2 - c2
-        r1 = _node_radius(shape1, size1, α1 + pi/2)
-        r2 = _node_radius(shape2, size2, α2 - pi/2)
-        r1 < 2r && r2 < 2r || return
-        start = α1 - _arc_angle(r, r1)
-        finish = α2 + _arc_angle(r, r2)
-        finish < start || return
-        arr_α = _arc_angle(r, arrow_size)
-        if directed && finish + arr_α < start
-            finish += arr_α
-        else
-            directed = false
-        end
-        arc_negative(context, xc, yc, r, start, finish)
-        end_x = xc + r * cos(finish)
-        end_y = yc + r * sin(finish)
-        end_α = finish - (pi/2 + arr_α/2)
-    end
-    set_line_width(context, width)
-    if width > 3
-        set_line_cap(context, 1)
-    end
-    set_source_rgba(context, color..., opacity)
-    stroke(context)
-    if directed
-        arrow_path!(context, end_x, end_y, end_α, arrow_size, width)
-        set_source_rgba(context, color..., opacity)
-        fill(context)
-    end
-end
 
 function draw_edges!(context::CairoContext, g::Graph, x, y, nodestyle, edgestyle)
     shape, size = nodestyle[:shape], nodestyle[:size]
-    width, color, opacity, curve =
+    eshape, width, color, opacity, curve = edgestyle[:shape],
         edgestyle[:width], edgestyle[:color], edgestyle[:opacity], edgestyle[:curve]
     for e = edges(g)
-        draw_edge!(context, e.isdir,
-                   x[e.source], y[e.source], shape[e.source], size[e.source],
-                   x[e.target], y[e.target], shape[e.target], size[e.target],
-                   width[e.id], _color(color[e.id]), opacity[e.id], curve[e.id])
+        s = eshape[e.id]
+        c = clamp(curve[e.id], -1.5, 1.5)
+        if s == :line
+            f = draw_edge_line!
+        elseif s == :arrow
+            if e.source == e.target
+                f = draw_edge_arrow_selfloop!
+            elseif abs(c) < .05
+                f = draw_edge_arrow_straight!
+            else
+                f = draw_edge_arrow_curved!
+            end
+        elseif s == :tapered
+            if e.source == e.target
+                f = draw_edge_tapered_selfloop!
+            elseif abs(c) < .05
+                f = draw_edge_tapered_straight!
+            else
+                f = draw_edge_tapered_curved!
+            end
+        else
+            continue
+        end
+        f(context, e.isdir,
+            x[e.source], y[e.source], shape[e.source], size[e.source],
+            x[e.target], y[e.target], shape[e.target], size[e.target],
+            width[e.id], _color(color[e.id]), opacity[e.id], c)
     end
 end
 
