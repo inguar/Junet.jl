@@ -37,6 +37,7 @@ include("generate/preferential.jl")
 include("measure/centrality/degree.jl")     # graph measures
 include("measure/centrality/subtree.jl")
 include("measure/centrality/power_iter.jl")
+include("measure/centrality/closeness.jl")
 
 include("measure/dyadic.jl")
 
@@ -87,6 +88,8 @@ export Graph,
     subtree_size,           # subtree.jl
 
     eigenvector, pagerank,  # power_iter.jl
+
+    closeness, harmonic_centrality,   # closeness.jl
 
     # measure/dyadic.jl
     maxedgecount, density, reciprocity, dyadcensus,
