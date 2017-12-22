@@ -246,6 +246,11 @@ function plot(g::Graph; filename="", size=(400,400), format=:svg, kvargs...)
         surface = CairoPDFSurface(filename, size...)
         draw_graph!(surface, g; kvargs...)
         finish(surface)
+    elseif format == :eps
+        @assert(filename != "", "need a file name to write EPS")
+        surface = CairoEPSSurface(filename, size...)
+        draw_graph!(surface, g; kvargs...)
+        finish(surface)
     else:
         error("wrong or unsupported image format :$format")
     end
