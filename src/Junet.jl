@@ -74,7 +74,8 @@ export Graph,
 
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
-    graph_tree, graph_erdosrenyi, graph_smallworld, graph_preferential,
+    graph_grid, graph_web, graph_tree,
+    graph_erdosrenyi, graph_smallworld, graph_preferential,
 
     # measure/centrality/
     degree, indegree, outdegree,    # degree.jl
