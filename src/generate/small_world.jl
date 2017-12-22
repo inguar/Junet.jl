@@ -1,5 +1,5 @@
 """
-    smallworld(n::Integer, m::Integer, p::Real, multiple=false; params...)
+    graph_smallworld(n::Integer, m::Integer, p::Real, multiple=false; params...)
 
 Small-world network model of Watts and Strogatz (1998).
 

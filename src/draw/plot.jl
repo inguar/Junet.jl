@@ -1,5 +1,6 @@
 ## Plotting networks with Cairo ##
 
+# TODO: fix plotting empty and 1-node graphs
 # TODO: eliminate intermediate layers when passing styles
 # TODO: ensure no mixed type combinations when calling Cairo
 # TODO: introduce color maps for real-valued attributes

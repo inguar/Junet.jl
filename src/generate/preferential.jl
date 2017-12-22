@@ -1,5 +1,5 @@
 """
-    preferential(n::Integer, m::Integer)
+    graph_preferential(n::Integer, m::Integer)
 
 Scale-free network model of Barabási and Albert (1999).
 
@@ -35,5 +35,4 @@ function graph_preferential(n::Integer, m::Integer, multi::Bool=false; params...
 end
 
 # FIXME: make sure the procedure doesn't generate self-loops
-# FIXME: add a function that returns a list of self-loops
-# FIXME: allow to combine it with bulk edge deletion
+# FIXME: allow to use list of self-loops for bulk edge deletion

@@ -34,7 +34,7 @@ function _erdosrenyifill!(g::DirectedGraph, p::Real)
 end
 
 """
-    erdosrenyifill!(g::Graph, p::Real)
+    graph_erdosrenyifill!(g::Graph, p::Real)
 
 Generate an Erdős–Rényi random graph.
 
