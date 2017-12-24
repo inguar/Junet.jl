@@ -16,6 +16,7 @@ using Base.Test
     end
 end
 
+
 @testset "graph.jl" begin
     g = Graph()
     ug = Graph(directed=false)
@@ -58,44 +59,25 @@ end
         end
     end
 end
-            @test nodecount(g) == i
-        end
-    end
-end
+
 
 @testset "generate/" begin
-    @testset "random.jl" begin
-        @testset "gilbert_fill!" begin
-            g = Graph(directed=true)
-            @test_nowarn Junet.gilbert_fill!(g, 1.)
-            @test edgecount(g) == 0
-            addnode!(g)         # nodecount(g) == 1
-            @test_nowarn Junet.gilbert_fill!(g, 1.)
-            @test edgecount(g) == 0
-            addnode!(g)         # nodecount(g) == 2
-            @test_nowarn Junet.gilbert_fill!(g, 1.)
-            @test edgecount(g) == 2
-
-            g = Graph(directed=false)
-            @test_nowarn Junet.gilbert_fill!(g, 1.)
-            @test edgecount(g) == 0
-            addnode!(g)         # nodecount(g) == 1
-            @test_nowarn Junet.gilbert_fill!(g, 1.)
-            @test edgecount(g) == 0
-            addnode!(g)         # nodecount(g) == 2
-            @test_nowarn Junet.gilbert_fill!(g, 1.)
-            @test edgecount(g) == 1
+    @testset "classic.jl" begin
+        @testset "graph_complete" begin
+            for i = 2:10
+                @test density(graph_complete(i)) == 1
+                @test density(graph_complete(i, directed=false)) == 1
+            end
         end
-            @test nodecount(g) == i
+
+        @testset "graph_tree" begin
+            @test_nowarn graph_tree(0, 0)
+            @test size(graph_tree(1, 2)) == (3, 2)
+            @test size(graph_tree(5, 2)) == (63, 62)
+            @test size(graph_tree(4, 4)) == (341, 340)
         end
     end
-end
-            @test nodecount(g) == i
-        end
-    end
-end
 
-@testset "generate/" begin
     @testset "random.jl" begin
         @testset "gilbert_fill!" begin
             g = Graph(directed=true)
