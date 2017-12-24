@@ -16,6 +16,7 @@ function addnode!(g::Graph{N,E}) where {N,E}
 end
 
 function addnode!(g::Graph, count::Integer)
+    @assert(count >= 0, "can't add a negative number of nodes")
     for i = 1:count
         addnode!(g)
     end

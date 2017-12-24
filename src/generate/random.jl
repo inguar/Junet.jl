@@ -9,9 +9,13 @@ package.
 """
 rand_geom(p::Real) = floor(Int, -randexp() / log1p(-p))
 
+"""
+    gilbert_fill!(g::Graph, p::Real)
 
-function gilbert_fill!(g::UndirectedGraph, p::AbstractFloat)
-    i, j = 1, 0
+Fill graph by choosing each edge randomly with probability `p`.
+"""
+function gilbert_fill!(g::UndirectedGraph, p::Real)
+    i, j = 1, 1
     n = nodecount(g)
     while true
         j += 1 + rand_geom(p)
@@ -24,8 +28,8 @@ function gilbert_fill!(g::UndirectedGraph, p::AbstractFloat)
     end
 end
 
-function gilbert_fill!(g::DirectedGraph, p::AbstractFloat)
-    i, j = 1, 0
+function gilbert_fill!(g::DirectedGraph, p::Real)
+    i, j = 1, 1
     n = nodecount(g)
     while true
         j_ = j + 1 + rand_geom(p)
@@ -41,7 +45,7 @@ function gilbert_fill!(g::DirectedGraph, p::AbstractFloat)
 end
 
 """
-    graph_gilbert(n::Integer, p::AbstractFloat)
+    graph_gilbert(n::Integer, p::Real)
 
 Generate a random graph according to Gilbert model with `n` nodes
 and expected density `p`.
@@ -56,15 +60,12 @@ matiematical expectation for the graph's density is `p`.
 Gilbert, E.N. (1959). "Random Graphs". Annals of Mathematical Statistics. 30 (4): 1141–1144.
 doi:10.1214/aoms/1177706098.
 """
-function graph_gilbert(n::Integer, p::AbstractFloat; params...)
-    @assert(n > 0      , "graph should have at least one node")
-    @assert(0 <= p <= 1, "edge probability `p` should be in [0, 1] interval")
+function graph_gilbert(n::Integer, p::Real; params...)
+    @assert(0 <= p <= 1, "edge probability (p) should be in [0, 1] interval")
     g = Graph(; nodecount=n, params...)
-    gilbert_fill!(g, p)
+    p > eps() && gilbert_fill!(g, p)
     return g
 end
-
-# TODO: ensure that `p=1` makes `density==1` (somehow fails for undirected)
 
 
 """
@@ -83,25 +84,26 @@ In practice, an empty graph with `n` nodes is created first and
 Erdős, P.; Rényi, A. (1959). "On Random Graphs. I". Publicationes Mathematicae. 6: 290–297.
 """
 function graph_erdos_renyi(n::Integer, m::Integer; params...)
-    @assert(n > 0, "there should be at least one node (n >= 1)")
     g = Graph(nodecount=n; params...)
-    simple = !ismultigraph(g)
-    simple && m <= maxedgecount(g) || error("too many edges (m) for a simple graph with n nodes")
-    for i = 1:m
-        x = rand(1:n)
-        y = rand(1:n)
-        while x == y || simple && hasedge(g, x, y)
-            x = rand(1:n)
-            y = rand(1:n)
+    if m < maxedgecount(g)
+        while edgecount(g) < m
+            x, y = rand(1:n), rand(1:n)
+            if x == y || hasedge(g, x, y)
+                continue
+            else
+                addedge!(g, x, y)
+            end
         end
-        addedge!(g, x, y)
+    elseif m == maxedgecount(g)
+        gilbert_fill!(g, 1.)
+    else
+        error("too many edges (m) for Erdős–Rényi graph with n nodes")
     end
     return g
 end
 
-const graph_erdosrenyi = graph_erdos_renyi   # TODO: deprecate this
+@deprecate(graph_erdosrenyi, graph_erdos_renyi)
 
-# TODO: make use of discrete distribution sampler for `graph_erdos_renyi` to avoid slowdown generating high-density graphs
 
 
 """
@@ -111,18 +113,27 @@ const graph_erdosrenyi = graph_erdos_renyi   # TODO: deprecate this
 A shorthand for creating random networks. There are two similar but distinct models:
 
 * `(n, m)` model, also known as Erdős–Rényi model. It randomly selects a 
-graph from a set of all possible graphs which have `n` nodes and `m` edges.
+  graph from a set of all possible graphs which have `n` nodes and `m` edges.
 
 * `(n, p)` model, introduced by Gilbert. For a graph on `n` nodes,
-it includes each edge with probability `p` independently of the others.
-This gives a graph with mathematical expectation of density equal to `p`.
+  it includes each edge with probability `p` independently of the others.
+  This gives a graph with mathematical expectation of density equal to `p`.
 
 This method is just a shorthand for `graph_erdos_renyi` and `graph_gilbert`,
 which implement these models and are chosen automatically based on the argument types.
 
-If you want an exact number of edges, use `(n, m)` model.
-If you want to create a graph of high density, use `(n, p)` model as it
-should be faster.
+If you need a graph of high density, use `(n, p)` model as it is much faster.
+If you want an exact number of edges with lower density, use `(n, m)` model.
+
+# Examples
+
+```julia-repl
+julia> g = graph_random(4, 1.)
+4-node 12-edge directed multigraph
+
+julia> g = graph_random(4, 1)
+4-node 1-edge directed multigraph
+```
 
 # References
 
