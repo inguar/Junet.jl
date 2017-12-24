@@ -5,20 +5,6 @@
 =#
 
 """
-    nodes(g::Graph)
-
-Indices of all nodes in the graph.
-"""
-nodes(g::Graph) = 1:length(g.nodes)
-
-"""
-    nodecount(g::Graph)
-
-Count nodes in the graph.
-"""
-nodecount(g::Graph) = length(g.nodes)
-
-"""
     addnode!(g::Graph[, count])
 
 Add one or several nodes to the graph.
@@ -69,18 +55,10 @@ remnodes!(g::Graph, it) = for i = sort(it, rev=true); remnode!(g, i) end
 # FIXME: teach these operations work with attributes nicely
 
 
+
 #=
 ##      Operations with edges
 =#
-
-"""
-    edgecount(g::Graph)
-
-Count edges in the graph.
-"""
-edgecount(g::Graph) = g.edgecount
-
-size(g::Graph) = (nodecount(g), edgecount(g))
 
 """
     hasedge(g::Graph, e::Edge)
@@ -302,7 +280,7 @@ newnodeattr(g::Graph, fn::Function) = [fn(g, i) for i = nodes(g)]
 
 
 #=
-##      Indexing syntax
+##      Indexing `Graph` objects
 =#
 
 # Nodes

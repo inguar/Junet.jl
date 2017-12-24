@@ -1,14 +1,6 @@
 ## Dyad-based network measures ##
 
 """
-    maxedgecount(g::Graph)
-
-Maximum number of edges possible in the graph with no multiple edges and self-loops.
-"""
-maxedgecount(g::DirectedGraph)   = (n = nodecount(g); n * (n - 1))
-maxedgecount(g::UndirectedGraph) = (n = nodecount(g); div(n * (n - 1), 2))
-
-"""
     density(g::Graph)
 
 Graph density. It is a proportion of number of existing edges to the maximum

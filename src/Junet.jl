@@ -23,14 +23,15 @@ include("params.jl")                        # getting to a minimally usable stat
 include("primitives.jl")
 include("attributes.jl")
 include("graph.jl")
+include("graph_info.jl")
 include("edgeiter.jl")
 include("graph_operations.jl")
 
 include("util/rand_dist.jl")                # commonly used methods
 include("util/relabel.jl")
 
-include("generate/erdos_renyi.jl")          # graph generators
-include("generate/geometric.jl")
+include("generate/geometric.jl")            # graph generators
+include("generate/random.jl")
 include("generate/small_world.jl")
 include("generate/preferential.jl")
 
@@ -76,20 +77,21 @@ export Graph,
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
     graph_grid, graph_web, graph_tree,
-    graph_erdosrenyi, graph_smallworld, graph_preferential,
+    graph_gilbert, graph_erdos_renyi, graph_erdosrenyi, graph_random,
+    graph_smallworld, graph_preferential,
 
     # measure/centrality/
-    degree, indegree, outdegree,    # degree.jl
+    degree, indegree, outdegree,        # degree.jl
     isolates, isolatecount,
     leaves, leafcount,
     sources, sourcecount,
     sinks, sinkcount,
 
-    subtree_size,           # subtree.jl
+    subtree_size,                       # subtree.jl
 
-    eigenvector, pagerank,  # power_iter.jl
+    eigenvector, pagerank,              # power_iter.jl
 
-    closeness, harmonic_centrality,   # closeness.jl
+    closeness, harmonic_centrality,     # closeness.jl
 
     # measure/dyadic.jl
     maxedgecount, density, reciprocity, dyadcensus,
