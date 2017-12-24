@@ -24,7 +24,7 @@ include("primitives.jl")
 include("attributes.jl")
 include("graph.jl")
 include("graph_info.jl")
-include("edgeiter.jl")
+include("graph_iter.jl")
 include("graph_operations.jl")
 
 include("util/rand_dist.jl")                # commonly used methods
@@ -60,19 +60,21 @@ include("draw/node_paths.jl")
 include("draw/edge_paths.jl")
 include("draw/plot.jl")
 
-export Graph,
-    DirectedGraph, UndirectedGraph,
-    MultiGraph, SimpleGraph,
-    LightGraph,
 
-    # graph.jl
+export
+    Graph, DirectedGraph, UndirectedGraph,  # graph.jl
+    MultiGraph, SimpleGraph, LightGraph,
     isdirected, ismultigraph, directed, undirected,
-    nodecount, nodes, addnode!, remnode!,
-    edgecount, hasedge, addedge!, remedge!, remedges!,
 
-    neighbors, outneighbors, inneighbors,
+    nodes, nodecount,                       # graph_info.jl
+    edgecount, maxedgecount,
+
+    neighbors, outneighbors, inneighbors,   # graph_iter.jl
     edges, outedges, inedges,
     getindex, setindex!,
+
+    addnode!, remnode!, remnodes!,          # graph_operations.jl
+    hasedge, addedge!, remedge!, remedges!,
 
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
