@@ -11,13 +11,17 @@ density larger than 1.
 density(g::Graph) = edgecount(g) / maxedgecount(g)
 
 """
-    mutualcount(g::Graph)
+    mutuality(g::Graph)
 
 Number of mutual dyads in the graph. A dyad is mutual if for two nodes
 `A` and `B` there are both edge `A → B` and `B → A`.
 Edges in undirected graphs always constitute mutual dyads.
+
+# References
+
+Moreno, J.L., and Jennings, H.H. (1938). "Statistics of Social Configurations." Sociometry, 1, 342-374.
 """
-function mutualcount(g::DirectedGraph)
+function mutuality(g::DirectedGraph)
     count = 0
     for n = g.nodes
         i, j = 1, 1
@@ -36,7 +40,7 @@ function mutualcount(g::DirectedGraph)
     return count
 end
 
-mutualcount(g::UndirectedGraph) = edgecount(g)
+mutuality(g::UndirectedGraph) = edgecount(g)
 
 """
     reciprocity(g::Graph)
@@ -45,7 +49,7 @@ Graph reciprocity. It is a proportion of mutual dyads to a total
 number of non-null dyads.
 [Wiki](https://en.wikipedia.org/wiki/Reciprocity_(network_science)#Traditional_definition)
 """
-reciprocity(g::Graph) = mutualcount(g) / edgecount(g)
+reciprocity(g::Graph) = mutuality(g) / edgecount(g)
 
 """
     dyadcensus(g::Graph)
@@ -54,7 +58,7 @@ Dyad census of the graph. It is a 3-tuple of form (M, A, N), standing for
 the numbers of mutual, asymmetric, and null dyads.
 """
 function dyadcensus(g::Graph)
-    m = mutualcount(g)
+    m = mutuality(g)
     return (m, edgecount(g) - m, maxedgecount(g) - edgecount(g))
 end
 

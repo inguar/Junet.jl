@@ -94,7 +94,7 @@ export Graph,
     closeness, harmonic_centrality,     # closeness.jl
 
     # measure/dyadic.jl
-    maxedgecount, density, reciprocity, dyadcensus,
+    density, mutuality, reciprocity, dyadcensus,
     selfloopcount, selfloopnodes,
 
     # measure/triadic/
