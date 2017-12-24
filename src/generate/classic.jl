@@ -12,12 +12,11 @@ julia> g = graph_path(10)
 ```
 """
 function graph_path(n::Integer; params...)
-    g = Graph(; params...)
-    addnode!(g, n)
+    g = Graph(; nodecount=n, params...)
     for i = 1:n - 1
         addedge!(g, i, i + 1)
     end
-    g
+    return g
 end
 
 """
@@ -32,12 +31,11 @@ julia> g = graph_cycle(10)
 ```
 """
 function graph_cycle(n::Integer; params...)
-    g = Graph(; params...)
-    addnode!(g, n)
+    g = Graph(; nodecount=n, params...)
     for i = 1:n
         addedge!(g, i, i % n + 1)
     end
-    g
+    return g
 end
 
 """
@@ -54,8 +52,7 @@ julia> g = graph_star(10)
 ```
 """
 function graph_star(n::Integer; out=true, params...)
-    g = Graph(; params...)
-    addnode!(g, n)
+    g = Graph(; nodecount=n, params...)
     for i = 2:n
         if out
             addedge!(g, 1, i)   # outwards
@@ -63,7 +60,7 @@ function graph_star(n::Integer; out=true, params...)
             addedge!(g, i, 1)   # inwards
         end
     end
-    g
+    return g
 end
 
 """
@@ -80,13 +77,12 @@ julia> g = graph_wheel(10)
 ```
 """
 function graph_wheel(n::Integer; out=true, params...)
-    g = Graph(; params...)
-    addnode!(g, n)
+    g = Graph(; nodecount=n, params...)
     for i = 2:n
         out ? addedge!(g, 1, i) : addedge!(g, i, 1)
         addedge!(g, i, i < n ? i + 1 : 2)
     end
-    g
+    return g
 end
 
 """
@@ -101,12 +97,17 @@ julia> g = graph_complete(10)
 ```
 """
 function graph_complete(n::Integer; params...)
-    g = Graph(; params...)
-    addnode!(g, n)
-    for i = 1:n, j = i + 1:n
-        addedge!(g, i, j)
+    g = Graph(; nodecount=n, params...)
+    if isdirected(g)
+        for i = 1:n, j = 1:n
+            i != j && addedge!(g, i, j)
+        end
+    else
+        for i = 1:n, j = i + 1:n
+            addedge!(g, i, j)
+        end
     end
-    g
+    return g
 end
 
 """
@@ -122,8 +123,7 @@ julia> graph_grid(10,5)
 ```
 """
 function graph_grid(a::Integer, b::Integer=a; params...)
-    g = Graph(; params...)
-    addnode!(g, a * b)
+    g = Graph(; nodecount=a * b, params...)
     for i = 1:a, j = 1:b
         cur = (i - 1) * b + j
         if i < a
@@ -133,7 +133,7 @@ function graph_grid(a::Integer, b::Integer=a; params...)
             addedge!(g, cur, cur + 1)
         end
     end
-    g
+    return g
 end
 
 """
@@ -149,8 +149,7 @@ julia> g = graph_web(4,20)
 ```
 """
 function graph_web(r::Integer, c::Integer; out=true, params...)
-    g = Graph(; params...)
-    addnode!(g, r * c + 1)
+    g = Graph(; nodecount=r * c + 1, params...)
     for i = 1:r, j = 1:c
         cur = 1 + (i - 1) * c + j
         if out                                              # radial
@@ -160,7 +159,7 @@ function graph_web(r::Integer, c::Integer; out=true, params...)
         end
         addedge!(g, cur, j < c ? cur + 1 : cur - c + 1)     # lateral
     end
-    g
+    return g
 end
 
 function branch!(g::Graph, root, depth, c, out)
@@ -190,5 +189,5 @@ function graph_tree(r::Integer, c::Integer; out=true, params...)
     g = Graph(; params...)
     addnode!(g)
     branch!(g, 1, r - 1, c, out)
-    g
+    return g
 end
