@@ -15,7 +15,7 @@ function subtree_size(g::DirectedGraph, n::Integer,
         end
         first += 1
     end
-    @inbounds for i = 1:last-1
+    @inbounds for i = 1:last - 1
         visited[stack[i]] = false
     end
     return first - 2

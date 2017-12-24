@@ -98,7 +98,7 @@ function readpajek(io::IO)
                     attrs[:color] = shift!(tokens)
                 else
                     t_ = shift!(tokens)
-                    attrs[Symbol(t)] = t_[1]=='"' ? strip(t_, '"') : float(t_)
+                    attrs[Symbol(t)] = t_[1] == '"' ? strip(t_, '"') : float(t_)
                 end
                 j += 1
             end

@@ -19,7 +19,7 @@
 @inline _color(c::T) where {T<:AbstractString} = begin
     haskey(color_names, c) || error("unknown color \"$c\"")
     x = color_names[c]
-    return (x[1]/255, x[2]/255, x[3]/255)
+    return (x[1] / 255, x[2] / 255, x[3] / 255)
 end
 
 function _rescale_coord(v, newmax::Real, margin::Real)
@@ -57,13 +57,12 @@ function _setup_node_style(g::Graph; kvargs...)
     style = Dict{Symbol,Any}(       # default node style
         :shape          => ConstantAttribute(:circle),
         :size           => ConstantAttribute(100),
-        :color          => ConstantAttribute((.7,.1,.2)),
-        :border_color   => ConstantAttribute((1.,1.,1.)),
+        :color          => ConstantAttribute((.7, .1, .2)),
+        :border_color   => ConstantAttribute((1., 1., 1.)),
         :border_width   => ConstantAttribute(.5),
         :opacity        => ConstantAttribute(.8),
         :label          => ConstantAttribute(""),
-        :label_color    => ConstantAttribute((0.,0.,0.))
-    )
+        :label_color    => ConstantAttribute((0., 0., 0.)))
     for (k, v) in g.nodeattrs       # incorporate node attributes
         if haskey(style, k)
             style[k] = _attribute(v)
@@ -85,10 +84,9 @@ function _setup_edge_style(g::Graph; kvargs...)
     style = Dict{Symbol,Any}(       # default edge style
         :shape          => ConstantAttribute(:arrow),
         :width          => ConstantAttribute(.5),
-        :color          => ConstantAttribute((.5,.5,.5)),
+        :color          => ConstantAttribute((.5, .5, .5)),
         :opacity        => ConstantAttribute(.8),
-        :curve          => ConstantAttribute(0)
-    )
+        :curve          => ConstantAttribute(0))
     for (k, v) in g.edgeattrs       # incorporate edge attributes
         if haskey(style, k)
             style[k] = _attribute(v)
@@ -108,7 +106,7 @@ end
 
 
 function draw_background!(context::CairoContext;
-                          bg_color=(1.,1.,1.),
+                          bg_color=(1., 1., 1.),
                           bg_opacity=1,
                           kvargs...)
     set_source_rgba(context, _color(bg_color)..., bg_opacity)
@@ -194,7 +192,7 @@ end
 function draw_graph!(surface::CairoSurface, g::Graph;
                      layout=(),
                      _layout=(),  # FIXME: remove this hack
-                     margin=(20,20),
+                     margin=(20, 20),
                      zoom=1,
                      kvargs...)
     context = CairoContext(surface)
@@ -224,7 +222,7 @@ end
 Plot the graph `g`. Specify the `filename`, `size`, `format`, or many
 of the other parameters.
 """
-function plot(g::Graph; filename="", size=(400,400), format=:svg, kvargs...)
+function plot(g::Graph; filename="", size=(400, 400), format=:svg, kvargs...)
     if format == :png
         surface = CairoARGBSurface(size...)
         draw_graph!(surface, g; kvargs...)

@@ -14,7 +14,7 @@ julia> g = graph_path(10)
 function graph_path(n::Integer; params...)
     g = Graph(; params...)
     addnode!(g, n)
-    for i = 1:n-1
+    for i = 1:n - 1
         addedge!(g, i, i + 1)
     end
     g

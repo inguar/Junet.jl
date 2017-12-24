@@ -1,8 +1,8 @@
 const PI_2 = pi / 2
 
-_dist(x1, y1, x2, y2) = sqrt(float(x2 - x1) ^ 2 + float(y2 - y1) ^ 2)
+_dist(x1, y1, x2, y2) = sqrt(float(x2 - x1)^2 + float(y2 - y1)^2)
 
-_arc_angle(r, d) = 2 * asin(d/2 / r)
+_arc_angle(r, d) = 2 * asin(d / 2 / r)
 
 
 """
@@ -287,11 +287,11 @@ function draw_edge_tapered_selfloop!(context::CairoContext, directed,
                     width, color, opacity, curve)
     curve = curve > 0 ? 1.2 : -1.2
     α = curve > 0 ? -PI_2 : PI_2
-    r1 = _node_radius(shape1, size1, α-curve)
+    r1 = _node_radius(shape1, size1, α - curve)
     width > r1 && return
-    r2 = _node_radius(shape1, size1, α+curve)
-    x1_, y1_ = end_point(Line(float(x1), float(y1), α-curve, 0., r1))
-    x2_, y2_ = end_point(Line(float(x1), float(y1), α+curve, 0., r2))
+    r2 = _node_radius(shape1, size1, α + curve)
+    x1_, y1_ = end_point(Line(float(x1), float(y1), α - curve, 0., r1))
+    x2_, y2_ = end_point(Line(float(x1), float(y1), α + curve, 0., r2))
     outline!(context, Arc(x1_ - width, y1_, x2_, y2_, curve))
     outline!(context, Arc(x2_, y2_, x1_ + width, y1_, -curve))
     if width > 1

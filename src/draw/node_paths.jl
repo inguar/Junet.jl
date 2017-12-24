@@ -1,13 +1,13 @@
 const SIDE_COEF_SQUARE = 1 / 2
 const SIDE_COEF_CIRCLE = 1 / sqrt(pi)
 const SIDE_COEF_DIAMOND = sqrt(2) / 2
-const SIDE_COEF_TRIANGLE = sqrt(2 / (3 * sqrt(3/2)))
+const SIDE_COEF_TRIANGLE = sqrt(2 / (3 * sqrt(3 / 2)))
 const SIDE_COEF_PENTAGON = sqrt(2 / (5 * sin(1.2566)))
 const SIDE_COEF_HEXAGON = sqrt(2 / (6 * sin(1.0472)))
 const SIDE_COEF_OCTAGON = sqrt(2 / (8 * sin(0.7854)))
 
 
-function _polygon_radius(a::Real, n::Integer, r::Real, start::Real=-pi/2)
+function _polygon_radius(a::Real, n::Integer, r::Real, start::Real=-pi / 2)
     a -= start
     while true
         if a > 2pi / n
@@ -47,13 +47,13 @@ node_radius(::Type{Val{:hexagon}}, s::Real, a::Real) =
     _polygon_radius(a, 6, s * SIDE_COEF_HEXAGON)
 
 node_radius(::Type{Val{:octagon}}, s::Real, a::Real) = 
-    _polygon_radius(a, 8, s * SIDE_COEF_OCTAGON, pi/8)
+    _polygon_radius(a, 8, s * SIDE_COEF_OCTAGON, pi / 8)
 
 
-function _polygon_path(context::CairoContext, x, y, n, r, start=-pi/2)
+function _polygon_path(context::CairoContext, x, y, n, r, start=-pi / 2)
     a = start
     move_to(context, x + r * cos(a), y + r * sin(a))
-    for i = 1:n-1
+    for i = 1:n - 1
         a += 2pi / n
         line_to(context, x + r * cos(a), y + r * sin(a))
     end
@@ -90,4 +90,4 @@ outline_node!(::Type{Val{:hexagon}}, context, x, y, side) =
     _polygon_path(context, x, y, 6, side * SIDE_COEF_HEXAGON)
 
 outline_node!(::Type{Val{:octagon}}, context, x, y, side) = 
-    _polygon_path(context, x, y, 8, side * SIDE_COEF_OCTAGON, pi/8)
+    _polygon_path(context, x, y, 8, side * SIDE_COEF_OCTAGON, pi / 8)

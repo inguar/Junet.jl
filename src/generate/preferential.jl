@@ -18,7 +18,7 @@ function graph_preferential(n::Integer, m::Integer, multi::Bool=false; params...
         addnode!(g)
         push!(p, 1)
     end
-    for i = m+1:n
+    for i = m + 1:n
         addnode!(g)
         push!(p, 1)
         for j = 1:m

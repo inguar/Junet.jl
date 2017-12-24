@@ -251,14 +251,14 @@ setattr!(d::AttributeDict, s::Symbol, x) = d[s] = attribute(x)
 
 
 function setattr!(d::AttributeDict, s::Symbol, ids::Integer, x)
-    if typeof(d[s])<:ConstantAttribute
+    if typeof(d[s]) <: ConstantAttribute
         d[s] = SparseAttribute(d[s])
     end
     d[s][ids] = x
 end
 
 function setattr!(d::AttributeDict, s::Symbol, ids::T, x) where {T<:AbstractVector}
-    if typeof(d[s])<:ConstantAttribute
+    if typeof(d[s]) <: ConstantAttribute
         d[s] = SparseAttribute(d[s])
     end
     for i = ids

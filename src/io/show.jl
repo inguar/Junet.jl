@@ -14,12 +14,12 @@ memsize(g::Graph) =
 memstr(m::Integer) =
     if m < 1024
         "< 1 KiB"
-    elseif m < 1024 ^ 2
+elseif m < 1024^2
         string(round(m / 1024, 1), " KiB")
-    elseif m < 1024 ^ 3
-        string(round(m / 1024 ^ 2, 2), " MiB")
+elseif m < 1024^3
+    string(round(m / 1024^2, 2), " MiB")
     else
-        string(round(m / 1024 ^ 3, 3), " GiB")
+    string(round(m / 1024^3, 3), " GiB")
     end
 
 summary(d::AttributeDict) = join(

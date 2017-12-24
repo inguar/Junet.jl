@@ -1,4 +1,4 @@
-ensurenode(g::Graph, i::Integer) = addnode!(g, i-nodecount(g));
+ensurenode(g::Graph, i::Integer) = addnode!(g, i - nodecount(g));
 
 """
     load_ngraph(path, directed::Bool, [nodeids::Type])
@@ -14,18 +14,18 @@ function load_ngraph(path,
     open(joinpath(path, "links.bin")) do f
         src = zero(nodeids)
         for i = reinterpret(nodeids, read(f))
-            if i < 0
-                src = -i
-                ensurenode(g, src)
-            else
-                ensurenode(g, i)
-                addedge!(g, src, i)
-            end
+        if i < 0
+            src = -i
+            ensurenode(g, src)
+        else
+            ensurenode(g, i)
+            addedge!(g, src, i)
         end
+    end
     end
     # Load the labels
     open(joinpath(path, "labels.json")) do f
-        l = readline(f)[2:end-1]
+        l = readline(f)[2:end - 1]
         g[:, :label] = [String(strip(i, [' ', '"'])) for i = split(l, ',')]
     end
     # Load the layout

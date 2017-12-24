@@ -2,10 +2,11 @@ __precompile__()
 
 module Junet
 
+
 # Use-only imports
-import GZip     # for io/edgelist.jl
-using Cairo     # for draw/plot.jl
-import Colors: color_names, RGB    # for draw/plot.jl
+import GZip                         # for io/edgelist.jl
+using Cairo                         # for draw/plot.jl
+import Colors: color_names, RGB     # for draw/plot.jl
 
 # Imports to extend Base
 import Base:
@@ -18,6 +19,7 @@ import Base:
     push!, pop!, rand,      # util/rand_dist.jl
     Matrix,                 # io/matrix.jl
     summary, show           # io/show.jl
+
 
 include("params.jl")                        # getting to a minimally usable state
 include("primitives.jl")
