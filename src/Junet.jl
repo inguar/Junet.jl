@@ -32,7 +32,7 @@ include("graph_operations.jl")
 include("util/rand_dist.jl")                # commonly used methods
 include("util/relabel.jl")
 
-include("generate/geometric.jl")            # graph generators
+include("generate/classic.jl")              # graph generators
 include("generate/random.jl")
 include("generate/small_world.jl")
 include("generate/preferential.jl")

@@ -1,4 +1,4 @@
-## Generators for graphs with simple structure ##
+## Generators for some "classic" graphs ##
 
 """
     graph_path(n::Integer)
