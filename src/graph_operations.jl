@@ -10,8 +10,7 @@
 Add one or several nodes to the graph.
 """
 function addnode!(g::Graph{N,E}) where {N,E}
-    @assert(nodecount(g) < typemax(N),
-            "integer overflow; try using a larger type for node ids")
+    @assert(nodecount(g) < typemax(N), "node ids exhausted type $N")
     push!(g.nodes, Node{N,E}())
     return nodecount(g)
 end
@@ -87,8 +86,7 @@ Create a pair of `NodePtr`s to be used for adding a new edge.
 """
 function new_ptr_pair!(g::Graph{N,E}, n::N, m::N) where {N,E<:Integer}
     @_inline_meta
-    @assert(g.edgemaxid < typemax(E),
-            "integer overflow; try using a larger type for edge ids")
+    @assert(g.edgemaxid < typemax(E), "edge ids exhausted type $E")
     g.edgemaxid += one(E)
     return NodePtr(m, g.edgemaxid), NodePtr(n, g.edgemaxid)
 end

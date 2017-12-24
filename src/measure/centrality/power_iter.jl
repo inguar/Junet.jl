@@ -16,7 +16,7 @@ stop exceeding it, the algorithm terminates).
 * `maxiter::Int=100`: maximum number of iterations.
 """
 function eigenvector(g::Graph, eps::Real=1e-4, maxiter::Int=100)
-    @assert(0 < eps < 0.1, "convergence threshold `eps` should be positive and small")
+    @assert(0 < eps <= 0.1, "convergence threshold (eps) should be positive and small")
     n         = nodecount(g)
     score     = fill(0.,     n)
     prevscore = fill(1. / n, n)
@@ -36,7 +36,7 @@ function eigenvector(g::Graph, eps::Real=1e-4, maxiter::Int=100)
             end
         end
         if λ == 0
-            error("Power iteration cannot converge")
+            error("power iteration cannot converge")
             break
         else
             maxdiff = 0.
@@ -47,7 +47,7 @@ function eigenvector(g::Graph, eps::Real=1e-4, maxiter::Int=100)
         end
         iter += 1
         if iter > maxiter && maxdiff > eps
-            warn("Power iteration did not converge in $maxiter steps, current convergence value is $maxdiff")
+            warn("power iteration did not converge in $maxiter steps, current convergence value is $maxdiff")
             return score
         end
         prevscore, score = score, prevscore
@@ -69,8 +69,8 @@ Compute PageRank scores for all nodes in the graph.
     stop exceeding it, the algorithm terminates).
 """
 function pagerank(g::Graph, d::Real=0.85, eps::Real=1e-4)
-    @assert(0 < d < 1,     "damping factor `d` should be between 0 and 1")
-    @assert(0 < eps < 0.1, "convergence threshold `eps` should be positive and small")
+    @assert(0 < d < 1,     "damping factor (d) should be between 0 and 1")
+    @assert(0 < eps < 0.1, "convergence threshold (eps) should be positive and small")
     n         = nodecount(g)
     score     = fill(0.,     n)
     prevscore = fill(1. / n, n)

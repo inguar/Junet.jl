@@ -254,6 +254,6 @@ function plot(g::Graph; filename="", size=(400, 400), format=:svg, kvargs...)
         draw_graph!(surface, g; kvargs...)
         finish(surface)
     else:
-        error("wrong or unsupported image format :$format")
+        error("unknown image format :$format; choose from :png, :svg, :pdf, or :eps")
     end
 end

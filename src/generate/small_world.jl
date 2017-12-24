@@ -14,10 +14,10 @@ Watts, D. J., & Strogatz, S. H. (1998).
 Collective dynamics of “small-world” networks. Nature, 393(6684), 440–442.
 """
 function graph_smallworld(n::Integer, k::Integer, p::Real, multi::Bool=false; params...)
-    @assert n > 5 "`n` too small"
-    @assert 0 < k < n / 2 "`k` is not in a valid range"
-    @assert k % 2 == 0 "`k` should be even"
-    @assert 0 <= p <= 1 "`p` is not in [0,1] interval"
+    @assert(n > 5,         "number of nodes (n) is too small; it should be > 5")
+    @assert(0 < k < n / 2, "node number of neighbors (k) is not in a valid range")
+    @assert(k % 2 == 0,    "node number of neighbors (k) should be even")
+    @assert(0 <= p <= 1,   "rewiring probability (p) is not in [0,1] interval")
     g = Graph(; nodecount=n, params...)
     c = Int(k / 2)
     for i = 1:n

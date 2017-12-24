@@ -53,7 +53,7 @@ setindex!(c::ConstantAttribute{T}, x::T, i::Integer) where {T} =
     if i == 0
         c.default = x
     else
-        error("Constant attributes don't support element assignments")
+        error("constant attributes don't support element assignments")
     end
 delete!(::ConstantAttribute, ::Integer) = nothing
 eachindex(::ConstantAttribute) = [0]

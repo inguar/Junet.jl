@@ -57,6 +57,8 @@ Gilbert, E.N. (1959). "Random Graphs". Annals of Mathematical Statistics. 30 (4)
 doi:10.1214/aoms/1177706098.
 """
 function graph_gilbert(n::Integer, p::AbstractFloat; params...)
+    @assert(n > 0      , "graph should have at least one node")
+    @assert(0 <= p <= 1, "edge probability `p` should be in [0, 1] interval")
     g = Graph(; nodecount=n, params...)
     gilbert_fill!(g, p)
     return g
@@ -81,10 +83,10 @@ In practice, an empty graph with `n` nodes is created first and
 Erdős, P.; Rényi, A. (1959). "On Random Graphs. I". Publicationes Mathematicae. 6: 290–297.
 """
 function graph_erdos_renyi(n::Integer, m::Integer; params...)
-    @assert(n > 0, "there should be at least one node")
+    @assert(n > 0, "there should be at least one node (n >= 1)")
     g = Graph(nodecount=n; params...)
     simple = !ismultigraph(g)
-    simple && @assert(m <= maxedgecount(g), "too many edges (m) for a simple graph")
+    simple && m <= maxedgecount(g) || error("too many edges (m) for a simple graph with n nodes")
     for i = 1:m
         x = rand(1:n)
         y = rand(1:n)

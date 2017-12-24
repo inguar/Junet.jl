@@ -32,9 +32,9 @@ function readedgelist(io::IO;
                 break
             end
         end
-        delim != :ok && error("Could not pick the delimiter automatically")
+        delim != :ok && error("could not pick the delimiter automatically")
     else
-        error("Bad delimiter specification")
+        error("bad delimiter specification")
     end
     # Read the main part of the file, possibly containing header
     push!(kvargs, (:directed, dir))
@@ -85,7 +85,7 @@ function readgraph(filename; format=:auto, gzip=:auto, kvargs...)
         elseif matchext("net", "paj")
             format = :pajek
         else
-            error("Could not determine file format automatically")
+            error("could not determine file format automatically")
         end
     end
     if gzip == :auto
