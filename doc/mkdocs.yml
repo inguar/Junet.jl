@@ -1,0 +1,35 @@
+site_name: 'Junet user guide'
+site_description: 'Documentation for Junet — a Julia network analysis library'
+site_author: 'Igor Zakhlebin'
+# site_url: '127.0.0.1'
+copyright: 'Copyright &copy; 2017 - 2018 Igor Zakhlebin'
+
+docs_dir: 'build'
+repo_name: 'inguar/Junet.jl'
+repo_url: 'https://github.com/inguar/Junet.jl'
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - toc:
+      permalink: true
+
+theme:
+  name: 'material'
+  language: 'en'
+  favicon: 'images/favicon.png'
+  logo:
+    icon: 'library_books'
+  palette:
+    primary: 'blue grey'
+    accent: 'pink'
+  font:
+    text: 'Nunito'
+    code: 'Source Code Pro'
+
+extra:
+    repo_icon: 'github'
+
+pages:
+    - Home: 'index.md'

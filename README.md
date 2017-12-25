@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="logo" src="./doc/readme/logo.svg" height="200px">
+  <img alt="logo" src="./doc/src/images/logo.svg" height="200px">
 </p>
 <br>
 
@@ -26,7 +26,7 @@ g = graph_smallworld(100, 4, .1)
 plot(g, node_size=10degree(g), edge_curve=.5)
 ```
 
-<img alt="plot" src="./doc/readme/test.svg" height="450px">
+<img alt="plot" src="./doc/src/images/test.svg" height="450px">
 
 See [more examples](https://github.com/inguar/Junet-demos).
 
