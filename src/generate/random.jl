@@ -59,6 +59,9 @@ matiematical expectation for the graph's density is `p`.
 
 Gilbert, E.N. (1959). "Random Graphs". Annals of Mathematical Statistics. 30 (4): 1141–1144.
 doi:10.1214/aoms/1177706098.
+
+Batagelj, V. and Brandes, U. (2005) "Efficient generation of large random networks".
+Physical Review E. 71 (3).
 """
 function graph_gilbert(n::Integer, p::Real; params...)
     @assert(0 <= p <= 1, "edge probability (p) should be in [0, 1] interval")
