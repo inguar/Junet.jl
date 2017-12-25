@@ -93,7 +93,7 @@ Generate a [complete graph](https://en.wikipedia.org/wiki/Complete_graph) with `
 # Examples
 ```julia-repl
 julia> g = graph_complete(10)
-10-node 45-edge directed multigraph
+10-node 90-edge directed multigraph
 ```
 """
 function graph_complete(n::Integer; params...)
@@ -118,7 +118,7 @@ If `b` is ommitted, it is set to be equal `a`.
 
 # Examples
 ```julia-repl
-julia> graph_grid(10,5)
+julia> graph_grid(10, 5)
 50-node 85-edge directed multigraph
 ```
 """
@@ -144,7 +144,7 @@ and `c` nodes on each level. Overall, it has `r * c + 1` nodes including center.
 
 # Examples
 ```julia-repl
-julia> g = graph_web(4,20)
+julia> g = graph_web(4, 20)
 81-node 160-edge directed multigraph
 ```
 """

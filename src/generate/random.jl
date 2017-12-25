@@ -122,8 +122,9 @@ A shorthand for creating random networks. There are two similar but distinct mod
   it includes each edge with probability `p` independently of the others.
   This gives a graph with mathematical expectation of density equal to `p`.
 
-This method is just a shorthand for `graph_erdos_renyi` and `graph_gilbert`,
-which implement these models and are chosen automatically based on the argument types.
+This method is just a shorthand for [`graph_erdos_renyi`](@ref) and 
+[`graph_gilbert`](@ref), which implement these models and are chosen automatically
+based on the argument types.
 
 If you need a graph of high density, use `(n, p)` model as it is much faster.
 If you want an exact number of edges with lower density, use `(n, m)` model.
