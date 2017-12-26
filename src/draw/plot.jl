@@ -22,12 +22,6 @@
     return (x[1] / 255, x[2] / 255, x[3] / 255)
 end
 
-function _rescale_coord(v, newmax::Real, margin::Real)
-    oldmin, oldmax = extrema(v)
-    newmax -= margin * 2
-    return [round(Int16, margin + (x - oldmin) / (oldmax - oldmin) * newmax) for x = v]
-end
-
 function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
     if haskey(g.nodeattrs, :x) && haskey(g.nodeattrs, :y)   # get layout
         x_ = g.nodeattrs[:x]
@@ -48,8 +42,8 @@ function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
     else
         error("invalid margin specification")
     end
-    x = _rescale_coord(x_, surface.width / zoom, m_x / zoom)      # rescale x and y
-    y = _rescale_coord(y_, surface.height / zoom, m_y / zoom)
+    x = rescale(x_, surface.width / zoom, m_x / zoom)      # rescale x and y
+    y = rescale(y_, surface.height / zoom, m_y / zoom)
     return x, y
 end
 

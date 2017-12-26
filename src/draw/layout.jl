@@ -56,3 +56,22 @@ function layout_fruchterman_reingold(g::Graph, maxiter=250, scale=sqrt(nodecount
     end
     return x, y
 end
+
+
+"""
+    rescale(v, newmax, margin)
+
+Rescale elements of `v` to fill range `margin:newmax - margin`.
+"""
+function rescale(v, newmax::Real, margin::Real) :: Vector{Float64}
+    if length(v) == 0
+        return Float64[]
+    end
+    oldmin, oldmax = extrema(v)
+    if oldmax > oldmin
+        k = (newmax - 2margin) / (oldmax - oldmin)
+        return [round(margin + (x - oldmin) * k) for x = v]
+    else
+        return [newmax / 2 for x = v]
+    end
+end

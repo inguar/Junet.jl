@@ -147,3 +147,15 @@ end
 
 end
 
+
+@testset "draw/" begin
+    @testset "layout.jl" begin
+        @testset "rescale" begin
+            @test Junet.rescale([], 10, 1) == []
+            @test Junet.rescale([0], 10, 1) == [5]
+            @test Junet.rescale([0, 0], 10, 1) == [5, 5]
+            @test Junet.rescale([0, 1], 10, 1) == [1, 9]
+        end
+
+    end
+end
