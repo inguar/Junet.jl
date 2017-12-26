@@ -17,9 +17,8 @@
 @inline _color(c::T) where {T<:Tuple{Real, Real, Real}} = c
 @inline _color(c::T) where {T<:RGB} = (c.r, c.g, c.b)
 @inline _color(c::T) where {T<:AbstractString} = begin
-    haskey(color_names, c) || error("unknown color \"$c\"")
-    x = color_names[c]
-    return (x[1] / 255, x[2] / 255, x[3] / 255)
+    x = parse(RGB, c)
+    return (x.r, x.g, x.b)
 end
 
 function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)

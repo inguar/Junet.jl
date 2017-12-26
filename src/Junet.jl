@@ -4,9 +4,9 @@ module Junet
 
 
 # Use-only imports
-import GZip                         # for io/edgelist.jl
-using Cairo                         # for draw/plot.jl
-import Colors: color_names, RGB     # for draw/plot.jl
+import GZip             # for io/edgelist.jl
+using Cairo             # for draw/plot.jl
+import Colors: RGB      # for draw/plot.jl
 
 # Imports to extend Base
 import Base:

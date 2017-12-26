@@ -158,4 +158,16 @@ end
         end
 
     end
+
+    @testset "plot.jl" begin
+        @testset "_color" begin
+            @test Junet._color("red") == (1, 0, 0)
+            @test Junet._color("black") == (0, 0, 0)
+            @test Junet._color("#000") == (0, 0, 0)
+            @test Junet._color("#ff00ff") == (1, 0, 1)
+            @test Junet._color((0, 255, 0)) == (0, 1, 0)
+
+        end
+
+    end
 end
