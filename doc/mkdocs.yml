@@ -1,4 +1,4 @@
-site_name: 'Junet user guide'
+site_name: 'Junet docs'
 site_description: 'Documentation for Junet — a Julia network analysis library'
 site_author: 'Igor Zakhlebin'
 # site_url: '127.0.0.1'
@@ -33,3 +33,6 @@ extra:
 
 pages:
     - Home: 'index.md'
+    - Getting Started: 'getting_started.md'
+    - Generators: 'generate.md'
+    - Drawing: 'draw.md'

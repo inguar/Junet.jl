@@ -3,8 +3,6 @@
 </p>
 <br>
 
-<!-- ![](logo.svg) -->
-
 # Junet — Networks Package for Julia
 
 Junet is a new package for network analysis that seeks
@@ -17,17 +15,3 @@ the graphs as well as to associate the attributes with their nodes and edges.
     Currently, Junet is in *alpha* stage: many features are being ported from
     experimental branches. Some things may break unexpectedly.
     To report a problem, please create an issue here. To contribute some code, please fork this repository and create a pull request.
-
-
-## Installing
-
-```julia
-Pkg.install("Junet")
-```
-
-
-
-
-<!-- ```@docs
-Graph
-``` -->
