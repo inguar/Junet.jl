@@ -1,12 +1,27 @@
 ## Graph layouts ##
 
+"""
+    layout_random(g::Graph)
+
+Place nodes at random positions. They are uniformly distributed along each axis.
+"""
 layout_random(g::Graph) = (rand(nodecount(g)), rand(nodecount(g)))
 
-layout_circle(g::Graph) = ([cos(2*pi*i/nodecount(g)) for i=nodes(g)],
-    [sin(2*pi*i/nodecount(g)) for i=nodes(g)])
+"""
+    layout_circle(g::Graph[, clockwise=true])
+
+Place nodes in a circle. Set `clockwise` to change their ordering.
+"""
+function layout_circle(g::Graph, clockwise=true)
+    Δα = 2 * pi / nodecount(g) * (clockwise ? 1 : -1)
+    α0 = -pi / 2 - Δα
+    return (
+        Float64[cos(α0 + Δα * i) for i = nodes(g)],
+        Float64[sin(α0 + Δα * i) for i = nodes(g)])
+end
 
 """
-    layout_fruchterman_reingold(g::Graph, ...)
+    layout_fruchterman_reingold(g::Graph[; maxiter, scale...)
 
 Layout network with Fruchterman-Reingold force-directed algorithm.
 
@@ -15,7 +30,7 @@ Layout network with Fruchterman-Reingold force-directed algorithm.
 Fruchterman, Thomas MJ, and Edward M Reingold. 1991.
 “Graph Drawing by Force-Directed Placement.” Software: Practice and Experience 21 (11):1129–64.
 """
-function layout_fruchterman_reingold(g::Graph, maxiter=250, scale=sqrt(nodecount(g)), init_temp=sqrt(nodecount(g)))
+function layout_fruchterman_reingold(g::Graph; maxiter=250, scale=sqrt(nodecount(g)), init_temp=sqrt(nodecount(g)))
     const n = nodecount(g)
     x = scale / 2 .* (rand(n) .- 0.5)
     y = scale / 2 .* (rand(n) .- 0.5)
@@ -70,8 +85,8 @@ function rescale(v, newmax::Real, margin::Real) :: Vector{Float64}
     oldmin, oldmax = extrema(v)
     if oldmax > oldmin
         k = (newmax - 2margin) / (oldmax - oldmin)
-        return [round(margin + (x - oldmin) * k) for x = v]
+        return Float64[round(margin + (x - oldmin) * k) for x = v]
     else
-        return [newmax / 2 for x = v]
+        return Float64[newmax / 2 for x = v]
     end
 end
