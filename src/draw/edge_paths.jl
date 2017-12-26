@@ -189,6 +189,7 @@ function draw_edge_arrow_curved!(context::CairoContext, directed,
                     width, color, opacity, curve)
     arrow_size = max(5., width * 1.5)
     a = Arc(x1, y1, x2, y2, curve)
+    geom_length(a) > sqrt(size1) + sqrt(size2) || return
     indent_start!(a, _node_radius(shape1, size1, start_angle(a)))
     outdent_end!(a, _node_radius(shape2, size2, end_angle(a)))
     is_valid(a) || return
@@ -265,6 +266,7 @@ function draw_edge_tapered_curved!(context::CairoContext, directed,
                     x2, y2, shape2, size2,
                     width, color, opacity, curve)
     a = Arc(x1, y1, x2, y2, curve)
+    geom_length(a) > sqrt(size1) + sqrt(size2) || return    
     α = start_angle(a)
     indent_start!(a, _node_radius(shape1, size1, α))
     outdent_end!(a, _node_radius(shape2, size2, end_angle(a)))

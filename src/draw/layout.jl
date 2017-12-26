@@ -8,6 +8,16 @@ Place nodes at random positions. They are uniformly distributed along each axis.
 layout_random(g::Graph) = (rand(nodecount(g)), rand(nodecount(g)))
 
 """
+    layout_line(g::Graph)
+
+Place nodes on a horisontal line.
+Combining this layout with `edge_curve=1` when plotting yields an
+[arc diagram](https://en.wikipedia.org/wiki/Arc_diagram).
+"""
+layout_line(g::Graph) = (
+        [Float64(i) for i = nodes(g)], ones(Float64, nodecount(g)))
+
+"""
     layout_circle(g::Graph[, clockwise=true])
 
 Place nodes in a circle. Set `clockwise` to change their ordering.

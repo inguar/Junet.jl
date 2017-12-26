@@ -3,11 +3,11 @@
 # INFO: imports of this file make up 3/4 of the overall load time (0.51278 vs 0.11367 without),
 # see if it's possible to speed up the loading time
 
-# TODO: fix plotting empty and 1-node graphs
 # TODO: eliminate intermediate layers when passing styles
 # TODO: ensure no mixed type combinations when calling Cairo
 # TODO: introduce color maps for real-valued attributes
 # TODO: draw parallel edges gracefully, like in graph-tool
+# TODO: in undirected graphs, draw edges along dyads from i to j, i < j
 
 @inline _attribute(v::T) where {T<:AbstractVector} = v
 @inline _attribute(v::T) where {T<:AbstractAttribute} = v

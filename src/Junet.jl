@@ -114,7 +114,8 @@ export
     label_propagation,
 
     # draw/
-    layout_random, layout_circle, layout_fruchterman_reingold,
+    layout_random, layout_circle, layout_line,
+    layout_fruchterman_reingold,
     plot
 
 end
