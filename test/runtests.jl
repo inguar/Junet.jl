@@ -1,6 +1,21 @@
 using Junet
 using Base.Test
 
+@testset "util.jl" begin
+    @testset "DistributionPicker" begin
+        x = rand(1:66, 100)
+        dp = Junet.DistributionPicker{Int}([])
+        for i = x
+            @test_nowarn push!(dp, i)
+        end
+        for _ = 1:1000
+            i, j = rand(dp, true)
+            @test 1 <= i <= length(x)
+            @test 1 <= j <= x[i]
+        end
+    end
+
+end
 
 @testset "primitives.jl" begin
     @testset "NodePtr" begin
