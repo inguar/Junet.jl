@@ -1,5 +1,10 @@
-## Efficient sampler from discrete probability distributions ##
+"""
+    DistributionPicker{T}
 
+Efficient sampler from discrete probability distributions.
+Works on a binary heap where each root has sum of weights of 
+its children: ``w_i = w_{2i} + w{2i + 1}``.
+"""
 struct DistributionPicker{T<:Integer}
     weights :: Vector{T}
 end
@@ -42,10 +47,18 @@ function findindex(d::DistributionPicker, i::Integer)
     return j
 end
 
-function inc_index!(d::DistributionPicker, i::Integer)
+function inc_index!(d::DistributionPicker{T}, i::Integer) where T
     root = findindex(d, i)
     while root != 0
-        d.weights[root] += 1
+        d.weights[root] += one(T)
+        root >>= 1
+    end
+end
+
+function dec_index!(d::DistributionPicker{T}, i::Integer) where T
+    root = findindex(d, i)
+    while root != 0
+        d.weights[root] -= one(T)
         root >>= 1
     end
 end
