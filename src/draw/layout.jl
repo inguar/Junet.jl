@@ -20,7 +20,8 @@ layout_line(g::Graph) = (
 """
     layout_circle(g::Graph[, clockwise=true])
 
-Place nodes in a circle. Set `clockwise` to change their ordering.
+Place nodes on a circle, a.k.a. [circular layout](https://en.wikipedia.org/wiki/Circular_layout).
+Set `clockwise` to change node ordering.
 """
 function layout_circle(g::Graph, clockwise=true)
     Δα = 2 * pi / nodecount(g) * (clockwise ? 1 : -1)

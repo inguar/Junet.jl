@@ -129,6 +129,7 @@ function draw_nodes!(context::CairoContext, g::Graph, x, y, nodestyle)
     end
 end
 
+# FIXME: align text vertically by its baseline, not bounding box
 function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
     size, label, label_color, opacity = nodestyle[:size],
         nodestyle[:label], nodestyle[:label_color], nodestyle[:opacity]
