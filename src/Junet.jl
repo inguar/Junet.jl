@@ -60,6 +60,7 @@ include("io/ngraph.jl")
 include("draw/layout.jl")                   # visualization
 include("draw/node_paths.jl")
 include("draw/edge_paths.jl")
+include("draw/styles.jl")
 include("draw/plot.jl")
 
 

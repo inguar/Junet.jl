@@ -16,7 +16,7 @@ getrgb(c::RGB) = (c.r, c.g, c.b)
 getrgb(c::AbstractString) = (@_inline_meta; x = parse(RGB, c); (x.r, x.g, x.b))
 
 
-function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
+function setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
     if haskey(g.nodeattrs, :x) && haskey(g.nodeattrs, :y)   # get layout
         x_ = g.nodeattrs[:x]
         y_ = g.nodeattrs[:y]
@@ -39,57 +39,6 @@ function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
     x = rescale(x_, surface.width / zoom, m_x / zoom)      # rescale x and y
     y = rescale(y_, surface.height / zoom, m_y / zoom)
     return x, y
-end
-
-function _setup_node_style(g::Graph; kvargs...)
-    style = AttributeDict(         # default node style
-        :shape          => nodeattr(g, :circle),
-        :size           => nodeattr(g, 100),
-        :color          => nodeattr(g, (.7, .1, .2)),
-        :border_color   => nodeattr(g, (1., 1., 1.)),
-        :border_width   => nodeattr(g, .5),
-        :opacity        => nodeattr(g, .8),
-        :label          => nodeattr(g, ""),
-        :label_color    => nodeattr(g, (0., 0., 0.)))
-    for (k, v) in g.nodeattrs       # incorporate node attributes
-        if haskey(style, k)
-            style[k] = nodeattr(g, v)
-        end
-    end
-    for (k, v) in kvargs            # incorporate node kvargs
-        m = match(r"(?<=node_)[a-z_]+", string(k))
-        if isa(m, RegexMatch)
-            k_ = Symbol(m.match)
-            if haskey(style, k_)
-                style[k_] = nodeattr(g, v)
-            end
-        end
-    end
-    return style
-end
-
-function _setup_edge_style(g::Graph; kvargs...)
-    style = AttributeDict(         # default edge style
-        :shape          => edgeattr(g, :arrow),
-        :width          => edgeattr(g, .5),
-        :color          => edgeattr(g, (.5, .5, .5)),
-        :opacity        => edgeattr(g, .8),
-        :curve          => edgeattr(g, 0))
-    for (k, v) in g.edgeattrs       # incorporate edge attributes
-        if haskey(style, k)
-            style[k] = edgeattr(g, v)
-        end
-    end
-    for (k, v) in kvargs            # incorporate edge kvargs
-        m = match(r"(?<=edge_)[a-z_]+", string(k))
-        if isa(m, RegexMatch)
-            k_ = Symbol(m.match)
-            if haskey(style, k_)
-                style[k_] = edgeattr(g, v)
-            end
-        end
-    end
-    return style
 end
 
 
@@ -193,10 +142,10 @@ function draw_graph!(surface::CairoSurface, g::Graph;
     if _layout != ()
         x, y = _layout
     else
-        x, y = _setup_layout(surface, g, layout, margin, zoom)
+        x, y = setup_layout(surface, g, layout, margin, zoom)
     end
-    ns = _setup_node_style(g; kvargs...)
-    es = _setup_edge_style(g; kvargs...)
+    ns = setup_node_style(g; kvargs...)
+    es = setup_edge_style(g; kvargs...)
     # Draw the edges
     draw_edges!(context, g, x, y, ns, es)
     # Draw the nodes
