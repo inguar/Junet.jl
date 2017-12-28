@@ -10,10 +10,10 @@
 # TODO: in undirected graphs, draw edges along dyads from i to j, i < j
 
 
-_color(c::Tuple{Real,Real,Real}) = c
-_color(c::Tuple{Integer,Integer,Integer}) = (c[1] / 255, c[2] / 255, c[3] / 255)
-_color(c::RGB) = (c.r, c.g, c.b)
-_color(c::AbstractString) = (@_inline_meta; x = parse(RGB, c); (x.r, x.g, x.b))
+getrgb(c::Tuple{Real,Real,Real}) = c
+getrgb(c::Tuple{Integer,Integer,Integer}) = (c[1] / 255, c[2] / 255, c[3] / 255)
+getrgb(c::RGB) = (c.r, c.g, c.b)
+getrgb(c::AbstractString) = (@_inline_meta; x = parse(RGB, c); (x.r, x.g, x.b))
 
 
 function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
@@ -97,7 +97,7 @@ function draw_background!(context::CairoContext;
                           bg_color=(1., 1., 1.),
                           bg_opacity=1,
                           kvargs...)
-    set_source_rgba(context, _color(bg_color)..., bg_opacity)
+    set_source_rgba(context, getrgb(bg_color)..., bg_opacity)
     paint(context)
 end
 
@@ -119,8 +119,8 @@ function draw_nodes!(context::CairoContext, g::Graph, x, y, nodestyle)
         nodestyle[:border_color], nodestyle[:border_width]
     for i = nodes(g)
         draw_node!(context, x[i], y[i],
-                   shape[i], size[i], _color(color[i]),
-                   _color(border_color[i]), border_width[i], opacity[i])
+                   shape[i], size[i], getrgb(color[i]),
+                   getrgb(border_color[i]), border_width[i], opacity[i])
     end
 end
 
@@ -136,7 +136,7 @@ function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
         ext = text_extents(context, l)
         move_to(context, x[i] - ext[3] / 2 - ext[1],
                          y[i] - ext[4] / 2 - ext[2])
-        set_source_rgba(context, _color(label_color[i])..., opacity[i])
+        set_source_rgba(context, getrgb(label_color[i])..., opacity[i])
         show_text(context, l)
     end
 end
@@ -173,7 +173,7 @@ function draw_edges!(context::CairoContext, g::Graph, x, y, nodestyle, edgestyle
         f(context, e.isdir,
             x[e.source], y[e.source], shape[e.source], size[e.source],
             x[e.target], y[e.target], shape[e.target], size[e.target],
-            width[e.id], _color(color[e.id]), opacity[e.id], c)
+            width[e.id], getrgb(color[e.id]), opacity[e.id], c)
     end
 end
 
