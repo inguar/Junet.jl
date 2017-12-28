@@ -1,10 +1,13 @@
 #= Node and edge types
 
-Each graph consists of `Node`s that store information about connections with
+* Each graph consists of `Node`s that store information about connections with
 each other using pointers of type `NodePtr`.
 
-Based on those pointers and their corresponding nodes, `Edge` instances
+* Based on those pointers and their corresponding node indices, `Edge` instances
 are generated dynamically upon user's request.
+
+* If some metadata needs to be stored, `AbstractAttribute` and its children are used.
+They map node or edge indices to their corresponding values.
 =#
 
 """
@@ -74,18 +77,18 @@ get_ptr(n::Node, i::Integer, ::Type{Both}) =
         end
     end
 
-function add_ptr!(vec::Vector{T}, val::T) where {T}
+function add_ptr!(vec::Vector{T}, val::T) where T
     i = searchsortedlast(vec, val) + 1
     insert!(vec, i, val)
 end
 
 """
-    insertsortedone!(vec, val)
+    add_one_ptr!(vec, val)
 
 Insert `val` into a sorted vector `vec` if it is not there already.
 Returns `true` or `false` depending on whether it was inserted.
 """
-function add_one_ptr!(vec::Vector{T}, val::T) where {T}
+function add_one_ptr!(vec::Vector{T}, val::T) where T
     i = searchsortedlast(vec, val)
     @inbounds if i == 0 || vec[i] != val
         insert!(vec, i + 1, val)
@@ -141,3 +144,28 @@ struct Edge{N,E}
     id     :: E
     isdir  :: Bool
 end
+
+
+"""
+    AbstractAttribute{T}
+
+Abstract parent for graph attribute types subtyping `AbstractVector`.
+To achieve maximum performance, attributes mostly omit bound checks.
+"""
+abstract type AbstractAttribute{T,N,F<:Function} <: AbstractArray{T,N} end
+
+const AttributeDict = Dict{Symbol,AbstractAttribute}
+
+"""
+    defval(::Type{T})
+
+Get a reasonable default value for type `T`.
+Works like `Base.zero`, but has implementations for more types.
+"""
+defval(::Type{T}) where {T<:Number} = zero(T)
+defval(::Type{String}) = ""
+defval(::Type{Char}) = '\0'
+defval(::Type{Void}) = nothing
+defval(::Type{RGB}) = RGB(0, 0, 0)
+defval(::Type{Tuple{Vararg{T,N}}}) where {T,N} = tuple([defval(T) for _ = 1:N]...)
+defval(::Type{T}) where {T} = error("no default value is set for type $T")

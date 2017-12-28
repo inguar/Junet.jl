@@ -29,7 +29,7 @@ functions: `DirectedGraph` or `UndirectedGraph` (w.r.t graph directedness), and
 `MultiGraph` or `SimpleGraph` (w.r.t. being a multigraph).
 
 """
-mutable struct Graph{N<:Integer,E<:Union{Integer,Void},D<:DirParam,M<:MultiParam} #<: AbstractGraph
+mutable struct Graph{N<:Integer,E<:Union{Integer,Void},D<:DirParam,M<:MultiParam}
     nodes::Vector{Node{N,E}}
     nodeattrs::AttributeDict
     edgemaxid::E
@@ -47,7 +47,7 @@ const SimpleGraph = Graph{N,E,D,Simple} where {N,E,D}
 
 Graph{N,E,D,M}() where {N,E,D,M} = Graph{N,E,D,M}(
         Node{N,E}[], AttributeDict(),          # nodes
-        null(E), zero(Int), AttributeDict()    # edges
+        defval(E), zero(Int), AttributeDict()  # edges
     )
 
 Graph{N,E,D,M}(g::Graph) where {N,E,D,M} = Graph{N,E,D,M}(

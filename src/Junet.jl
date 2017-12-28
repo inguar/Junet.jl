@@ -13,9 +13,9 @@ import Base:
     length, size, getindex, setindex!,  # common
     @_inline_meta, @_propagate_inbounds_meta,
     isless, ==,             # primitives.jl
-    sizehint!, delete!, eachindex, similar,   # attributes.jl
-    ndims, start, next, done, endof, eltype,  # edgeiter.jl
     reverse, transpose,     # graph.jl
+    deleteat!,              # attributes.jl
+    ndims, start, next, done, endof, eltype,  # edgeiter.jl
     push!, pop!, rand,      # util/rand_dist.jl
     Matrix,                 # io/matrix.jl
     summary, show           # io/show.jl
@@ -23,8 +23,8 @@ import Base:
 
 include("params.jl")                        # getting to a minimally usable state
 include("primitives.jl")
-include("attributes.jl")
 include("graph.jl")
+include("attributes.jl")
 include("graph_info.jl")
 include("graph_iter.jl")
 include("graph_operations.jl")
