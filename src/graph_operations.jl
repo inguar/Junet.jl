@@ -236,51 +236,11 @@ inedges(g::Graph, n::AbstractVector) = Base.Flatten(PtrView(g, i, Reverse, get_e
 
 
 #=
-##      Operations with attributes
-=#
-
-hasnodeattr(g::Graph, s::Symbol) = haskey(g.nodeattrs, s)
-hasedgeattr(g::Graph, s::Symbol) = haskey(g.edgeattrs, s)
-
-getattr(d::AttributeDict, s::Symbol, len::Integer) = (sizehint!(d[s], len); d[s])
-getattrn(d::AttributeDict, s::Symbol, n::Integer) = d[s][n]
-getattrg(d::AttributeDict, s::Symbol, g) = (d[s][i] for i = g)
-
-setattr!(d::AttributeDict, s::Symbol, x) = d[s] = attribute(x)
-
-
-function setattr!(d::AttributeDict, s::Symbol, ids::Integer, x)
-    if typeof(d[s]) <: ConstantAttribute
-        d[s] = SparseAttribute(d[s])
-    end
-    d[s][ids] = x
-end
-
-function setattr!(d::AttributeDict, s::Symbol, ids::T, x) where {T<:AbstractVector}
-    if typeof(d[s]) <: ConstantAttribute
-        d[s] = SparseAttribute(d[s])
-    end
-    for i = ids
-        d[s][i] = x
-    end
-end
-
-
-
-function newnodeattr(g::Graph, t::Type=SparseAttribute, default=nothing)
-    if t == DenseAttribute
-        nothing
-    end
-end
-
-newnodeattr(g::Graph, value) = fill(value, g.nodemaxid)
-newnodeattr(g::Graph, fn::Function) = [fn(g, i) for i = nodes(g)]
-
-
-
-#=
 ##      Indexing `Graph` objects
 =#
+
+size(g::Graph) = (nodecount(g), nodecount(g))
+size(g::Graph, i::Integer) = i <= 2 ? nodecount(g) : 1
 
 # Nodes
 getindex(g::Graph, ::Colon) = nodes(g)
@@ -290,28 +250,42 @@ getindex(g::Graph, n) = g.nodes[n]
 getindex(g::Graph, ::Colon, ::Colon) = edges(g)
 getindex(g::Graph, n, ::Colon) = outedges(g, n)
 getindex(g::Graph, ::Colon, n) = inedges(g, n)
-getindex(g::Graph, n, m) = edges(g, n, m)
+# getindex(g::Graph, n, m) = edges(g, n, m)
+
+# Attributes
+getindex(d::AttributeDict, s::Symbol, i) = d[s][i]
+
+function setindex!(d::AttributeDict, v, s::Symbol, i)
+    if typeof(d[s]) <: ConstantAttribute
+        d[s] = SparseAttribute(d[s])
+    elseif typeof(d[s]) <: SparseAttribute && density(d[s]) > .3
+        d[s] = DenseAttribute(d[s])
+    end
+    d[s][i] = v
+end
+
+hasnodeattr(g::Graph, s::Symbol) = haskey(g.nodeattrs, s)
+hasedgeattr(g::Graph, s::Symbol) = haskey(g.edgeattrs, s)
 
 # Node attributes
-getindex(g::Graph, ::Colon, s::Symbol) = getattr(g.nodeattrs, s, nodecount(g))
-getindex(g::Graph, n::Integer, s::Symbol) = getattrn(g.nodeattrs, s, n)
-setindex!(g::Graph, x, ::Colon, s::Symbol) = setattr!(g.nodeattrs, s, x)
-setindex!(g::Graph, x, n::Integer, s::Symbol) =
-    (checkbounds(g.nodes, n); setattr!(g.nodeattrs, s, n, x))
-setindex!(g::Graph, x, n::UnitRange, s::Symbol) = setattr!(g.nodeattrs, s, n, x)
+setindex!(g::Graph, v, ::Colon, s::Symbol) = g.nodeattrs[s] = nodeattr(g, v)
+setindex!(g::Graph, v, i, s::Symbol) = g.nodeattrs[s, i] = v
+
+getindex(g::Graph, ::Colon, s::Symbol) = g.nodeattrs[s]
+getindex(g::Graph, i, s::Symbol) = g.nodeattrs[s, i]
 
 # Edge atrributes
-getindex(g::Graph, ::Colon, ::Colon, s::Symbol) = getattr(g.edgeattrs, s, edgecount(g))
-getindex(g::Graph, n::Integer, ::Colon, s::Symbol) = getattrg(g.edgeattrs, s, outedgeids(g, n))
-getindex(g::Graph, ::Colon, n::Integer, s::Symbol) = getattrg(g.edgeattrs, s, inedgeids(g, n))
-getindex(g::Graph, n::Integer, m::Integer, s::Symbol) = getattrg(g.edgeattrs, s, edgeids(g, n, m))
-getindex(g::Graph, e::Edge, s::Symbol) = getattr(g.edgeattrs, s, e.id)
+setindex!(g::Graph, v, ::Colon, ::Colon, s::Symbol) = g.edgeattrs[s] = edgeattr(g, v)
+setindex!(g::Graph, v, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, outedgeids(g, i)] = v
+setindex!(g::Graph, v, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, inedgeids(g, i)] = v
+# setindex!(g::Graph, v, i::Integer, j::Integer, s::Symbol) = g.edgeattrs[s, edgeids(g, i, j)] = v
+setindex!(g::Graph, v, e::Edge, s::Symbol) = g.edgeattrs[s, e.id] = v
 
-setindex!(g::Graph, x, ::Colon, ::Colon, s::Symbol) = setattr!(g.edgeattrs, s, x)
-setindex!(g::Graph, x, n::Integer, ::Colon, s::Symbol) = setattr!(g.edgeattrs, s, outedgeids(g, n), x)  #+g
-setindex!(g::Graph, x, ::Colon, n::Integer, s::Symbol) = setattr!(g.edgeattrs, s, inedgeids(g, n), x)  #+g
-setindex!(g::Graph, x, n::Integer, m::Integer, s::Symbol) = setattr!(g.edgeattrs, s, edgeids(g, n, m), x)  #+g
-setindex!(g::Graph, x, e::Edge, s::Symbol) = setattr!(g.edgeattrs, s, e.id, x)
+getindex(g::Graph, ::Colon, ::Colon, s::Symbol) = g.edgeattrs[s]
+getindex(g::Graph, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, outedgeids(g, i)]
+getindex(g::Graph, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, inedgeids(g, i)]
+# getindex(g::Graph, i::Integer, j::Integer, s::Symbol) = g.edgeattrs[s][edgeids(g, i, j)]
+getindex(g::Graph, e::Edge, s::Symbol) = g.edgeattrs[s, e.id]
 
 
 

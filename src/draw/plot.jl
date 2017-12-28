@@ -9,8 +9,6 @@
 # TODO: draw parallel edges gracefully, like in graph-tool
 # TODO: in undirected graphs, draw edges along dyads from i to j, i < j
 
-_attribute(v::AbstractVector) = v
-_attribute(v::Any) = ConstantAttribute(v)
 
 _color(c::Tuple{Real,Real,Real}) = c
 _color(c::Tuple{Integer,Integer,Integer}) = (c[1] / 255, c[2] / 255, c[3] / 255)
@@ -44,18 +42,18 @@ function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
 end
 
 function _setup_node_style(g::Graph; kvargs...)
-    style = Dict{Symbol,Any}(       # default node style
-        :shape          => ConstantAttribute(:circle),
-        :size           => ConstantAttribute(100),
-        :color          => ConstantAttribute((.7, .1, .2)),
-        :border_color   => ConstantAttribute((1., 1., 1.)),
-        :border_width   => ConstantAttribute(.5),
-        :opacity        => ConstantAttribute(.8),
-        :label          => ConstantAttribute(""),
-        :label_color    => ConstantAttribute((0., 0., 0.)))
+    style = AttributeDict(         # default node style
+        :shape          => nodeattr(g, :circle),
+        :size           => nodeattr(g, 100),
+        :color          => nodeattr(g, (.7, .1, .2)),
+        :border_color   => nodeattr(g, (1., 1., 1.)),
+        :border_width   => nodeattr(g, .5),
+        :opacity        => nodeattr(g, .8),
+        :label          => nodeattr(g, ""),
+        :label_color    => nodeattr(g, (0., 0., 0.)))
     for (k, v) in g.nodeattrs       # incorporate node attributes
         if haskey(style, k)
-            style[k] = _attribute(v)
+            style[k] = nodeattr(g, v)
         end
     end
     for (k, v) in kvargs            # incorporate node kvargs
@@ -63,7 +61,7 @@ function _setup_node_style(g::Graph; kvargs...)
         if isa(m, RegexMatch)
             k_ = Symbol(m.match)
             if haskey(style, k_)
-                style[k_] = _attribute(v)
+                style[k_] = nodeattr(g, v)
             end
         end
     end
@@ -71,15 +69,15 @@ function _setup_node_style(g::Graph; kvargs...)
 end
 
 function _setup_edge_style(g::Graph; kvargs...)
-    style = Dict{Symbol,Any}(       # default edge style
-        :shape          => ConstantAttribute(:arrow),
-        :width          => ConstantAttribute(.5),
-        :color          => ConstantAttribute((.5, .5, .5)),
-        :opacity        => ConstantAttribute(.8),
-        :curve          => ConstantAttribute(0))
+    style = AttributeDict(         # default edge style
+        :shape          => edgeattr(g, :arrow),
+        :width          => edgeattr(g, .5),
+        :color          => edgeattr(g, (.5, .5, .5)),
+        :opacity        => edgeattr(g, .8),
+        :curve          => edgeattr(g, 0))
     for (k, v) in g.edgeattrs       # incorporate edge attributes
         if haskey(style, k)
-            style[k] = _attribute(v)
+            style[k] = edgeattr(g, v)
         end
     end
     for (k, v) in kvargs            # incorporate edge kvargs
@@ -87,7 +85,7 @@ function _setup_edge_style(g::Graph; kvargs...)
         if isa(m, RegexMatch)
             k_ = Symbol(m.match)
             if haskey(style, k_)
-                style[k_] = _attribute(v)
+                style[k_] = edgeattr(g, v)
             end
         end
     end

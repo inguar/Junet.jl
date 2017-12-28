@@ -1,8 +1,8 @@
 ## Efficient implementation of node and edge attributes ##
 
-length(a::AbstractAttribute) = a.getlen()
-endof(a::AbstractAttribute) = a.getlen()
-size(a::AbstractAttribute) = (a.getlen(),)
+length(x::AbstractAttribute) = x.getlen()
+endof(x::AbstractAttribute) = x.getlen()
+size(x::AbstractAttribute) = (x.getlen(),)
 
 
 """
@@ -43,7 +43,7 @@ density(x::SparseAttribute) = length(x.data) / x.getlen()
 
 getindex(x::SparseAttribute, i::Integer) = get(x.data, i, x.default)
 function setindex!(x::SparseAttribute{T}, v, i::Integer) where {T}
-    @boundscheck checkbounds(i, 1:x.getlen(), i)
+    @boundscheck checkbounds(1:x.getlen(), i)
     if v != x.default
         x.data[i] = v
     else
@@ -75,7 +75,7 @@ DenseAttribute(x::AbstractAttribute{T,N,F}) where {T,N,F<:Function} =
 
 getindex(x::DenseAttribute, i::Integer) = checkbounds(Bool, x, i) ? x.data[i] : x.default
 function setindex!(x::DenseAttribute{T}, v::T, i::Integer) where {T}
-    @boundscheck checkbounds(i, 1:x.getlen(), i)
+    @boundscheck checkbounds(1:x.getlen(), i)
     while length(x.data) < i
         push!(x.data, x.default)
     end
@@ -92,11 +92,15 @@ end
 deleteat!(x::DenseAttribute, i) = checkbounds(Bool, x, i) && deleteat!(x.data[i], i)
 
 
-# """
-#     attribute(x)
+"""
+    attribute(x, f)
 
-# Create an appropriate attribute instance depending on the type of x.
-# """
-# attribute(a::AbstractAttribute) = a
-# attribute(v::Vector) = length(v) == 1 ? DenseAttribute(v[1]) : DenseAttribute(v)
-# attribute(x) = ConstantAttribute(x)
+Create an appropriate attribute instance depending on the type of `x`.
+Anonymous function `f()` should return the length.
+"""
+attribute(x::AbstractAttribute, f::Function) = x  # TODO: use this to reassign attributes to different graphs
+attribute(x::AbstractArray, f::Function) = DenseAttribute(x, f)
+attribute(x, f::Function) = ConstantAttribute(x, f)
+
+nodeattr(g::Graph, v) = attribute(v, ()->nodecount(g))
+edgeattr(g::Graph, v) = attribute(v, ()->edgecount(g))

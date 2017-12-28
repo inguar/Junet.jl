@@ -76,6 +76,21 @@ end
 end
 
 
+@testset "attributes.jl" begin
+    c = Junet.ConstantAttribute(1, ()->69)
+    @test length(c) == 69
+    @test all(x == 1 for x = c)
+    
+    s = Junet.SparseAttribute(c)
+    @test length(s) == 69
+    @test all(x == 1 for x = s)
+
+    d = Junet.DenseAttribute(s)
+    @test length(s) == 69
+    @test all(x == 1 for x = s)
+end
+
+
 @testset "generate/" begin
     @testset "classic.jl" begin
         @testset "graph_complete" begin
@@ -87,9 +102,10 @@ end
 
         @testset "graph_tree" begin
             @test_nowarn graph_tree(0, 0)
-            @test size(graph_tree(1, 2)) == (3, 2)
-            @test size(graph_tree(5, 2)) == (63, 62)
-            @test size(graph_tree(4, 4)) == (341, 340)
+            counts(g::Graph) = (nodecount(g), edgecount(g))
+            @test counts(graph_tree(1, 2)) == (3, 2)
+            @test counts(graph_tree(5, 2)) == (63, 62)
+            @test counts(graph_tree(4, 4)) == (341, 340)
         end
     end
 

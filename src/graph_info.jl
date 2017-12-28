@@ -21,8 +21,6 @@ Count edges in the graph.
 """
 edgecount(g::Graph) = g.edgecount
 
-size(g::Graph) = (nodecount(g), edgecount(g))
-
 """
     maxedgecount(g::Graph)
 
