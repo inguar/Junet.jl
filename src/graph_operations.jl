@@ -276,14 +276,14 @@ getindex(g::Graph, i, s::Symbol) = g.nodeattrs[s, i]
 
 # Edge atrributes
 setindex!(g::Graph, v, ::Colon, ::Colon, s::Symbol) = g.edgeattrs[s] = edgeattr(g, v)
-setindex!(g::Graph, v, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, outedgeids(g, i)] = v
-setindex!(g::Graph, v, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, inedgeids(g, i)] = v
+setindex!(g::Graph, v, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, collect(outedgeids(g, i))] = v
+setindex!(g::Graph, v, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, collect(inedgeids(g, i))] = v
 # setindex!(g::Graph, v, i::Integer, j::Integer, s::Symbol) = g.edgeattrs[s, edgeids(g, i, j)] = v
 setindex!(g::Graph, v, e::Edge, s::Symbol) = g.edgeattrs[s, e.id] = v
 
 getindex(g::Graph, ::Colon, ::Colon, s::Symbol) = g.edgeattrs[s]
-getindex(g::Graph, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, outedgeids(g, i)]
-getindex(g::Graph, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, inedgeids(g, i)]
+getindex(g::Graph, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, collect(outedgeids(g, i))]
+getindex(g::Graph, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, collect(inedgeids(g, i))]
 # getindex(g::Graph, i::Integer, j::Integer, s::Symbol) = g.edgeattrs[s][edgeids(g, i, j)]
 getindex(g::Graph, e::Edge, s::Symbol) = g.edgeattrs[s, e.id]
 

@@ -10,9 +10,6 @@ get_edge(n::Integer, ptr::NodePtr, isdir::Bool, ::Type{Reverse}) =
         (@_inline_meta; Edge(ptr.node, n, ptr.id, isdir))
 
 
-# abstract type ViewVector end
-
-
 """
     PtrView(g::Graph, i::Integer, ::Type{R}, fun::F)
 

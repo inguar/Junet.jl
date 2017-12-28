@@ -27,10 +27,11 @@ function setup_node_style(g::Graph; kvargs...)
         end
     end
     for (k, v) in kvargs            # incorporate node kvargs
-        if startswith(k, "node_")
-            k_ = k[6:end]
+        ks = String(k)
+        if startswith(ks, "node_")
+            k_ = Symbol(ks[6:end])
             if haskey(style, k_)
-                style[k_] = v
+                style[k_] = attribute(v, ()->1)
             end
         end
     end
@@ -45,10 +46,11 @@ function setup_edge_style(g::Graph; kvargs...)
         end
     end
     for (k, v) in kvargs            # incorporate edge kvargs
-        if startswith(k, "edge_")
-            k_ = k[6:end]
+        ks = String(k)
+        if startswith(ks, "edge_")
+            k_ = Symbol(ks[6:end])
             if haskey(style, k_)
-                style[k_] = v
+                style[k_] = attribute(v, ()->1)
             end
         end
     end
