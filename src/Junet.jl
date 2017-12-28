@@ -76,8 +76,11 @@ export
     edges, outedges, inedges,
     getindex, setindex!,
 
-    addnode!, remnode!, remnodes!,          # graph_operations.jl
-    hasedge, addedge!, remedge!, remedges!,
+    addnode!, addnodes!,                    # graph_operations.jl
+    remnode!, remnodes!,
+    addedge!, addedges!, hasedge,
+    remedge!, remedges!,
+    addnodeattr!, addedgeattr!,
 
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,

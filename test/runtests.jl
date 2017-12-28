@@ -62,10 +62,9 @@ end
             addnode!(g)
             @test nodecount(g) == i
         end
-
-        @test_nowarn addnode!(g, 10)
-        @test_nowarn addnode!(g, 0)
-        @test_throws AssertionError addnode!(g, -1)
+        @test_nowarn addnodes!(g, 10)
+        @test_nowarn addnodes!(g, 0)
+        @test_throws AssertionError addnodes!(g, -1)
         @test nodecount(g) == 20
         
         for i = 19:-1:0
@@ -191,12 +190,12 @@ end
     end
 
     @testset "plot.jl" begin
-        @testset "_color" begin
-            @test Junet._color("red") == (1, 0, 0)
-            @test Junet._color("black") == (0, 0, 0)
-            @test Junet._color("#000") == (0, 0, 0)
-            @test Junet._color("#ff00ff") == (1, 0, 1)
-            @test Junet._color((0, 255, 0)) == (0, 1, 0)
+        @testset "getrgb" begin
+            @test Junet.getrgb("red") == (1, 0, 0)
+            @test Junet.getrgb("black") == (0, 0, 0)
+            @test Junet.getrgb("#000") == (0, 0, 0)
+            @test Junet.getrgb("#ff00ff") == (1, 0, 1)
+            @test Junet.getrgb((0, 255, 0)) == (0, 1, 0)
 
         end
 
