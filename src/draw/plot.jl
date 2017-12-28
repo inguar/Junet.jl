@@ -9,17 +9,14 @@
 # TODO: draw parallel edges gracefully, like in graph-tool
 # TODO: in undirected graphs, draw edges along dyads from i to j, i < j
 
-@inline _attribute(v::T) where {T<:AbstractVector} = v
-@inline _attribute(v::T) where {T<:AbstractAttribute} = v
-@inline _attribute(v::Any) = ConstantAttribute(v)
+_attribute(v::AbstractVector) = v
+_attribute(v::Any) = ConstantAttribute(v)
 
-@inline _color(c::T) where {T<:Tuple{Integer, Integer, Integer}} = (c[1]/255, c[2]/255, c[3]/255)
-@inline _color(c::T) where {T<:Tuple{Real, Real, Real}} = c
-@inline _color(c::T) where {T<:RGB} = (c.r, c.g, c.b)
-@inline _color(c::T) where {T<:AbstractString} = begin
-    x = parse(RGB, c)
-    return (x.r, x.g, x.b)
-end
+_color(c::Tuple{Real,Real,Real}) = c
+_color(c::Tuple{Integer,Integer,Integer}) = (c[1] / 255, c[2] / 255, c[3] / 255)
+_color(c::RGB) = (c.r, c.g, c.b)
+_color(c::AbstractString) = (@_inline_meta; x = parse(RGB, c); (x.r, x.g, x.b))
+
 
 function _setup_layout(surface::CairoSurface, g::Graph, layout, margin, zoom)
     if haskey(g.nodeattrs, :x) && haskey(g.nodeattrs, :y)   # get layout
