@@ -150,7 +150,7 @@ end
     AbstractAttribute{T}
 
 Abstract parent for graph attribute types subtyping `AbstractVector`.
-To achieve maximum performance, attributes mostly omit bound checks.
+To achieve maximum performance, attributes check bounds only on element assignment.
 """
 abstract type AbstractAttribute{T,N,F<:Function} <: AbstractArray{T,N} end
 

@@ -39,9 +39,11 @@ end
 SparseAttribute(d::T, f::F) where {T,F<:Function} = SparseAttribute{T,1,F}(d, Dict{Int,T}(), f)
 SparseAttribute(x::ConstantAttribute{T,N,F}) where {T,N,F} =
     SparseAttribute{T,N,F}(x.default, Dict{Int,T}(), x.getlen)
+density(x::SparseAttribute) = length(x.data) / x.getlen()
 
 getindex(x::SparseAttribute, i::Integer) = get(x.data, i, x.default)
 function setindex!(x::SparseAttribute{T}, v, i::Integer) where {T}
+    @boundscheck checkbounds(i, 1:x.getlen(), i)
     if v != x.default
         x.data[i] = v
     else
@@ -73,13 +75,9 @@ DenseAttribute(x::AbstractAttribute{T,N,F}) where {T,N,F<:Function} =
 
 getindex(x::DenseAttribute, i::Integer) = checkbounds(Bool, x, i) ? x.data[i] : x.default
 function setindex!(x::DenseAttribute{T}, v::T, i::Integer) where {T}
-    l = x.getlen()
-    if i <= l
-        while length(x) < i
-            push!(x.data, x.default)
-        end
-    else
-        error("trying to set value out of bounds")
+    @boundscheck checkbounds(i, 1:x.getlen(), i)
+    while length(x.data) < i
+        push!(x.data, x.default)
     end
     x.data[i] = v
 end
