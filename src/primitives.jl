@@ -164,8 +164,10 @@ Works like `Base.zero`, but has implementations for more types.
 """
 defval(::Type{T}) where {T<:Number} = zero(T)
 defval(::Type{String}) = ""
+defval(::Type{Symbol}) = :|
 defval(::Type{Char}) = '\0'
 defval(::Type{Void}) = nothing
 defval(::Type{RGB}) = RGB(0, 0, 0)
 defval(::Type{Tuple{Vararg{T,N}}}) where {T,N} = tuple([defval(T) for _ = 1:N]...)
+defval(::Type{Any}) = nothing
 defval(::Type{T}) where {T} = error("no default value is set for type $T")

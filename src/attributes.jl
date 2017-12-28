@@ -69,11 +69,12 @@ end
 DenseAttribute(d::T, f::F) where {T,F<:Function} = DenseAttribute{T,1,F}(d, T[], f)
 DenseAttribute(d::T, x::Vector{T}, f::F) where {T,F<:Function} =
     DenseAttribute{T,1,F}(d, x, f)
-DenseAttribute(x::Vector{T}, f::F) where {T,F<:Function} = DenseAttribute(defval(T), x, f)
+DenseAttribute(x::AbstractVector{T}, f::F) where {T,F<:Function} =
+    DenseAttribute(defval(T), collect(x), f)
 DenseAttribute(x::AbstractAttribute{T,N,F}) where {T,N,F<:Function} =
     DenseAttribute{T,N,F}(x.default, collect(x), x.getlen)
 
-getindex(x::DenseAttribute, i::Integer) = checkbounds(Bool, x, i) ? x.data[i] : x.default
+getindex(x::DenseAttribute, i::Integer) = checkbounds(Bool, x.data, i) ? x.data[i] : x.default
 function setindex!(x::DenseAttribute{T}, v::T, i::Integer) where {T}
     @boundscheck checkbounds(1:x.getlen(), i)
     while length(x.data) < i
