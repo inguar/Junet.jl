@@ -158,7 +158,7 @@ end
     plot(g::Graph[, filename, size, format[, kvargs...]])
 
 Plot the graph `g`. Specify the `filename`, `size`, `format`, or many
-of the other parameters.
+of the other parameters to customize its style.
 """
 function plot(g::Graph; filename="", size=(400, 400), format=:svg, kvargs...)
     if format == :png

@@ -145,6 +145,8 @@ function _addedge!(g::MultiGraph{N,E,D}, n::Integer, m::Integer) where {N,E,D}
     return g.edgecount
 end
 
+# TODO: ensure that simple graphs can't have selfloops + make undirected graph checks
+
 function _addedge!(g::SimpleGraph{N,E,D}, n::Integer, m::Integer) where {N,E,D}
     fwd, rev = new_ptr_pair!(g, N(n), N(m))
     add_one_ptr!(fwd_ptrs(g.nodes[n], D), fwd) &&
@@ -180,6 +182,12 @@ function addedge!(g::Graph, n::Integer, m::Integer; attrs...)
 end
 
 addedges!(g::Graph, it) = for i = collect(it); addedge!(g, i) end
+
+function addedges!(g::Graph, e::Tuple{Vararg{Int}})
+    for i = 1:length(e) - 1
+        addedge!(g, e[i], e[i + 1])
+    end
+end
 
 """
     remedge!(g::Graph, e::Edge)
@@ -326,27 +334,27 @@ function setindex!(d::AttributeDict, v, s::Symbol, i)
     d[s][i] = v
 end
 
-addnodeattr!(g::Graph, s::Symbol, v) = g.nodeattrs[s] = nodeattr(g, v)
-addedgeattr!(g::Graph, s::Symbol, v) = g.edgeattrs[s] = edgeattr(g, v)
+addnodeattr!(g::Graph, s::Symbol, v) = (g.nodeattrs[s] = nodeattr(g, v); nothing)
+addedgeattr!(g::Graph, s::Symbol, v) = (g.edgeattrs[s] = edgeattr(g, v); nothing)
 
 hasnodeattr(g::Graph, s::Symbol) = haskey(g.nodeattrs, s)
 hasedgeattr(g::Graph, s::Symbol) = haskey(g.edgeattrs, s)
 
 # Node attributes
-setindex!(g::Graph, v, ::Colon, s::Symbol) = 
+setindex!(g::Graph, v, ::Colon, s::Symbol) = addnodeattr!(g, s, v)
 setindex!(g::Graph, v, i, s::Symbol) = g.nodeattrs[s, i] = v
 
 getindex(g::Graph, ::Colon, s::Symbol) = g.nodeattrs[s]
 getindex(g::Graph, i, s::Symbol) = g.nodeattrs[s, i]
 
 # Edge atrributes
-setindex!(g::Graph, v, ::Colon, ::Colon, s::Symbol) = addnodeattr!(g, s, v)
+setindex!(g::Graph, v, ::Colon, ::Colon, s::Symbol) = addedgeattr!(g, s, v)
 setindex!(g::Graph, v, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, collect(outedgeids(g, i))] = v
 setindex!(g::Graph, v, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, collect(inedgeids(g, i))] = v
 # setindex!(g::Graph, v, i::Integer, j::Integer, s::Symbol) = g.edgeattrs[s, edgeids(g, i, j)] = v
 setindex!(g::Graph, v, e::Edge, s::Symbol) = g.edgeattrs[s, e.id] = v
 
-getindex(g::Graph, ::Colon, ::Colon, s::Symbol) = addedgeattr!(g, s, v)
+getindex(g::Graph, ::Colon, ::Colon, s::Symbol) = g.edgeattrs[s]
 getindex(g::Graph, i::Integer, ::Colon, s::Symbol) = g.edgeattrs[s, collect(outedgeids(g, i))]
 getindex(g::Graph, ::Colon, i::Integer, s::Symbol) = g.edgeattrs[s, collect(inedgeids(g, i))]
 # getindex(g::Graph, i::Integer, j::Integer, s::Symbol) = g.edgeattrs[s][edgeids(g, i, j)]
