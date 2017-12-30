@@ -106,10 +106,10 @@ remnodes!(g::Graph, it) = for i = sort(it, rev=true); remnode!(g, i) end
 
 Check if graph `g` has an edge between nodes `n` and `m`.
 """
-hasedge(g::Graph{N,E,D}, e::Edge{N,E}) where {N,E,D<:Directed} =
+hasedge(g::DirectedGraph{N,E,D}, e::Edge) where {N,E,D<:Directed} =
     has_ptr(fwd_ptrs(g.nodes[e.source], D), e.target)
 
-hasedge(g::Graph{N,E,D}, e::Edge{N,E}) where {N,E,D<:Undirected} =
+hasedge(g::Graph{N,E,D}, e::Edge) where {N,E,D<:Undirected} =
     has_ptr(fwd_ptrs(g.nodes[e.source], D), e.target) ||
     has_ptr(rev_ptrs(g.nodes[e.source], D), e.target)
 
@@ -187,14 +187,14 @@ addedges!(g::Graph, it) = for i = collect(it); addedge!(g, i) end
 
 Remove edge `e` from graph `g`.
 """
-function remedge!(g::Graph{N,E,D}, e::Edge{N,E}) where {N,E,D<:Directed}
+function remedge!(g::Graph{N,E,D}, e::Edge) where {N,E,D<:Directed}
     delete_ptr!(fwd_ptrs(g.nodes[e.source], D), e.target, e.id) &&
     delete_ptr!(rev_ptrs(g.nodes[e.target], D), e.source, e.id) ||
     error("edge $e not found")
     g.edgecount -= 1;
 end
 
-function remedge!(g::Graph{N,E,D}, e::Edge{N,E}) where {N,E,D<:Undirected}
+function remedge!(g::Graph{N,E,D}, e::Edge) where {N,E,D<:Undirected}
     delete_ptr!(fwd_ptrs(g.nodes[e.source], D), e.target, e.id) &&
     delete_ptr!(rev_ptrs(g.nodes[e.target], D), e.source, e.id) ||
     delete_ptr!(fwd_ptrs(g.nodes[e.target], D), e.source, e.id) &&
