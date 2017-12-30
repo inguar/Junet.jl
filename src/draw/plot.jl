@@ -156,23 +156,23 @@ end
 
 
 """
-    plot(g::Graph[, filename, size, format[, kvargs...]])
+    plot(g::Graph[; format, file, size, kvargs...])
 
-Plot the graph `g`. Specify the `filename`, `size`, `format`, or many
+Plot the graph `g`. Specify the `format`, `file`, `size`, or many
 of the other parameters to customize its style.
 """
-function plot(g::Graph; filename="", size=(400, 400), format=:svg, kvargs...)
+function plot(g::Graph; format=:svg, file="", size=(400, 400), kvargs...)
     if format == :png
         surface = CairoARGBSurface(size...)
         draw_graph!(surface, g; kvargs...)
-        if filename != ""
-            write_to_png(surface, filename)
+        if file != ""
+            write_to_png(surface, file)
         else
             return surface
         end
     elseif format == :svg
-        if filename != ""
-            surface = CairoSVGSurface(filename, size...)
+        if file != ""
+            surface = CairoSVGSurface(file, size...)
             draw_graph!(surface, g; kvargs...)
             finish(surface)
         else
@@ -183,13 +183,13 @@ function plot(g::Graph; filename="", size=(400, 400), format=:svg, kvargs...)
             display(MIME("image/svg+xml"), String(take!(buf)))
         end
     elseif format == :pdf
-        @assert(filename != "", "need a file name to write PDF")
-        surface = CairoPDFSurface(filename, size...)
+        @assert(file != "", "need a file name to write PDF")
+        surface = CairoPDFSurface(file, size...)
         draw_graph!(surface, g; kvargs...)
         finish(surface)
     elseif format == :eps
-        @assert(filename != "", "need a file name to write EPS")
-        surface = CairoEPSSurface(filename, size...)
+        @assert(file != "", "need a file name to write EPS")
+        surface = CairoEPSSurface(file, size...)
         draw_graph!(surface, g; kvargs...)
         finish(surface)
     else:
