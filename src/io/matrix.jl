@@ -3,7 +3,7 @@
 function Graph(m::Matrix{T}; params...) where {T<:Number}
     n, n_ = size(m)
     @assert(n == n_, "adjacency matrix should be square")
-    g = Graph(; nodecount=n, params...)
+    g = Graph(; n=n, params...)
     for i = 1:n, j = 1:n
         if m[i, j] > zero(T)
             addedge!(g, i, j)

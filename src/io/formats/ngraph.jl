@@ -14,14 +14,14 @@ function load_ngraph(path,
     open(joinpath(path, "links.bin")) do f
         src = zero(nodeids)
         for i = reinterpret(nodeids, read(f))
-        if i < 0
-            src = -i
-            ensurenode(g, src)
-        else
-            ensurenode(g, i)
-            addedge!(g, src, i)
+            if i < 0
+                src = -i
+                ensurenode(g, src)
+            else
+                ensurenode(g, i)
+                addedge!(g, src, i)
+            end
         end
-    end
     end
     # Load the labels
     open(joinpath(path, "labels.json")) do f

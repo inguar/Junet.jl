@@ -53,9 +53,11 @@ include("community/label_propagation.jl")   # community detection
 
 include("io/show.jl")                       # input/output
 include("io/matrix.jl")
-include("io/edgelist.jl")
-include("io/pajek.jl")
-include("io/ngraph.jl")
+include("io/formats/edgelist.jl")
+include("io/formats/pajek.jl")
+include("io/formats/ngraph.jl")
+include("io/formats/ucinet.jl")
+include("io/file_io.jl")
 
 include("draw/layout.jl")                   # visualization
 include("draw/node_paths.jl")
