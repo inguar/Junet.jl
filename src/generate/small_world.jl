@@ -18,7 +18,7 @@ function graph_smallworld(n::Integer, k::Integer, p::Real, multi::Bool=false; pa
     @assert(0 < k < n / 2, "node number of neighbors (k) is not in a valid range")
     @assert(k % 2 == 0,    "node number of neighbors (k) should be even")
     @assert(0 <= p <= 1,   "rewiring probability (p) is not in [0,1] interval")
-    g = Graph(; nodecount=n, params...)
+    g = Graph(; n=n, params...)
     c = Int(k / 2)
     for i = 1:n
         for j = 1:c

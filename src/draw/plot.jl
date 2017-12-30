@@ -3,6 +3,7 @@
 # INFO: imports of this file make up 3/4 of the overall load time (0.51278 vs 0.11367 without),
 # see if it's possible to speed up the loading time
 
+# TODO: fix drawing self-loops again
 # TODO: eliminate intermediate layers when passing styles
 # TODO: ensure no mixed type combinations when calling Cairo
 # TODO: introduce color maps for real-valued attributes

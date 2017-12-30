@@ -181,13 +181,41 @@ function addedge!(g::Graph, n::Integer, m::Integer; attrs...)
     return e
 end
 
-addedges!(g::Graph, it) = for i = collect(it); addedge!(g, i) end
+const DyadTuple = Tuple{T,T,Vararg{T}} where {T<:Integer}
+const DyadTupleVector = AbstractVector{T} where {T<:DyadTuple}
 
-function addedges!(g::Graph, e::Tuple{Vararg{Int}})
-    for i = 1:length(e) - 1
-        addedge!(g, e[i], e[i + 1])
+"""
+    addedges!(g::Graph, es)
+
+Add multiple edges to the graph. There are 3 ways to define them:
+
+* Integer tuple, e.g., `(1, 2)` or `(1, 2, 3, 1)`. In second case,
+3 edges will be created: `1 → 2`, `2 → 3`, and `3 → 1`.
+
+* Vector of tuples, e.g., `[(1, 2), (3, 4), (4, 3, 2)]`.
+
+* Generator returning integer 2-tuples, e.g., `((i, i + 1) for i = 1:10)`.
+
+# Example
+
+```julia-repl
+julia> g = Graph(n=4);
+julia> addedges!(g, (1, 2, 3, 4, 1))
+```
+"""
+function addedges!(g::Graph, es::DyadTuple)
+    for i = 1:length(es) - 1
+        addedge!(g, es[i], es[i + 1])
     end
 end
+
+function addedges!(g::Graph, es::DyadTupleVector)
+    for e = es
+        addedges!(g, e)
+    end
+end
+
+addedges!(g::Graph, it) = for i = collect(it); addedge!(g, i...) end
 
 """
     remedge!(g::Graph, e::Edge)
@@ -366,13 +394,20 @@ getindex(g::Graph, e::Edge, s::Symbol) = g.edgeattrs[s, e.id]
 ##      Convenience syntax
 =#
 
-function Graph(; directed=true, multigraph=true, nodecount=0,
-             nodeids=UInt32, edgeids=UInt32)
-    N, E = nodeids::Type, edgeids::Type
+maxid(x::Void) = 0
+maxid(x::DyadTuple) = maximum(x)
+maxid(x::DyadTupleVector) = maximum(maximum(i) for i = x)
+
+function Graph(edges=nothing;
+               n=maxid(edges),
+               directed=true, simple=false,
+               TNode=UInt32, TEdge=UInt32)
     D = directed ? Forward : Both
-    M = multigraph ? Multi : Simple
-    g = Graph{N,E,D,M}()
-    addnodes!(g, nodecount)
+    M = simple ? Simple : Multi
+    g = Graph{TNode,TEdge,D,M}()
+    addnodes!(g, n)
+    if edges != nothing
+        addedges!(g, edges)
+    end
     return g
 end
-

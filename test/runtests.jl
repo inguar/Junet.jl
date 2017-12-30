@@ -49,11 +49,11 @@ end
         @test typeof(ug') == typeof(ug)
     end
     
-    @testset "multigraph?" begin
+    @testset "simple?" begin
         @test ismultigraph(g)
         @test ismultigraph(ug)
 
-        lg = Graph(edgeids=Void)
+        lg = Graph(TEdge=Void)
         @test typeof(lg) <: LightGraph
     end
 
@@ -102,8 +102,8 @@ end
         @testset "graph_tree" begin
             @test_nowarn graph_tree(0, 0)
             counts(g::Graph) = (nodecount(g), edgecount(g))
-            @test counts(graph_tree(1, 2)) == (3, 2)
-            @test counts(graph_tree(5, 2)) == (63, 62)
+            @test counts(graph_tree(2, 1)) == (3, 2)
+            @test counts(graph_tree(2, 5)) == (63, 62)
             @test counts(graph_tree(4, 4)) == (341, 340)
         end
     end

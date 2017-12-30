@@ -65,7 +65,7 @@ Physical Review E. 71 (3).
 """
 function graph_gilbert(n::Integer, p::Real; params...)
     @assert(0 <= p <= 1, "edge probability (p) should be in [0, 1] interval")
-    g = Graph(; nodecount=n, params...)
+    g = Graph(; n=n, params...)
     p > eps() && gilbert_fill!(g, p)
     return g
 end
@@ -87,7 +87,7 @@ In practice, an empty graph with `n` nodes is created first and
 Erdős, P.; Rényi, A. (1959). "On Random Graphs. I". Publicationes Mathematicae. 6: 290–297.
 """
 function graph_erdos_renyi(n::Integer, m::Integer; params...)
-    g = Graph(nodecount=n; params...)
+    g = Graph(; n=n, params...)
     if m < maxedgecount(g)
         while edgecount(g) < m
             x, y = rand(1:n), rand(1:n)
