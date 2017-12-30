@@ -81,11 +81,12 @@ export
     addedge!, addedges!, hasedge,
     remedge!, remedges!,
     addnodeattr!, addedgeattr!,
+    addnodeattrs!, addedgeattrs!,
 
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
     graph_grid, graph_web, graph_tree,
-    graph_gilbert, graph_erdos_renyi, graph_erdosrenyi, graph_random,
+    graph_gilbert, graph_erdos_renyi, graph_random, graph_erdosrenyi,
     graph_smallworld, graph_preferential,
 
     # measure/centrality/

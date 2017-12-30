@@ -363,7 +363,10 @@ function setindex!(d::AttributeDict, v, s::Symbol, i)
 end
 
 addnodeattr!(g::Graph, s::Symbol, v) = (g.nodeattrs[s] = nodeattr(g, v); nothing)
+addnodeattrs!(g::Graph; attrs...) = for (k, v) = attrs; addnodeattr!(g, k, v) end
+
 addedgeattr!(g::Graph, s::Symbol, v) = (g.edgeattrs[s] = edgeattr(g, v); nothing)
+addedgeattrs!(g::Graph; attrs...) = for (k, v) = attrs; addedgeattr!(g, k, v) end
 
 hasnodeattr(g::Graph, s::Symbol) = haskey(g.nodeattrs, s)
 hasedgeattr(g::Graph, s::Symbol) = haskey(g.edgeattrs, s)
