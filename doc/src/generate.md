@@ -99,7 +99,7 @@ plotit(graph_star(10), :graph_star)
 plotit(graph_wheel(10), :graph_wheel)
 plotit(graph_complete(10), :graph_complete)
 plotit(graph_grid(10, 5), :graph_grid)
-plotit(graph_web(4, 20), :graph_web)
+plotit(graph_web(20, 4), :graph_web)
 plotit(graph_tree(3, 3), :graph_tree)
 plotit(graph_smallworld(20, 4, .1), :graph_smallworld)
 

@@ -7,7 +7,7 @@ Generate a [path graph](https://en.wikipedia.org/wiki/Path_graph) with `n` nodes
 
 # Examples
 ```julia-repl
-julia> g = graph_path(10)
+julia> graph_path(10)
 10-node 9-edge directed multigraph
 ```
 """
@@ -26,7 +26,7 @@ Generate a [cycle graph](https://en.wikipedia.org/wiki/Cycle_graph) with `n` nod
 
 # Examples
 ```julia-repl
-julia> g = graph_cycle(10)
+julia> graph_cycle(10)
 10-node 10-edge directed multigraph
 ```
 """
@@ -39,7 +39,7 @@ function graph_cycle(n::Integer; params...)
 end
 
 """
-    graph_star(n::Integer[, out=true])
+    graph_star(n::Integer[; out=true])
 
 Generate a [star graph](https://en.wikipedia.org/wiki/Star_graph) with `n` nodes.
 If `out == true`, connections go outwards from the central node.
@@ -47,11 +47,11 @@ Otherwise, they go inwards.
 
 # Examples
 ```julia-repl
-julia> g = graph_star(10)
+julia> graph_star(10)
 10-node 9-edge directed multigraph
 ```
 """
-function graph_star(n::Integer; out=true, params...)
+function graph_star(n::Integer; out::Bool=true, params...)
     g = Graph(; nodecount=n, params...)
     for i = 2:n
         if out
@@ -64,7 +64,7 @@ function graph_star(n::Integer; out=true, params...)
 end
 
 """
-    graph_wheel(n::Integer[, out=true])
+    graph_wheel(n::Integer[; out=true])
 
 Generate a [wheel graph](https://en.wikipedia.org/wiki/Wheel_graph) with `n` nodes.
 If `out == true`, connections go outwards from the central node.
@@ -72,11 +72,11 @@ Otherwise, they go inwards.
 
 # Examples
 ```julia-repl 
-julia> g = graph_wheel(10)
+julia> graph_wheel(10)
 10-node 18-edge directed multigraph
 ```
 """
-function graph_wheel(n::Integer; out=true, params...)
+function graph_wheel(n::Integer; out::Bool=true, params...)
     g = Graph(; nodecount=n, params...)
     for i = 2:n
         out ? addedge!(g, 1, i) : addedge!(g, i, 1)
@@ -86,19 +86,25 @@ function graph_wheel(n::Integer; out=true, params...)
 end
 
 """
-    graph_complete(n::Integer)
+    graph_complete(n::Integer[; ordered=false])
 
 Generate a [complete graph](https://en.wikipedia.org/wiki/Complete_graph) with `n` nodes.
 
+If you are generating a directed graph, by default it will have 2 edges between
+each pair of nodes. To leave only edges `i → j` where `i < j`, set `ordered=true`.
+
 # Examples
 ```julia-repl
-julia> g = graph_complete(10)
+julia> graph_complete(10)
 10-node 90-edge directed multigraph
+
+julia> graph_complete(10, ordered=true)
+10-node 45-edge directed multigraph
 ```
 """
-function graph_complete(n::Integer; params...)
+function graph_complete(n::Integer; ordered::Bool=false, params...)
     g = Graph(; nodecount=n, params...)
-    if isdirected(g)
+    if isdirected(g) && !ordered
         for i = 1:n, j = 1:n
             i != j && addedge!(g, i, j)
         end
@@ -114,7 +120,7 @@ end
     graph_grid(a::Integer[, b=a])
 
 Generate a rectangular grid of size `a`×`b`.
-If `b` is ommitted, it is set to be equal `a`.
+If `b` is ommitted, it is taken to be equal `a`.
 
 # Examples
 ```julia-repl
@@ -137,18 +143,18 @@ function graph_grid(a::Integer, b::Integer=a; params...)
 end
 
 """
-    graph_web(r::Integer, c::Integer[; out=true])
+    graph_web(c::Integer, r::Integer[; out=true])
 
-Generate a spiderweb-shaped graph with number of levels (radius) `r`
-and `c` nodes on each level. Overall, it has `r * c + 1` nodes including center.
+Generate a spiderweb-shaped graph with `c` nodes on each of `r` levels.
+Overall, it has `c * r + 1` nodes including the center node.
 
 # Examples
 ```julia-repl
-julia> g = graph_web(4, 20)
+julia> graph_web(20, 4)
 81-node 160-edge directed multigraph
 ```
 """
-function graph_web(r::Integer, c::Integer; out=true, params...)
+function graph_web(c::Integer, r::Integer; out=true, params...)
     g = Graph(; nodecount=r * c + 1, params...)
     for i = 1:r, j = 1:c
         cur = 1 + (i - 1) * c + j
@@ -173,19 +179,19 @@ function branch!(g::Graph, root, depth, c, out)
 end
 
 """
-    graph_tree(r::Integer, c::Integer)
+    graph_tree(c::Integer, r::Integer)
 
-Generate a tree with `r` levels (radius) and `c` child branches
-for each node. Mind that it has exponential number of nodes in `r`,
+Generate a tree with branching factor `c` and `r` levels.
+Mind that it has exponential number of nodes in `r`,
 so it is not advisable to create graphs with `r > 4`.
 
 # Examples
 ```julia-repl
-julia> g = graph_tree(3, 3)
+julia> graph_tree(3, 3)
 40-node 39-edge directed multigraph
 ```
 """
-function graph_tree(r::Integer, c::Integer; out=true, params...)
+function graph_tree(c::Integer, r::Integer; out=true, params...)
     g = Graph(; params...)
     addnode!(g)
     branch!(g, 1, r - 1, c, out)
