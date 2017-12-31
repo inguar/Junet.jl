@@ -105,3 +105,9 @@ attribute(x, f::Function) = ConstantAttribute(x, f)
 
 nodeattr(g::Graph, v) = attribute(v, ()->nodecount(g))
 edgeattr(g::Graph, v) = attribute(v, ()->edgecount(g))
+
+# TODO: 1. get rid of setindex!(d::AttributeDict, v, s::Symbol, i) in graph_operations.jl
+# TODO: 2. introduce an `AttributeBuilder` class
+# TODO: 3. find most common value on at least 100 fist ones and do an informed conversion
+# TODO: 4. create a method that substantiates attributes from all `AttributeBuilder`s
+# TODO: 5. replace currrent attribute assignment in all IO files

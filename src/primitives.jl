@@ -14,8 +14,9 @@ They map node or edge indices to their corresponding values.
     NodePtr{N,E}
 
 Internal type for storing information about connections in the graph:
-  * `node` — id of target node,
-  * `id`   — id of the corresponding edge.
+
+* `node` — id of target node,
+* `id`   — id of the corresponding edge.
 
 `NodePtr` instances are compared by IDs of nodes they point to.
 """
@@ -133,10 +134,11 @@ end
     Edge{N,E}
 
 A single edge in the graph. It has the following fields:
-  * `source` — id of the source node,
-  * `target` — id of the target node,
-  * `id`     — its own unique id,
-  * `isdir`  — whether it is directed.
+
+* `source` — id of the source node,
+* `target` — id of the target node,
+* `id`     — its own unique id,
+* `isdir`  — whether it is directed.
 """
 struct Edge{N,E}
     source :: N

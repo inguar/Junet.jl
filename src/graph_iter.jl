@@ -9,6 +9,11 @@ get_edge(n::Integer, ptr::NodePtr, isdir::Bool, ::Type{Forward}) =
 get_edge(n::Integer, ptr::NodePtr, isdir::Bool, ::Type{Reverse}) =
         (@_inline_meta; Edge(ptr.node, n, ptr.id, isdir))
 
+# TODO: refactor Edge system for efficiency
+# TODO: 1. create edges with native types (N,E)
+# TODO: 2. add getters source() and target() that convert ids to Int
+# TODO: 3. throughout Junet, convert e.source to source(e)
+
 
 """
     PtrView(g::Graph, i::Integer, ::Type{R}, fun::F)
@@ -35,11 +40,12 @@ Similarly, for in-neighbors:
 This view class is very flexible and can be used to produce 27 different kinds of views.
 Under the hood, it uses multiple dispatch to construct and run the correct methods.
 It relies on a number of parameters:
-  * `O` — shows which vector of `NodePtrs` associated with a node to use
-  * `D` — same as `D` in `Graph`, signifies directedness
-  * `R` — same as `R` passed in the constructor
-  * `F` — type of function used to transform the elements
-  * `N` and `E` are the graph's node and edge ID types
+
+* `O` — shows which vector of `NodePtrs` associated with a node to use
+* `D` — same as `D` in `Graph`, signifies directedness
+* `R` — same as `R` passed in the constructor
+* `F` — type of function used to transform the elements
+* `N` and `E` are the graph's node and edge ID types
 
 """
 struct PtrView{O<:DirParam,D<:DirParam,R<:DirParam,F,N,E}
@@ -126,7 +132,7 @@ end
 
 Iterator over all edges in the graph.
 
-Under the hood, a 3-tuple of type {N, Int, Bool} is used to hold the state
+Under the hood, it uses a 3-tuple of type {N, Int, Bool} to hold the state
 during the iteration.
 """
 struct EdgeIter{D,N,E}

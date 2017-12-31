@@ -5,24 +5,26 @@
 
 Type for storing graphs. Its fields have mostly self-explanatory names
 (field marked with an asterisk is for internal use only):
-  * `nodes`      — vector with nodes in the graph
-  * `nodeattrs`  — dictionary with node attributes
-  * `edgemaxid`* — largest edge id
-  * `edgecount`  — count of edges in the graph
-  * `edgeattrs`  — dictionary with edge attributes
+
+* `nodes`      — vector with nodes in the graph
+* `nodeattrs`  — dictionary with node attributes
+* `edgemaxid`* — largest edge id
+* `edgecount`  — count of edges in the graph
+* `edgeattrs`  — dictionary with edge attributes
 
 There are four type parameters:
-  * `N` — integer type used for node ids
-  * `E` — integer type used for edge ids, `Void` can also be used to save space
-  * `D` — singleton type indicating whether the graph is directed
-     - `Directed`   — directed graph (default)
-     - `Undirected` — undirected graph
-  * `M` — singleton type indicating whether multiple edges and self-loops
-    are allowed
-     - `Multi`  — multiple edges and self-loops allowed, i.e. graph
-        is a multigraph (default)
-     - `Simple` — only single edges between pais of different nodes allowed,
-        i.e. graph is simple
+
+* `N` — integer type used for node ids
+* `E` — integer type used for edge ids, `Void` can also be used to save space
+* `D` — singleton type indicating whether the graph is directed
+    - `Directed`   — directed graph (default)
+    - `Undirected` — undirected graph
+* `M` — singleton type indicating whether multiple edges and self-loops
+are allowed
+    - `Multi`  — multiple edges and self-loops allowed, i.e. graph
+    is a multigraph (default)
+    - `Simple` — only single edges between pais of different nodes allowed,
+    i.e. graph is simple
 
 There is a couple of predefined type aliases you can use for dispatch in your
 functions: `DirectedGraph` or `UndirectedGraph` (w.r.t graph directedness), and
