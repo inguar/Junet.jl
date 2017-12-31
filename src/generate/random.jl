@@ -105,8 +105,8 @@ function graph_erdos_renyi(n::Integer, m::Integer; params...)
     return g
 end
 
+@deprecate(erdosrenyi, graph_erdos_renyi)
 @deprecate(graph_erdosrenyi, graph_erdos_renyi)
-
 
 
 """

@@ -34,21 +34,17 @@ include("util/relabel.jl")
 
 include("generate/classic.jl")              # graph generators
 include("generate/random.jl")
-include("generate/small_world.jl")
+include("generate/smallworld.jl")
 include("generate/preferential.jl")
 
 include("measure/centrality/degree.jl")     # graph measures
 include("measure/centrality/subtree.jl")
 include("measure/centrality/power_iter.jl")
 include("measure/centrality/closeness.jl")
-
 include("measure/dyadic.jl")
-
 include("measure/triadic/clustering.jl")
-
 include("measure/global/components.jl")
 include("measure/global/k-core.jl")
-
 include("community/label_propagation.jl")   # community detection
 
 include("io/show.jl")                       # input/output
@@ -89,8 +85,9 @@ export
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,
     graph_grid, graph_web, graph_tree,
-    graph_gilbert, graph_erdos_renyi, graph_random, graph_erdosrenyi,
-    graph_smallworld, graph_preferential,
+    graph_gilbert, graph_erdos_renyi, graph_random, graph_erdosrenyi, erdosrenyi,
+    graph_small_world, graph_smallworld, smallworld,
+    graph_preferential,
 
     # measure/centrality/
     degree, indegree, outdegree,        # degree.jl
