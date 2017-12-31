@@ -55,6 +55,7 @@ include("io/show.jl")                       # input/output
 include("io/matrix.jl")
 include("io/formats/edgelist.jl")
 include("io/formats/pajek.jl")
+include("io/formats/gml.jl")
 include("io/formats/ngraph.jl")
 include("io/formats/ucinet.jl")
 include("io/file_io.jl")

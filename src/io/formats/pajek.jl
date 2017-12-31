@@ -5,6 +5,9 @@ See [1](http://www.pfeffer.at/txt2pajek/txt2pajek.pdf), and
 [2](http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/draweps.htm)
 for the reference. =#
 
+const PAJEK_ATTRIBUTES = Dict("ic"=>:color, "c"=>:color, "w"=>:width, "l"=>:label,
+    "bw"=>:border_width, "fos"=>:font_size, "lr"=>:label_angle, "s"=>:arrow_size)
+
 const PAJEK_ATTR_DEFAULTS = Dict(:label => "", :shape => :circle,
     :color => "Grey", :weight => 1., :width => 1.)
 
