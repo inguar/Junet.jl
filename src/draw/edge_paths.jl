@@ -124,15 +124,16 @@ end
 Add a path to Cairo context that outlines an arrow starting
 at (x, y) and having certain length and line width.
 """
-function outline_arrow!(context::CairoContext, x, y, α, len, width)
+function outline_arrow!(context::CairoContext, x, y, α, len, width) 
     if width > 3
-        arc(context, x, y, width / 2, α - 2.3, α + 2.3)
+        arc(context, x, y, width / 2, α - 2.0, α + 2.0)
     else
         move_to(context, x, y)
     end
-    line_to(context, x + len * cos(α + 2.3), y + len * sin(α + 2.3))
+    l = len * 0.6
+    line_to(context, x + l * cos(α + 2.0), y + l * sin(α + 2.0))
     line_to(context, x + len * cos(α), y + len * sin(α))
-    line_to(context, x + len * cos(α - 2.3), y + len * sin(α - 2.3))
+    line_to(context, x + l * cos(α - 2.0), y + l * sin(α - 2.0))
     close_path(context)
 end
 
