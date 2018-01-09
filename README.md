@@ -70,13 +70,13 @@ Users can also strip off support for edge attributes, which gives
 an additional 2x improvement in memory footprint.
 
 ```julia
-g = Graph(nodeids=Int, edgeids=Int)  # about the same size as igraph on 64-bit machines
+g = Graph(TNode=Int, TEdge=Int)  # about the same size as igraph on 64-bit machines
 
-g = Graph(nodeids=UInt32, edgeids=UInt32)  # 2 times smaller (default)
+g = Graph(TNode=UInt32, TEdge=UInt32)  # 2 times smaller (default)
 
-g = Graph(nodeids=UInt32, edgeids=Void)    # 4 times smaller
+g = Graph(TNode=UInt32, TEdge=Void)    # 4 times smaller
 
-g = Graph(nodeids=UInt8, edgeids=Void)     # hardly usable, but ~16x smaller!
+g = Graph(TNode=UInt8, TEdge=Void)     # hardly usable, but ~16x smaller!
 ```
 
 * Zero-cost views on the networks, which don't copy the data.

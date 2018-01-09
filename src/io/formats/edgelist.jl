@@ -58,10 +58,10 @@ with `start_id`, which is zero by default.
 If `:str` mode is chosen, the resulting graph has a `String` attribute `:id`
 associated with its nodes.
 """
-function read_edgelist(io::IO; delim=DELIM_REGEX, mode=:auto, start_id=0, kvargs...)
+function read_edgelist(io::IO; delim=DELIM_REGEX, mode=:auto, start_id=0, kwargs...)
     if mode == :int || mode == :auto
         pos = position(io)
-        g = Graph(; kvargs...)
+        g = Graph(; kwargs...)
         res = read_edgelist_ids!(io, g, delim, start_id)
         if res == nothing
             return g
@@ -71,7 +71,7 @@ function read_edgelist(io::IO; delim=DELIM_REGEX, mode=:auto, start_id=0, kvargs
         seek(io, pos)
     end
     if mode == :str || mode == :auto
-        g = Graph(; kvargs...)
+        g = Graph(; kwargs...)
         res = read_edgelist_strings!(io, g, delim)
         if res == nothing
             return g

@@ -2,7 +2,7 @@
 # http://www.analytictech.com/ucinet/help/hs5000.htm
 
 function read_dl(io::IO)
-    g = Graph(nodecount=16)
+    g = Graph(16)
     readline(io)
     readline(io)
     readline(io)

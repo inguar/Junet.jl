@@ -63,9 +63,9 @@ doi:10.1214/aoms/1177706098.
 Batagelj, V. and Brandes, U. (2005) "Efficient generation of large random networks".
 Physical Review E. 71 (3).
 """
-function graph_gilbert(n::Integer, p::Real; params...)
+function graph_gilbert(n::Integer, p::Real; kwargs...)
     @assert(0 <= p <= 1, "edge probability (p) should be in [0, 1] interval")
-    g = Graph(; n=n, params...)
+    g = Graph(n; kwargs...)
     p > eps() && gilbert_fill!(g, p)
     return g
 end
@@ -86,8 +86,8 @@ In practice, an empty graph with `n` nodes is created first and
 
 Erdős, P.; Rényi, A. (1959). "On Random Graphs. I". Publicationes Mathematicae. 6: 290–297.
 """
-function graph_erdos_renyi(n::Integer, m::Integer; params...)
-    g = Graph(; n=n, params...)
+function graph_erdos_renyi(n::Integer, m::Integer; kwargs...)
+    g = Graph(n; kwargs...)
     if m < maxedgecount(g)
         while edgecount(g) < m
             x, y = rand(1:n), rand(1:n)
@@ -143,7 +143,7 @@ julia> g = graph_random(4, 1)
 
 [Wikipedia](https://en.wikipedia.org/wiki/Erdős–Rényi_model)
 """
-graph_random(n::Integer, m::Integer; params...) =
-    graph_erdos_renyi(n::Integer, m::Integer; params...)
-graph_random(n::Integer, p::AbstractFloat; params...) =
-    graph_gilbert(n::Integer, p::AbstractFloat; params...)
+graph_random(n::Integer, m::Integer; kwargs...) =
+    graph_erdos_renyi(n::Integer, m::Integer; kwargs...)
+graph_random(n::Integer, p::AbstractFloat; kwargs...) =
+    graph_gilbert(n::Integer, p::AbstractFloat; kwargs...)

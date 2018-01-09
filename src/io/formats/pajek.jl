@@ -127,7 +127,7 @@ To suppress it, pass `parse_attrs=false` to this function, which also
 dramatically speeds up the parsing.
 """
 function read_pajek(io::IO; parse_attrs=true)
-    g = Graph(; directed=_is_directed_lookahead(io))
+    g = Graph(directed=_is_directed_lookahead(io))
     header = _skip_to_header(io)
     while !eof(io)
         header = lowercase(header)

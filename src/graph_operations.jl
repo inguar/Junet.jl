@@ -199,7 +199,7 @@ Add multiple edges to the graph. There are 3 ways to define them:
 # Example
 
 ```julia-repl
-julia> g = Graph(n=4);
+julia> g = Graph(4);
 julia> addedges!(g, (1, 2, 3, 4, 1))
 ```
 """
@@ -397,20 +397,40 @@ getindex(g::Graph, e::Edge, s::Symbol) = g.edgeattrs[s, e.id]
 ##      Convenience syntax
 =#
 
-maxid(x::Void) = 0
-maxid(x::DyadTuple) = maximum(x)
-maxid(x::DyadTupleVector) = maximum(maximum(i) for i = x)
+maxid(edges::Void) = 0
+maxid(edges::DyadTuple) = maximum(edges)
+maxid(edges::DyadTupleVector) = maximum(maximum(i) for i = edges)
+maxid(edges) = error("invalid specification of edges")
 
-function Graph(edges=nothing;
-               n=maxid(edges),
-               directed=true, simple=false,
-               TNode=UInt32, TEdge=UInt32)
+"""
+    Graph()
+    Graph(kwargs...)
+    Graph(n[; kwargs...])
+    Graph(edges[, n; kwargs...])
+
+Construct a `Graph` object with `n` nodes and specified `edges`.
+The following keyword arguments control the data structure being used:
+
+* `directed=true` — whether constructed graph is directed,
+* `sumple=false` — whether graph is simple (multi-edges and self-loops are prohibited),
+* `TNode=UInt32` — type used for node IDs, should be `Integer`,
+* `TEdge=UInt32` — type used for edge IDs, should be `Integer` or `Void`.
+"""
+function Graph(; directed=true, simple=false, TNode=UInt32, TEdge=UInt32)
     D = directed ? Forward : Both
     M = simple ? Simple : Multi
-    g = Graph{TNode,TEdge,D,M}()
+    return Graph{TNode,TEdge,D,M}()
+end
+
+function Graph(n::Integer; kwargs...)
+    g = Graph(; kwargs...)
     addnodes!(g, n)
-    if edges != nothing
-        addedges!(g, edges)
-    end
+    return g
+end
+
+function Graph(edges::Union{Tuple,Vector}, n::Integer=maxid(edges); kwargs...)
+    g = Graph(; kwargs...)
+    addnodes!(g, n)
+    addedges!(g, edges)
     return g
 end

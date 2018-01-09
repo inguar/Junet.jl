@@ -31,7 +31,7 @@ Shape of a node. The possible values are: `:circle`, `:square`, `:diamond`, `:tr
 
 ```@example *
 shapes = [:circle, :square, :diamond, :triangle, :hexagon, :octagon, :none]
-g = Graph(nodecount=length(shapes))
+g = Graph(length(shapes))
 plot(g, node_shape=shapes, node_label=shapes,
      layout=layout_line(g), zoom=2,
      filename="images/node_shapes.svg", size=(500, 100))

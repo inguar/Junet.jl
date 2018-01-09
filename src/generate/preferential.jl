@@ -11,8 +11,8 @@ Scale-free network model of Barabási and Albert (1999).
 Barabási, A.-L., & Albert, R. (1999).
 Emergence of Scaling in Random Networks. Science, 286(5439), 509.
 """
-function graph_preferential(n::Integer, m::Integer, multi::Bool=false; params...)
-    g = Graph(; params...)
+function graph_preferential(n::Integer, m::Integer, multi::Bool=false; kwargs...)
+    g = Graph(; kwargs...)
     p = DistributionPicker{Int}([])
     for i = 1:m
         addnode!(g)

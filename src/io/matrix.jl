@@ -1,9 +1,9 @@
 ## Conversion to and from Matrix objects ##
 
-function Graph(m::Matrix{T}; params...) where {T<:Number}
+function Graph(m::Matrix{T}; kwargs...) where {T<:Number}
     n, n_ = size(m)
     @assert(n == n_, "adjacency matrix should be square")
-    g = Graph(; n=n, params...)
+    g = Graph(n; kwargs...)
     for i = 1:n, j = 1:n
         if m[i, j] > zero(T)
             addedge!(g, i, j)

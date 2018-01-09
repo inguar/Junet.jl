@@ -11,8 +11,8 @@ julia> graph_path(10)
 10-node 9-edge directed multigraph
 ```
 """
-function graph_path(n::Integer; params...)
-    g = Graph(; n=n, params...)
+function graph_path(n::Integer; kwargs...)
+    g = Graph(n; kwargs...)
     for i = 1:n - 1
         addedge!(g, i, i + 1)
     end
@@ -30,8 +30,8 @@ julia> graph_cycle(10)
 10-node 10-edge directed multigraph
 ```
 """
-function graph_cycle(n::Integer; params...)
-    g = Graph(; n=n, params...)
+function graph_cycle(n::Integer; kwargs...)
+    g = Graph(n; kwargs...)
     for i = 1:n
         addedge!(g, i, i % n + 1)
     end
@@ -51,8 +51,8 @@ julia> graph_star(10)
 10-node 9-edge directed multigraph
 ```
 """
-function graph_star(n::Integer; out::Bool=true, params...)
-    g = Graph(; n=n, params...)
+function graph_star(n::Integer; out::Bool=true, kwargs...)
+    g = Graph(n; kwargs...)
     for i = 2:n
         if out
             addedge!(g, 1, i)   # outwards
@@ -76,8 +76,8 @@ julia> graph_wheel(10)
 10-node 18-edge directed multigraph
 ```
 """
-function graph_wheel(n::Integer; out::Bool=true, params...)
-    g = Graph(; n=n, params...)
+function graph_wheel(n::Integer; out::Bool=true, kwargs...)
+    g = Graph(n; kwargs...)
     for i = 2:n
         out ? addedge!(g, 1, i) : addedge!(g, i, 1)
         addedge!(g, i, i < n ? i + 1 : 2)
@@ -102,8 +102,8 @@ julia> graph_complete(10, ordered=true)
 10-node 45-edge directed multigraph
 ```
 """
-function graph_complete(n::Integer; ordered::Bool=false, params...)
-    g = Graph(; n=n, params...)
+function graph_complete(n::Integer; ordered::Bool=false, kwargs...)
+    g = Graph(n; kwargs...)
     if isdirected(g) && !ordered
         for i = 1:n, j = 1:n
             i != j && addedge!(g, i, j)
@@ -128,8 +128,8 @@ julia> graph_grid(10, 5)
 50-node 85-edge directed multigraph
 ```
 """
-function graph_grid(a::Integer, b::Integer=a; params...)
-    g = Graph(; n=a * b, params...)
+function graph_grid(a::Integer, b::Integer=a; kwargs...)
+    g = Graph(a * b; kwargs...)
     for i = 1:a, j = 1:b
         cur = (i - 1) * b + j
         if i < a
@@ -154,8 +154,8 @@ julia> graph_web(20, 4)
 81-node 160-edge directed multigraph
 ```
 """
-function graph_web(c::Integer, r::Integer; out=true, params...)
-    g = Graph(; n=r * c + 1, params...)
+function graph_web(c::Integer, r::Integer; out=true, kwargs...)
+    g = Graph(r * c + 1; kwargs...)
     for i = 1:r, j = 1:c
         cur = 1 + (i - 1) * c + j
         if out                                              # radial
@@ -191,8 +191,8 @@ julia> graph_tree(3, 3)
 40-node 39-edge directed multigraph
 ```
 """
-function graph_tree(c::Integer, r::Integer; out=true, params...)
-    g = Graph(; params...)
+function graph_tree(c::Integer, r::Integer; out=true, kwargs...)
+    g = Graph(; kwargs...)
     addnode!(g)
     branch!(g, 1, r - 1, c, out)
     return g
