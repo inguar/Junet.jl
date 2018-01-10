@@ -69,24 +69,28 @@ end
 Remove node `u` from the graph.
 """
 function remnode!(g::Graph{N}, n::Integer) where {N}
-    g.edgecount -= ptr_length(g.nodes[n], Both)
-    for p = fwd_ptrs(g.nodes[n])        # remove pointers to this node
+    for p = fwd_ptrs(g.nodes[n])    # remove pointers to this node; works correctly with self-loops!
         delete_ptr!(rev_ptrs(g.nodes[p.node]), N(n), p.id)
     end
     for p = rev_ptrs(g.nodes[n])
         delete_ptr!(fwd_ptrs(g.nodes[p.node]), N(n), p.id)
     end
-    m = nodecount(g)                    # if last node, remove it
-    if n == m
-        deleteat!(g.nodes, n)
-        return
-    end
-    g.nodes[n] = pop!(g.nodes)          # if not, move the last node to its position
-    for p = fwd_ptrs(g.nodes[n])
-        swap_ptr!(rev_ptrs(g.nodes[p.node]), N(m), p.id, N(n))
-    end
-    for p = rev_ptrs(g.nodes[n])
-        swap_ptr!(fwd_ptrs(g.nodes[p.node]), N(m), p.id, N(n))
+    g.edgecount -= ptr_length(g.nodes[n], Both)
+    if n < nodecount(g)     # move the last node to n if not already there
+        m = nodecount(g)
+        for p = fwd_ptrs(g.nodes[m])    # reset ptrs from m to n
+            swap_ptr!(rev_ptrs(g.nodes[p.node]), N(m), p.id, N(n))
+        end
+        for p = rev_ptrs(g.nodes[m])
+            if p.node != n
+                swap_ptr!(fwd_ptrs(g.nodes[p.node]), N(m), p.id, N(n))
+            else
+                swap_ptr!(fwd_ptrs(g.nodes[m]), N(m), p.id, N(n))
+            end
+        end
+        g.nodes[n] = pop!(g.nodes);
+    else
+        pop!(g.nodes);
     end
 end
 
@@ -106,7 +110,7 @@ remnodes!(g::Graph, it) = for i = sort(it, rev=true); remnode!(g, i) end
 
 Check if graph `g` has an edge between nodes `n` and `m`.
 """
-hasedge(g::DirectedGraph{N,E,D}, e::Edge) where {N,E,D<:Directed} =
+hasedge(g::Graph{N,E,D}, e::Edge) where {N,E,D<:Directed} =
     has_ptr(fwd_ptrs(g.nodes[e.source], D), e.target)
 
 hasedge(g::Graph{N,E,D}, e::Edge) where {N,E,D<:Undirected} =
