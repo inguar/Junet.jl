@@ -89,15 +89,15 @@ end
 
 Rescale elements of `v` to fill range `margin:newmax - margin`.
 """
-function rescale(v, newmax::Real, margin::Real) :: Vector{Float64}
+function rescale(v, newmax::Real, margin::Real) :: Vector{Int}
     if length(v) == 0
-        return Float64[]
+        return Int[]
     end
     oldmin, oldmax = extrema(v)
     if oldmax > oldmin
         k = (newmax - 2margin) / (oldmax - oldmin)
-        return Float64[round(margin + (x - oldmin) * k) for x = v]
+        return Int[round(Int, margin + (x - oldmin) * k) for x = v]
     else
-        return Float64[newmax / 2 for x = v]
+        return Int[round(Int, newmax / 2) for x = v]
     end
 end

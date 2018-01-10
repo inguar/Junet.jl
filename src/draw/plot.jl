@@ -74,20 +74,25 @@ function draw_nodes!(context::CairoContext, g::Graph, x, y, nodestyle)
     end
 end
 
-# FIXME: align text vertically by its baseline, not bounding box
+# TODO: align text vertically by its baseline, not bounding box
+# That would require enhancements to be pushed straight to Cairo.jl
 function draw_node_labels!(context::CairoContext, g::Graph, x, y, nodestyle)
-    size, label, label_color, opacity = nodestyle[:size],
-        nodestyle[:label], nodestyle[:label_color], nodestyle[:opacity]
+    size, label, label_color, border_color, opacity = nodestyle[:size], nodestyle[:label], 
+        nodestyle[:label_color], nodestyle[:border_color], nodestyle[:opacity]
     select_font_face(context, "Sans", 0, 0)  # TODO: make font face user-selectable
     for i = nodes(g)
         l = string(label[i])
         l == "" && continue
-        set_font_size(context, sqrt(size[i]) * .8)  # TODO: make font size user-selectable
+        set_font_size(context, round(Int, sqrt(size[i]) * .8))  # TODO: make font size user-selectable
         ext = text_extents(context, l)
         move_to(context, x[i] - ext[3] / 2 - ext[1],
-                         y[i] - ext[4] / 2 - ext[2])
+                y[i] - ext[4] / 2 - ext[2])
+        text_path(context, l)
+        set_source_rgba(context, getrgb(border_color[i])..., opacity[i] / 2)
+        set_line_width(context, 2)
+        stroke_preserve(context)
         set_source_rgba(context, getrgb(label_color[i])..., opacity[i])
-        show_text(context, l)
+        fill(context)
     end
 end
 
