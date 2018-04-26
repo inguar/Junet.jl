@@ -197,7 +197,7 @@ function plot(g::Graph; format=:svg, file="", size=(400, 400), kvargs...)
         surface = CairoEPSSurface(file, size...)
         draw_graph!(surface, g; kvargs...)
         finish(surface)
-    else:
+    else
         error("unknown image format :$format; choose from :png, :svg, :pdf, or :eps")
     end
 end
