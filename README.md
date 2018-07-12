@@ -98,7 +98,7 @@ they had to load it into RAM and run 4 different algorithms on it.
 
 |                  | igraph   | graph-tool | SNAP     | *Junet*  | *Junet\** | NetworkX  |
 |------------------|---------:|-----------:|---------:|---------:|----------:|----------:|
-| Memory           | 2,285 MB | 3.457 MB   | 5,120 MB | 2,247 MB | 591 MB    | 43,343 MB |
+| Memory           | 2,285 MB | 3,457 MB   | 5,120 MB | 2,247 MB | 591 MB    | 43,343 MB |
 | Conn. Components | 3.5 s    | 3.4 s      | 22.5 s   | 3.6 s    | 2.8 s     | 35.5 s    |
 | K-cores          | 6.2 s    | 3.2 s      | 39.4 s   | 9.5 s    | 8.5 s     | 349.2 s   |
 | PageRank         | 22.2 s   | 50.6 s     | 250.2 s  | 24.3 s   | 17.3 s    | 625.9 s   |
