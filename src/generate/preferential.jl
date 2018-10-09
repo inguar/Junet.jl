@@ -13,7 +13,7 @@ Emergence of Scaling in Random Networks. Science, 286(5439), 509.
 """
 function graph_preferential(n::Integer, m::Integer, multi::Bool=false; kwargs...)
     g = Graph(; kwargs...)
-    p = DistributionPicker{Int}([])
+    p = DiscreteSampler(Int[])
     for i = 1:m
         addnode!(g)
         push!(p, 1)
@@ -22,9 +22,9 @@ function graph_preferential(n::Integer, m::Integer, multi::Bool=false; kwargs...
         addnode!(g)
         push!(p, 1)
         for j = 1:m
-            k = rand(p)
+            k = randd(p)
             if k == i || !multi && hasedge(g, i, k)
-                k = rand(p)
+                k = randd(p)
             end
             addedge!(g, i, k)
             inc_index!(p, i)

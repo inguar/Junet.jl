@@ -2,14 +2,14 @@ using Junet
 using Base.Test
 
 @testset "util.jl" begin
-    @testset "DistributionPicker" begin
+    @testset "DiscreteSampler" begin
         x = rand(1:66, 100)
-        dp = Junet.DistributionPicker{Int}([])
+        dp = Junet.DiscreteSampler(Int[])
         for i = x
             @test_nowarn push!(dp, i)
         end
         for _ = 1:1000
-            i, j = rand(dp, true)
+            i, j = randd(dp, return_residual=true)
             @test 1 <= i <= length(x)
             @test 1 <= j <= x[i]
         end

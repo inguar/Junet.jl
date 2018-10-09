@@ -27,7 +27,7 @@ include("graph_info.jl")
 include("graph_iter.jl")
 include("graph_operations.jl")
 
-include("util/rand_dist.jl")                # commonly used methods
+include("util/discrete_sampler.jl")         # commonly used methods
 include("util/relabel.jl")
 
 include("generate/classic.jl")              # graph generators
