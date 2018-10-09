@@ -1,5 +1,5 @@
 using Junet
-using Base.Test
+using Test
 
 @testset "util.jl" begin
     @testset "DiscreteSampler" begin
@@ -9,7 +9,7 @@ using Base.Test
             @test_nowarn push!(dp, i)
         end
         for _ = 1:1000
-            i, j = randd(dp, return_residual=true)
+            i, j = Junet.randd(dp, return_residual=true)
             @test 1 <= i <= length(x)
             @test 1 <= j <= x[i]
         end

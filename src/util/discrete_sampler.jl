@@ -69,7 +69,7 @@ end
 
 # Could not be `rand` to avoid clash with `Random` module, which had
 # too many functions unneeded by `Junet` to build on.
-function randd(d::DiscreteSampler, return_residual=false)
+function randd(d::DiscreteSampler; return_residual=false)
     x = rand(1:d.values[1])
     i = 1       # current node index
     j = 1       # index in original order
