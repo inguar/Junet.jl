@@ -2,6 +2,7 @@ module Junet
 
 
 # Use-only imports
+import Random: randexp  # for generate/random.jl
 import GZip             # for io/edgelist.jl
 using Cairo             # for draw/plot.jl
 import Colors: RGB      # for draw/plot.jl
@@ -12,7 +13,8 @@ import Base:
     @_inline_meta, @_propagate_inbounds_meta,
     isless, ==,             # primitives.jl
     reverse, transpose,     # graph.jl
-    iterate, lastindex, ndims, eltype,  # graph_iter.jl
+    iterate, lastindex, eltype,  # graph_iter.jl
+    IteratorEltype, HasEltype, IteratorSize, HasLength,
     deleteat!,              # attributes.jl
     push!, pop!, rand,      # util/rand_dist.jl
     Matrix,                 # io/matrix.jl

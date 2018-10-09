@@ -61,21 +61,22 @@ end
 PtrView(g::Graph{N,E,D}, i::Integer, ::Type{R}, fun::F) where {N,E,D,R<:DirParam,F<:Function} =
             PtrView{dir_xor(D,R),D,R,F,N,E}(N(i), g.nodes[i], fun)
 
-eltype(::PtrView{O,D,R,F,N,E}) where {O,D,R,F<:typeof(get_node_id),N,E} = N
-eltype(::PtrView{O,D,R,F,N,E}) where {O,D,R,F<:typeof(get_edge_id),N,E} = E
-eltype(::PtrView{O,D,R,F,N,E}) where {O,D,R,F<:typeof(get_edge),N,E} = Edge{N,E}
+eltype(::Type{PtrView{O,D,R,F,N,E}}) where {O,D,R,F<:typeof(get_node_id),N,E} = N
+eltype(::Type{PtrView{O,D,R,F,N,E}}) where {O,D,R,F<:typeof(get_edge_id),N,E} = E
+eltype(::Type{PtrView{O,D,R,F,N,E}}) where {O,D,R,F<:typeof(get_edge),N,E} = Edge{N,E}
+IteratorEltype(::Type{PtrView}) = HasEltype()
 
 length(x::PtrView{O}) where {O<:Forward} = length(x.node.forward)
 length(x::PtrView{O}) where {O<:Reverse} = length(x.node.reverse)
 length(x::PtrView{O}) where {O<:Both} = length(x.node.forward) + length(x.node.reverse)
+IteratorSize(::Type{PtrView}) = HasLength()
 
-lastindex(x::PtrView) = length(x)
-ndims(::PtrView) = 1
-size(x::PtrView) = (length(x),)
-
-start(::PtrView) = 1
-next(x::PtrView, i::Integer) = (@_inline_meta; @_propagate_inbounds_meta; (x[i], i + 1))
-done(x::PtrView, i::Integer) = (@_inline_meta; i == length(x) + 1)
+function iterate(x::PtrView, i=1)
+    @_inline_meta
+    if i < length(x)
+        return x[i], i + 1
+    end
+end
 
 getindex(x::PtrView{O,D,R}, i::Integer) where {O<:Forward,D,R} =
     (@_inline_meta; @_propagate_inbounds_meta; x.fun(x.src, x.node.forward[i], true, R))
@@ -135,46 +136,29 @@ Iterator over all edges in the graph.
 Under the hood, it uses a 3-tuple of type {N, Int, Bool} to hold the state
 during the iteration.
 """
-struct EdgeIter{D,N,E}
+struct EdgeIter{N,E,D}
     graph :: Graph{N,E,D}
 end
 
-eltype(::Type{EdgeIter{D,N,E}}) where {D,N,E} = Edge{N,E}
+eltype(::Type{EdgeIter{N,E,D}}) where {N,E,D} = Edge{N,E}
+IteratorEltype(::Type{EdgeIter}) = HasEltype()
+
 length(x::EdgeIter) = edgecount(x.graph)
-lastindex(x::EdgeIter) = length(x)
-ndims(::EdgeIter) = 1
-size(x::EdgeIter) = (length(x),)
+IteratorSize(::Type{EdgeIter}) = HasLength()
 
-function start(x::EdgeIter{D,N}) where {D,N}
-    @_inline_meta; @_propagate_inbounds_meta
-    source = one(N)
-    while source < nodecount(x.graph)
-        if length(fwd_ptrs(x.graph.nodes[source], D)) > 0
-            return (source, 1, false)
-        end
-        source += one(N)
-    end
-    return (source, 1, true)
-end
-
-function next(x::EdgeIter{D,N}, s) where {D,N}
-    @_inline_meta; @_propagate_inbounds_meta
-    source, target = s[1], s[2]
-    ptrs = fwd_ptrs(x.graph.nodes[source], D)
-    edge = get_edge(source, ptrs[target], D<:Directed, Forward)
-    if target < length(ptrs)
-        return edge, (source, target + 1, false)
-    end
-    while source < nodecount(x.graph)
-        source += one(N)
-        if length(fwd_ptrs(x.graph.nodes[source], D)) > 0
-            return edge, (source, 1, false)
+function iterate(x::EdgeIter{N,E,D}, state=(1, 1)) where {N,E,D}
+    node_ind, ptr_ind = state
+    @inbounds while true
+        ptrs = fwd_ptrs(x.graph.nodes[node_ind], D)
+        if ptr_ind <= length(ptrs)
+            edge = get_edge(N(node_ind), ptrs[ptr_ind], D<:Directed, Forward)
+            return edge, (node_ind, ptr_ind + 1)
+        else
+            node_ind += 1
+            if node_ind > nodecount(x.graph)
+                return nothing
+            end
+            ptr_ind = 1
         end
     end
-    return edge, (source, target, true)
 end
-
-done(x::EdgeIter, s) = (@_inline_meta; s[3])
-
-# FIXME: make self-loops work correctly, e.g., in case of 1-node graph with self-loop
-
