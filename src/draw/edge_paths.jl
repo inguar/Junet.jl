@@ -19,7 +19,7 @@ mutable struct Line{T<:Real}
 end
 
 Line(x1, y1, x2, y2) = Line(
-        float(x1), float(y1), atan2(y2 - y1, x2 - x1), 0., _dist(x1, y1, x2, y2))
+        float(x1), float(y1), atan(y2 - y1, x2 - x1), 0., _dist(x1, y1, x2, y2))
 
 indent_start!(l::Line, d) = l.Δ1 += d
 
@@ -65,7 +65,7 @@ end
 
 function Arc(x1, y1, x2, y2, curve)
     dist = _dist(x1, y1, x2, y2)
-    α⊥ = atan2(y2 - y1, x2 - x1) - PI_2 * sign(curve)
+    α⊥ = atan(y2 - y1, x2 - x1) - PI_2 * sign(curve)
     α∠ = curve * PI_2
     α1, α2 = α⊥ - α∠, α⊥ + α∠
     r = dist / 2 / sin(abs(α∠))
