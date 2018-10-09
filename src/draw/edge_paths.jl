@@ -65,9 +65,9 @@ end
 
 function Arc(x1, y1, x2, y2, curve)
     dist = _dist(x1, y1, x2, y2)
-    α⟂ = atan2(y2 - y1, x2 - x1) - PI_2 * sign(curve)
+    α⊥ = atan2(y2 - y1, x2 - x1) - PI_2 * sign(curve)
     α∠ = curve * PI_2
-    α1, α2 = α⟂ - α∠, α⟂ + α∠
+    α1, α2 = α⊥ - α∠, α⊥ + α∠
     r = dist / 2 / sin(abs(α∠))
     xc, yc = x1 - r * cos(α1), y1 - r * sin(α1)
     return Arc(xc, yc, r, α1, α2, curve < 0)
