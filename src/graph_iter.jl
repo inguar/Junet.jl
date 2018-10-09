@@ -69,7 +69,7 @@ length(x::PtrView{O}) where {O<:Forward} = length(x.node.forward)
 length(x::PtrView{O}) where {O<:Reverse} = length(x.node.reverse)
 length(x::PtrView{O}) where {O<:Both} = length(x.node.forward) + length(x.node.reverse)
 
-endof(x::PtrView) = length(x)
+lastindex(x::PtrView) = length(x)
 ndims(::PtrView) = 1
 size(x::PtrView) = (length(x),)
 
@@ -141,7 +141,7 @@ end
 
 eltype(::Type{EdgeIter{D,N,E}}) where {D,N,E} = Edge{N,E}
 length(x::EdgeIter) = edgecount(x.graph)
-endof(x::EdgeIter) = length(x)
+lastindex(x::EdgeIter) = length(x)
 ndims(::EdgeIter) = 1
 size(x::EdgeIter) = (length(x),)
 

@@ -14,8 +14,8 @@ import Base:
     @_inline_meta, @_propagate_inbounds_meta,
     isless, ==,             # primitives.jl
     reverse, transpose,     # graph.jl
-    deleteat!, endof,       # attributes.jl
-    ndims, start, next, done, endof, eltype,  # edgeiter.jl
+    iterate, lastindex, ndims, eltype,  # edgeiter.jl
+    deleteat!,              # attributes.jl
     push!, pop!, rand,      # util/rand_dist.jl
     Matrix,                 # io/matrix.jl
     summary, show           # io/show.jl

@@ -1,7 +1,7 @@
 ## Efficient implementation of node and edge attributes ##
 
 length(x::AbstractAttribute) = x.getlen()
-endof(x::AbstractAttribute) = x.getlen()
+lastindex(x::AbstractAttribute) = x.getlen()
 size(x::AbstractAttribute) = (x.getlen(),)
 
 
