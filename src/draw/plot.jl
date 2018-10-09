@@ -166,7 +166,19 @@ end
 Plot the graph `g`. Specify the `format`, `file`, `size`, or many
 of the other parameters to customize its style.
 """
-function plot(g::Graph; format=:svg, file="", size=(400, 400), kvargs...)
+function plot(g::Graph; format=:auto, file="", size=(400, 400), kvargs...)
+    if format == :auto
+        if file != ""
+            ext = splitext(file)[2]
+            if ext in (".png", ".svg", ".pdf", ".eps")
+                format = Symbol(ext[2:end])
+            else
+                error("unknown file extension \"$ext\"; specify it or define `format` instead")
+            end
+        else
+            format = nodecount(g) <= 1000 ? :svg : :png
+        end
+    end
     if format == :png
         surface = CairoARGBSurface(size...)
         draw_graph!(surface, g; kvargs...)
