@@ -1,5 +1,3 @@
-__precompile__()
-
 module Junet
 
 
@@ -14,7 +12,7 @@ import Base:
     @_inline_meta, @_propagate_inbounds_meta,
     isless, ==,             # primitives.jl
     reverse, transpose,     # graph.jl
-    iterate, lastindex, ndims, eltype,  # edgeiter.jl
+    iterate, lastindex, ndims, eltype,  # graph_iter.jl
     deleteat!,              # attributes.jl
     push!, pop!, rand,      # util/rand_dist.jl
     Matrix,                 # io/matrix.jl
@@ -64,23 +62,21 @@ include("draw/plot.jl")
 
 
 export
-    Graph, DirectedGraph, UndirectedGraph,  # graph.jl
-    MultiGraph, SimpleGraph, LightGraph,
+    # graph.jl
+    Graph, DirectedGraph, UndirectedGraph, MultiGraph, SimpleGraph, LightGraph,
     isdirected, ismultigraph, directed, undirected,
 
-    nodes, nodecount,                       # graph_info.jl
-    edgecount, maxedgecount,
+    # graph_info.jl
+    memsize,
+    nodes, nodecount, edgecount, maxedgecount,
 
-    neighbors, outneighbors, inneighbors,   # graph_iter.jl
+    # graph_operations.jl
+    neighbors, outneighbors, inneighbors,
+    addnode!, addnodes!, remnode!, remnodes!,
     edges, outedges, inedges,
+    addedge!, addedges!, hasedge, remedge!, remedges!,
     getindex, setindex!,
-
-    addnode!, addnodes!,                    # graph_operations.jl
-    remnode!, remnodes!,
-    addedge!, addedges!, hasedge,
-    remedge!, remedges!,
-    addnodeattr!, addedgeattr!,
-    addnodeattrs!, addedgeattrs!,
+    addnodeattr!, addedgeattr!, addnodeattrs!, addedgeattrs!,
 
     # generate/
     graph_path, graph_cycle, graph_star, graph_wheel, graph_complete,

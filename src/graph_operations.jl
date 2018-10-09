@@ -341,9 +341,6 @@ inedges(g::Graph, n::AbstractVector) = Base.Flatten(PtrView(g, i, Reverse, get_e
 ##      Indexing `Graph` objects
 =#
 
-size(g::Graph) = (nodecount(g), nodecount(g))
-size(g::Graph, i::Integer) = i <= 2 ? nodecount(g) : 1
-
 # Nodes
 getindex(g::Graph, ::Colon) = nodes(g)
 getindex(g::Graph, n) = g.nodes[n]

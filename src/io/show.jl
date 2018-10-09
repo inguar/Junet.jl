@@ -6,11 +6,6 @@ typestr(g::Graph) = string(
     isdirected(g) ? "directed " : "undirected ",
     ismultigraph(g) ? "multigraph" : "graph")
 
-memsize(g::Graph) =
-    sizeof(g) + sizeof(g.nodes) +
-    sum(Int[sizeof(n.forward) + sizeof(n.reverse) for n = g.nodes]) +
-    sizeof(g.nodeattrs) + sizeof(g.edgeattrs)
-
 memstr(m::Integer) =
     if m < 1024
         "< 1 KiB"
