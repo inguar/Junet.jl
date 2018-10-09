@@ -15,7 +15,7 @@ Type for storing graphs. Its fields have mostly self-explanatory names
 There are four type parameters:
 
 * `N` — integer type used for node ids
-* `E` — integer type used for edge ids, `Void` can also be used to save space
+* `E` — integer type used for edge ids, `Nothing` can also be used to save space
 * `D` — singleton type indicating whether the graph is directed
     - `Directed`   — directed graph (default)
     - `Undirected` — undirected graph
@@ -31,7 +31,7 @@ functions: `DirectedGraph` or `UndirectedGraph` (w.r.t graph directedness), and
 `MultiGraph` or `SimpleGraph` (w.r.t. being a multigraph).
 
 """
-mutable struct Graph{N<:Integer,E<:Union{Integer,Void},D<:DirParam,M<:MultiParam}
+mutable struct Graph{N<:Integer,E<:Union{Integer,Nothing},D<:DirParam,M<:MultiParam}
     nodes::Vector{Node{N,E}}
     nodeattrs::AttributeDict
     edgemaxid::E
@@ -39,7 +39,7 @@ mutable struct Graph{N<:Integer,E<:Union{Integer,Void},D<:DirParam,M<:MultiParam
     edgeattrs::AttributeDict
 end
 
-const LightGraph = Graph{N,Void,D,M} where {N,D,M}
+const LightGraph = Graph{N,Nothing,D,M} where {N,D,M}
 
 const DirectedGraph   = Graph{N,E,<:Directed,M} where {N,E,M}
 const UndirectedGraph = Graph{N,E,<:Undirected,M} where {N,E,M}

@@ -53,7 +53,7 @@ end
         @test ismultigraph(g)
         @test ismultigraph(ug)
 
-        lg = Graph(TEdge=Void)
+        lg = Graph(TEdge=Nothing)
         @test typeof(lg) <: LightGraph
     end
 

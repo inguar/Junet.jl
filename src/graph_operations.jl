@@ -136,7 +136,7 @@ function new_ptr_pair!(g::Graph{N,E}, n::N, m::N) where {N,E<:Integer}
     return NodePtr(m, g.edgemaxid), NodePtr(n, g.edgemaxid)
 end
 
-function new_ptr_pair!(g::Graph{N,E}, n::N, m::N) where {N,E<:Void}
+function new_ptr_pair!(g::Graph{N,E}, n::N, m::N) where {N,E<:Nothing}
     @_inline_meta
     return NodePtr(m, nothing), NodePtr(n, nothing)
 end
@@ -401,7 +401,7 @@ getindex(g::Graph, e::Edge, s::Symbol) = g.edgeattrs[s, e.id]
 ##      Convenience syntax
 =#
 
-maxid(edges::Void) = 0
+maxid(edges::Nothing) = 0
 maxid(edges::DyadTuple) = maximum(edges)
 maxid(edges::DyadTupleVector) = maximum(maximum(i) for i = edges)
 maxid(edges) = error("invalid specification of edges")
@@ -418,7 +418,7 @@ The following keyword arguments control the data structure being used:
 * `directed=true` — whether constructed graph is directed,
 * `sumple=false` — whether graph is simple (multi-edges and self-loops are prohibited),
 * `TNode=UInt32` — type used for node IDs, should be `Integer`,
-* `TEdge=UInt32` — type used for edge IDs, should be `Integer` or `Void`.
+* `TEdge=UInt32` — type used for edge IDs, should be `Integer` or `Nothing`.
 """
 function Graph(; directed=true, simple=false, TNode=UInt32, TEdge=UInt32)
     D = directed ? Forward : Both

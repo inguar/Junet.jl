@@ -168,7 +168,7 @@ defval(::Type{T}) where {T<:Number} = zero(T)
 defval(::Type{String}) = ""
 defval(::Type{Symbol}) = :|
 defval(::Type{Char}) = '\0'
-defval(::Type{Void}) = nothing
+defval(::Type{Nothing}) = nothing
 defval(::Type{RGB}) = RGB(0, 0, 0)
 defval(::Type{Tuple{Vararg{T,N}}}) where {T,N} = tuple([defval(T) for _ = 1:N]...)
 defval(::Type{Any}) = nothing
