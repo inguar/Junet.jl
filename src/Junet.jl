@@ -32,7 +32,7 @@ include("util/relabel.jl")
 
 include("generate/classic.jl")              # graph generators
 include("generate/random.jl")
-include("generate/smallworld.jl")
+include("generate/small_world.jl")
 include("generate/preferential.jl")
 
 include("measure/centrality/degree.jl")     # graph measures
