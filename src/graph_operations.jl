@@ -261,6 +261,7 @@ end
 
 remedges!(g::Graph, it) = for x = collect(it); remedge!(g, x); end
 
+# FIXME: allow to use list of self-loops for bulk edge deletion
 
 
 #=

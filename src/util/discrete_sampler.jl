@@ -12,7 +12,8 @@ struct DiscreteSampler{T}
     values :: Vector{T}
 end
 
-function push!(d::DiscreteSampler{T}, x::T) where T
+function push!(d::DiscreteSampler{T}, value) where T
+    x = T(value)
     if length(d.values) == 0
         push!(d.values, x)
     else
