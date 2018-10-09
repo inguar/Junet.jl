@@ -42,7 +42,7 @@ Fruchterman, Thomas MJ, and Edward M Reingold. 1991.
 “Graph Drawing by Force-Directed Placement.” Software: Practice and Experience 21 (11):1129–64.
 """
 function layout_fruchterman_reingold(g::Graph; maxiter=250, scale=sqrt(nodecount(g)), init_temp=sqrt(nodecount(g)))
-    const n = nodecount(g)
+    n = nodecount(g)
     x = scale / 2 .* (rand(n) .- 0.5)
     y = scale / 2 .* (rand(n) .- 0.5)
     @inbounds for iter = 1:maxiter
