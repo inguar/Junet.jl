@@ -161,12 +161,12 @@ end
 
 
 """
-    plot(g::Graph[; format, file, size, kvargs...])
+    plot(g::Graph[; file, format, size, kvargs...])
 
 Plot the graph `g`. Specify the `format`, `file`, `size`, or many
 of the other parameters to customize its style.
 """
-function plot(g::Graph; format=:auto, file="", size=(400, 400), kvargs...)
+function plot(g::Graph; file="", format=:auto, size=(400, 400), kvargs...)
     if format == :auto
         if file != ""
             ext = splitext(file)[2]
