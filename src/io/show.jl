@@ -10,11 +10,11 @@ memstr(m::Integer) =
     if m < 1024
         "< 1 KiB"
 elseif m < 1024^2
-        string(round(m / 1024, 1), " KiB")
+        string(round(m / 1024, digits=1), " KiB")
 elseif m < 1024^3
-    string(round(m / 1024^2, 2), " MiB")
+    string(round(m / 1024^2, digits=2), " MiB")
     else
-    string(round(m / 1024^3, 3), " GiB")
+    string(round(m / 1024^3, digits=3), " GiB")
     end
 
 summary(d::AttributeDict) = join(
