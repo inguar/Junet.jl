@@ -12,7 +12,7 @@ import Base:
     length, size, getindex, setindex!,  # common
     @_inline_meta, @_propagate_inbounds_meta,
     isless, ==,             # primitives.jl
-    reverse, transpose,     # graph.jl
+    reverse, adjoint,       # graph.jl
     iterate, lastindex, eltype,  # graph_iter.jl
     IteratorEltype, HasEltype, IteratorSize, HasLength,
     deleteat!,              # attributes.jl

@@ -99,4 +99,4 @@ A view on the graph where each edge is reversed.
 reverse(g::Graph{N,E,Forward}) where {N,E} = dirview(g, Reverse)
 reverse(g::Graph{N,E,Reverse}) where {N,E} = dirview(g, Forward)
 reverse(g::UndirectedGraph) = g
-transpose(g::Graph) = reverse(g)
+adjoint(g::Graph) = reverse(g)
