@@ -109,11 +109,11 @@ is_valid(a::Arc) = xor(a.inv, a.α1 < a.α2)
 
 function outline!(context::CairoContext, a::Arc)
     if !a.inv
-        arc(context, round(a.xc, 1), round(a.yc, 1), round(a.r, 1),
-            round(a.α1, 3), round(a.α2, 3))
+        arc(context, round(a.xc, digits=1), round(a.yc, digits=1), round(a.r, digits=1),
+            round(a.α1, digits=3), round(a.α2, digits=3))
     else
-        arc_negative(context, round(a.xc, 1), round(a.yc, 1), round(a.r, 1),
-            round(a.α1, 3), round(a.α2, 3))
+        arc_negative(context, round(a.xc, digits=1), round(a.yc, digits=1), round(a.r, digits=1),
+            round(a.α1, digits=3), round(a.α2, digits=3))
     end
 end
 
