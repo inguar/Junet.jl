@@ -185,6 +185,8 @@ function addedge!(g::Graph, n::Integer, m::Integer; attrs...)
     return e
 end
 
+addedge!(g::Graph, pair::Pair{T}) where {T<:Integer} = addedge!(g, pair...)
+
 const DyadTuple = Tuple{T,T,Vararg{T}} where {T<:Integer}
 const DyadTupleVector = AbstractVector{T} where {T<:DyadTuple}
 
