@@ -1,6 +1,4 @@
-<div style="border: 1px solid #db8432; border-radius: 4px; background-color: #fff5cb; padding: 10px;">
-  ⚠️ This project is no longer maintained and is not guaranteed to work on newer versions of Julia. Please refer to [LightGraphs](https://github.com/JuliaGraphs/LightGraphs.jl) package if you need graph algorithms.
-</div>
+⚠️ This project is no longer maintained and is not guaranteed to work on newer versions of Julia. Please refer to [LightGraphs](https://github.com/JuliaGraphs/LightGraphs.jl) package if you need graph algorithms.
 
 <br/>
 <br/>
