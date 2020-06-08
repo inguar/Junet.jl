@@ -114,15 +114,13 @@ they had to load it into RAM and run 4 different algorithms on it.
 
 ## Installation
 
-You need Julia 0.5 to run Junet. It is also forward compatible with release candidate of Julia 0.6, but it will trigger some warnings.
-
-Once you have Julia set up, you can check out Junet from this repository (it is't added to METADATA registry yet). For that, run the following line in REPL:
+You need Julia 1.0 or newer to run Junet. You can check it out from this repository as it is not listed on METADATA registry. Run the following command in your REPL's package mode:
 
 ```julia
-julia> Pkg.clone("git://github.com/inguar/Junet.jl.git")
+(v1.0) pkg> add "git://github.com/inguar/Junet.jl.git"
 ```
 
-If you want to update the package, a simple `Pkg.update()` command should do that.
+If you want to update the package, just run the built-in `update` command.
 
 
 ## Citing Junet
