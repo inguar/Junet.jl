@@ -1,3 +1,8 @@
+  ⚠️ This project is no longer maintained and is not guaranteed to work on newer versions of Julia. Please refer to [LightGraphs](https://github.com/JuliaGraphs/LightGraphs.jl) package if you need graph algorithms.
+
+<br/>
+<br/>
+
 <p align="center">
   <img alt="logo" src="./doc/src/images/logo.svg" height="200px">
 </p>
